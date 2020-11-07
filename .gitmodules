@@ -1,0 +1,3 @@
+[submodule "vendor/pistache"]
+	path = vendor/pistache
+	url = https://github.com/pistacheio/pistache.git
