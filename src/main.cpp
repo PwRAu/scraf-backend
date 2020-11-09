@@ -1,3 +1,4 @@
+#include "pistache/http.h"
 #include <iostream>
 #include <memory>
 #include <pistache/endpoint.h>
@@ -10,17 +11,18 @@ public:
 	// but since this http handler is really simple I can use the Pistache macro that does that for me
 	HTTP_PROTOTYPE(HelloHandler)
 
-	void onRequest(const Http::Request& request, Http::ResponseWriter response) override {
-		response.send(Http::Code::Ok, "Luca suca");
+	void onRequest([[maybe_unused]] const Http::Request& request, Http::ResponseWriter response) override {
+		response.send(Http::Code::Ok, "Luca suca\n");
 	}
 };
 
 int main() {
-	Address address(Ipv4::any(), Port(10780));
-	auto httpOptions = Http::Endpoint::options().threads(1);
-	Http::Endpoint server(address);
-	server.init(httpOptions);
-	server.setHandler(std::make_shared<HelloHandler>());
-	server.serve();
-	// Or I can simply use Http::listenAndServe<HelloHandler>("*:10780", options) that sets up everything for me
+	Http::listenAndServe<HelloHandler>(Address(Ipv4::any(), Port(10780)), Http::Endpoint::options().threads(1));
+	// La funzione che c'è sopra è una scorciatoia per le righe di sotto
+	// Address address(Ipv4::any(), Port(10780));
+	// auto httpOptions = Http::Endpoint::options().threads(1);
+	// Http::Endpoint server(address);
+	// server.init(httpOptions);
+	// server.setHandler(Http::make_handler<HelloHandler>());
+	// server.serve();
 }

@@ -1,3 +1,6 @@
 [submodule "vendor/pistache"]
 	path = vendor/pistache
 	url = https://github.com/pistacheio/pistache.git
+[submodule "vendor/pgfe"]
+	path = vendor/pgfe
+	url = https://github.com/dmitigr/pgfe.git
