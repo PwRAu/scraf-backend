@@ -20,7 +20,7 @@ public:
 };
 
 int main() {
-	pgfe::Connection connection {pgfe::Connection_options{pgfe::Communication_mode::net}.net_hostname("localhost").database("scraf").username("tachi").password("pone666")};
+	pgfe::Connection connection {pgfe::Connection_options{pgfe::Communication_mode::net}.net_hostname("87.250.73.27").database("scraf").username("scraf").password("ollareollare")};
 	connection.connect();
 	//connection.perform("INSERT INTO tabella (payload) VALUES ('soos')");
 
