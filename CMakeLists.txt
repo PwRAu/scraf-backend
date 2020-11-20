@@ -26,11 +26,24 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 		# TODO: Check -g3 -g difference
 		set(CMAKE_C_FLAGS_DEBUG   "${CMAKE_C_FLAGS_DEBUG}   --optimize=g --debug=3 -gdwarf-4 -glldb -fstandalone-debug -fdebug-info-for-profiling -fdebug-macro -fdebug-default-version=4 -fno-omit-frame-pointer -fno-optimize-sibling-calls")
 		set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} --optimize=g --debug=3 -gdwarf-4 -glldb -fstandalone-debug -fdebug-info-for-profiling -fdebug-macro -fdebug-default-version=4 -fno-omit-frame-pointer -fno-optimize-sibling-calls -Wall -Wextra -Weverything -Wpedantic -Wno-unused-parameter -Wno-c++98-compat -Wno-c++98-compat-pedantic -Wno-missing-prototypes -Wno-global-constructors -Wno-exit-time-destructors -Wno-shadow -Wno-shorten-64-to-32 -Wno-documentation -Wno-documentation-unknown-command")
-	else()
+	elseif(CMAKE_BUILD_TYPE MATCHES Release)
 		set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   --optimize=3 -flto -fwhole-program-vtables")
 		set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} --optimize=3 -flto -fwhole-program-vtables")
 		set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -flto -fwhole-program-vtables")
 	endif(CMAKE_BUILD_TYPE MATCHES Debug)
+else()
+	if(CMAKE_BUILD_TYPE MATCHES Release)
+		include(CheckIPOSupported)
+		check_ipo_supported(RESULT ipo_result OUTPUT ipo_output)
+		if(ipo_result)
+			if(CMAKE_VERSION VERSION_GREATER 3.8)
+				# Enable IPO for CMake versions that support it
+				cmake_policy(SET CMP0069 NEW)
+			endif()
+			set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+			# set_property(TARGET target-name-Scraf PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE) così da abilitare l'LTO solo per Scraf in caso dia problemi col resto del progetto
+		endif()
+	endif(CMAKE_BUILD_TYPE MATCHES Release)
 endif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
 # Per creare l'eseguibile, devo scrivere qui tutti i file .cpp appartenenti al progetto

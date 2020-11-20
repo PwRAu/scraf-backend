@@ -4,7 +4,6 @@
 
 using namespace Pistache;
 namespace pgfe = dmitigr::pgfe;
-//using pgfe = dmitigr::pgfe;
 
 class HelloHandler : public Http::Handler {
 public:
