@@ -49,9 +49,9 @@ endif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 # Per creare l'eseguibile, devo scrivere qui tutti i file .cpp appartenenti al progetto
 add_executable(${PROJECT_NAME} src/main.cpp)
 
-set(BUILD_SHARED_LIBS OFF)
-set(PISTACHE_INSTALL OFF)
-set(PISTACHE_USE_SSL ON)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "Only statically linked library")
+set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
+set(PISTACHE_USE_SSL ON CACHE BOOL "Only statically linked library")
 add_subdirectory(vendor/pistache)
 
 # CMake 3.18 doesn't support Postgres 13
