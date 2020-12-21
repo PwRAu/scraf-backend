@@ -54,12 +54,6 @@ set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_USE_SSL ON CACHE BOOL "Only statically linked library")
 add_subdirectory(vendor/pistache)
 
-# CMake 3.18 doesn't support Postgres 13
-set(PostgreSQL_ADDITIONAL_VERSIONS "13")
-set(DMITIGR_CEFEIKA_HEADER_ONLY ON CACHE BOOL "Header only?")
-add_subdirectory(vendor/pgfe)
-
 target_link_libraries(${PROJECT_NAME}
 	pistache_static
-	dmitigr::pgfe
 )
