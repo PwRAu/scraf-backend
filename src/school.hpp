@@ -20,7 +20,7 @@ public:
 private:
 	// Creo il costruttore di default, di cui ODB ha bisogno;
 	// non deve essere necessariamente privato, ma deve esserci.
-	School() {}
+	School() = default;
 
 	// Rendo odb::access una classe "amica" di School, così che ODB possa accedere ai campi privati;
 	// se la classe ha tutti i membri e il costruttore di default public non è necessario (per chiarezza penso sia meglio metterlo)
