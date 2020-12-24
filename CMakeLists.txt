@@ -11,7 +11,7 @@ project(Scraf
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 # Imposto gli standard di C e C++ alle ultime disponibili, disabilitando delle estensioni specifiche di Linux che non servono
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS OFF)
@@ -46,8 +46,16 @@ else()
 	endif(CMAKE_BUILD_TYPE MATCHES Release)
 endif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/vendor/OdbCmake/cmake/Modules")
+find_package(ODB REQUIRED COMPONENTS pgsql)
+include(${ODB_USE_FILE})
+set(Scraf_SOURCES main.cpp)
+set(Scraf_ODB_HEADERS school.hpp)
+odb_compile(Scraf_SOURCES FILES ${Scraf_ODB_HEADERS} DB pgsql STANDARD "c++17" GENERATE_QUERY)
+
+
 # Per creare l'eseguibile, devo scrivere qui tutti i file .cpp appartenenti al progetto
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} ${Scraf_SOURCES})
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
@@ -56,4 +64,16 @@ add_subdirectory(vendor/pistache)
 
 target_link_libraries(${PROJECT_NAME}
 	pistache_static
+	${ODB_LIBRARIES}
+)
+
+target_include_directories(${PROJECT_NAME}
+	PRIVATE
+		${ODB_INCLUDE_DIRS}
+		${ODB_COMPILE_OUTPUT_DIR}
+)
+
+target_compile_definitions(${PROJECT_NAME}
+	PRIVATE
+		DATABASE_PGSQL
 )
