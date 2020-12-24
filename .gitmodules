@@ -4,3 +4,6 @@
 [submodule "vendor/pgfe"]
 	path = vendor/pgfe
 	url = https://github.com/dmitigr/pgfe.git
+[submodule "vendor/OdbCmake"]
+	path = vendor/OdbCmake
+	url = https://github.com/PwRAu/OdbCmake.git
