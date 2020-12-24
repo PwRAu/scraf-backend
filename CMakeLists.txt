@@ -49,8 +49,8 @@ endif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/vendor/OdbCmake/cmake/Modules")
 find_package(ODB REQUIRED COMPONENTS pgsql)
 include(${ODB_USE_FILE})
-set(Scraf_SOURCES main.cpp)
-set(Scraf_ODB_HEADERS school.hpp)
+set(Scraf_SOURCES src/main.cpp)
+set(Scraf_ODB_HEADERS src/school.hpp)
 odb_compile(Scraf_SOURCES FILES ${Scraf_ODB_HEADERS} DB pgsql STANDARD "c++17" GENERATE_QUERY)
 
 
@@ -71,6 +71,7 @@ target_include_directories(${PROJECT_NAME}
 	PRIVATE
 		${ODB_INCLUDE_DIRS}
 		${ODB_COMPILE_OUTPUT_DIR}
+		src
 )
 
 target_compile_definitions(${PROJECT_NAME}
