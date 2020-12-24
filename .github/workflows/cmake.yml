@@ -20,8 +20,14 @@ jobs:
     - name: Checkout submodules
       run: git submodule update --init --recursive
     
-    - name: Install PostgreSQL-dev
-      run: sudo apt-get update && sudo apt-get install --assume-yes postgresql-server-dev-all libpq-dev
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt-get install --assume-yes libpq-dev gcc-10-plugin-dev
+    
+    - name: Install build2
+      run: mkdir build2-build && cd build2-build && curl -sSfO https://download.build2.org/0.13.0/build2-install-0.13.0.sh && sh build2-install-0.13.0.sh --yes --no-check
+    
+    - name: Install odb
+      run: mkdir odb-build && cd odb-build && bpkg create --directory gcc-10 cc config.cxx=g++ config.cc.coptions=-O3 config.install.root=/usr/local config.install.sudo=sudo --trust-yes && cd odb-gcc-10 && bpkg build odb@https://pkg.cppget.org/1/beta --trust-yes && pkg test odb && bpkg install odb --trust-yes && cd .. && bpkg create --directory gcc-10 cc config.cxx=g++ config.cc.coptions=-O3 config.install.root=/usr/local config.install.sudo=sudo && cd gcc-10 && bpkg add https://pkg.cppget.org/1/beta --trust-yes && bpkg fetch --trust-yes && bpkg build libodb --trust-yes && bpkg build libodb-pgsql --trust-yes && bpkg install --trust-yes --all --recursive
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
