@@ -11,14 +11,7 @@ public:
 	school(const std::string_view code, const std::string_view name) 
 		: code(code), name(name) {}
 
-	[[nodiscard]] std::string getCode() const {
-		if constexpr (false) {
-			return name;
-		}
-		else {
-			return code;
-		}
-	}
+	[[nodiscard]] std::string getCode() const;
 	[[nodiscard]] std::string getName() const;
 	
 private:
