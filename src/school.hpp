@@ -17,6 +17,9 @@ public:
 private:
 	// Creo il costruttore di default, di cui ODB ha bisogno;
 	// non deve essere necessariamente privato, ma deve esserci.
+	// È conveniente metterlo privato così che all'interno del codice
+	// non sia possibile instanziare un oggetto school senza code e name,
+	// cosa sbagliata in quanto nel database sono salvati come NOT NULL
 	school() = default;
 
 	// Rendo odb::access una classe "amica" di school, così che ODB possa accedere ai campi privati;
