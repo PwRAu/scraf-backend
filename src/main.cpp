@@ -2,6 +2,7 @@
 #include <memory>
 
 #include <odb/database.hxx>
+#include <odb/forward.hxx>
 #include <odb/transaction.hxx>
 #include <odb/pgsql/database.hxx>
 #include "school.hpp"
@@ -34,7 +35,16 @@ int main() {
 
 		// Creo la transazione, ovvero l'oggetto che si occuperà di inviare i cambiamenti al database
 		odb::transaction transaction(database->begin());
-		
+		// I controlli con # vengono eseguiti prima della compilazione, e mi permettono di compilare del codice
+		// in base a cose come se sto compilando il programma in Debug o Release;
+		// se l'#if è false, il codice al suo interno viene ignorato.
+		// In questo caso, sto dicendo "se NDEBUG non è definito, abilita il tracciamento dell'SQL";
+		// NDEBUG viene definito automaticamente quando sto compilando in Release,
+		// quindi questo codice sarà presente solo in non non-debug, quindi debug.
+		#ifndef NDEBUG
+		transaction.tracer(odb::stderr_tracer);
+		#endif
+
 		// Dico a ODB di rendere persistenti (salvare nel db) le scuole cobianchi e stein,
 		// e poi faccio un commit dei cambiamenti, ovvero dico a ODB di salvarli effettivamente nel database.
 		// In pratica preparo prima una serie di robe da fare, ma non le faccio,
