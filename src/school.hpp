@@ -8,12 +8,15 @@
 #pragma db object
 class school {
 public:
+	// Dico che code è l'id (PRIMARY KEY) della school;
+	// potrei dire db id auto per dire che l'id è AUTOINCREMENT
+	#pragma db id
+	std::string code;
+	std::string name;
+
 	school(const std::string_view code, const std::string_view name) 
 		: code(code), name(name) {}
-
-	[[nodiscard]] std::string getCode() const;
-	[[nodiscard]] std::string getName() const;
-	
+		
 private:
 	// Creo il costruttore di default, di cui ODB ha bisogno;
 	// non deve essere necessariamente privato, ma deve esserci.
@@ -25,12 +28,6 @@ private:
 	// Rendo odb::access una classe "amica" di school, così che ODB possa accedere ai campi privati;
 	// se la classe ha tutti i membri e il costruttore di default public non è necessario (per chiarezza penso sia meglio metterlo)
 	friend class odb::access;
-
-	// Dico che code è l'id (PRIMARY KEY) della school;
-	// potrei dire db id auto per dire che l'id è AUTOINCREMENT
-	#pragma db id
-	std::string code;
-	std::string name;
 };
 
 /*
