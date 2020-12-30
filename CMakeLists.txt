@@ -11,17 +11,21 @@ project(Scraf
 set(CMAKE_EXPORT_COMPILE_COMMANDS true)
 
 # Imposto gli standard di C e C++ alle ultime disponibili, disabilitando delle estensioni specifiche di Linux che non servono
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_C_EXTENSIONS OFF)
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Release)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/vendor/OdbCmake/cmake/Modules")
 find_package(ODB REQUIRED COMPONENTS pgsql)
 include(${ODB_USE_FILE})
 set(Scraf_SOURCES src/main.cpp)
 set(Scraf_ODB_HEADERS src/school.hpp)
-odb_compile(Scraf_SOURCES FILES ${Scraf_ODB_HEADERS} DB pgsql STANDARD "c++17" GENERATE_QUERY)
+odb_compile(Scraf_SOURCES FILES ${Scraf_ODB_HEADERS} DB pgsql STANDARD "c++17" X_CPP_OPTION "-fconcepts" X_CPP_OPTION "-std=c++20" GENERATE_QUERY)
 
 # Per creare l'eseguibile, devo scrivere qui tutti i file .cpp appartenenti al progetto
 add_executable(${PROJECT_NAME} ${Scraf_SOURCES})

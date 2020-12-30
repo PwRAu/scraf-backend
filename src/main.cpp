@@ -46,7 +46,7 @@ int main() {
 		// il cui nome sia uguale a "IS L. Cobianchi", e mi salvo il risultato della query in una variabile result.
 		// Il tipo di result dev'essere un odb::result dell'oggetto che sto cercando, in questo caso school,
 		// e così anche la query, che è una query di tipo school.
-		odb::result<school> result(database->query<school>(odb::query<school>::name == "IS L. Cobianchi"));
+		odb::result<school> result {database->query<school>(odb::query<school>::name == "IS L. Cobianchi")};
 		// Una volta aver ottenuto il risultato non posso stamparlo, perché non ho la certezza di aver ottenuto un singolo
 		// oggetto school, in quando name non è UNIQUE o PRIMARY KEY. 
 		// Per questo motivo, odb::result è una specie di array.
@@ -60,6 +60,11 @@ int main() {
 		for (const auto& school : result) {
 			std::cout << "Il codice del Cobianchi è " << school.code << '\n';
 		}
+		
+		std::unique_ptr<school> cobianchi {database->load<school>("VBIS00700V")};
+
+		school paolo {std::string{"Paolino"}, std::string{"Paoletto"}};
+		std::cout << paolo.code << '\n';
 
 		// In pratica preparo prima una serie di robe da fare, ma non le faccio,
 		// e poi con transaction.commit() le faccio effettivamente.
