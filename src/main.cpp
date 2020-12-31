@@ -7,6 +7,8 @@
 #include <odb/pgsql/database.hxx>
 #include "school.hpp"
 #include "school_odb.hpp"
+#include "student.hpp"
+#include "student_odb.hpp"
 
 #include <pistache/endpoint.h>
 
@@ -60,11 +62,9 @@ int main() {
 		for (const auto& school : result) {
 			std::cout << "Il codice del Cobianchi è " << school.code << '\n';
 		}
-		
-		std::unique_ptr<school> cobianchi {database->load<school>("VBIS00700V")};
 
-		school paolo {std::string{"Paolino"}, std::string{"Paoletto"}};
-		std::cout << paolo.code << '\n';
+		student pappacoda {"andrea@pappacoda.it", "Andrea", "Pappacoda"};
+		std::cerr << pappacoda.name.get() << '\n';
 
 		// In pratica preparo prima una serie di robe da fare, ma non le faccio,
 		// e poi con transaction.commit() le faccio effettivamente.

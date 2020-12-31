@@ -16,8 +16,8 @@ scraf-backend uses C++20 and requires a modern compiler. It should work on Clang
 
 ##### ODB
 
-ODB is an Object-Relational Mapping (ORM) library.
-The stable version of ODB usually packaged by Debian does not support anything newer than C++14, so it is required to use the beta plus the module for PostgreSQL.
+[ODB](https://www.codesynthesis.com/products/odb/) is an Object-Relational Mapping (ORM) library.
+The stable version of ODB packaged by Debian does not support anything newer than C++14, so it is required to use the beta plus the module for PostgreSQL.
 It is recommended to follow the official [installation guide](https://www.codesynthesis.com/products/odb/doc/install-build2.xhtml#linux), but if you're lazy you can install it with this two commands (spoiler: it is goning to take more than 10 minutes, go drink a tea or something)
 
 ```sh

@@ -24,7 +24,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/vendor/OdbCmake/cmake/Modules
 find_package(ODB REQUIRED COMPONENTS pgsql)
 include(${ODB_USE_FILE})
 set(Scraf_SOURCES src/main.cpp)
-set(Scraf_ODB_HEADERS src/school.hpp)
+set(Scraf_ODB_HEADERS src/school.hpp src/student.hpp)
 if((CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "GNU") AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 10)
 	set(ODB_CPP_STANDARD_FLAG "-std=c++20")
 else()
