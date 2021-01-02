@@ -128,6 +128,15 @@ int main() {
 		// e poi con transaction.commit() le faccio effettivamente.
 		// Questo mi permette di fare più cose in una sola volta, migliorando le prestazioni.
 		transaction.commit();
+
+
+
+		// Aggiornare un oggetto conoscendo già l'id
+		odb::transaction transaction2 {database->begin()};
+		std::unique_ptr<student> studentPappacoda {database->load<student>(studentPappacodaId)};
+		studentPappacoda->name = "Tachi";
+		database->update(*studentPappacoda);
+		transaction2.commit();
 	}
 
 	struct sigaction sigIntHandler { .sa_flags = 0 };
