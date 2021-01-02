@@ -112,13 +112,13 @@ int main() {
 		// }
 		// So che viene naturale scrivere int i = 0, ma è meglio usare {0}.
 		const std::int64_t studentPappacodaId {[&]() {
-			odb::result studentResult {database->query<student>(odb::query<student>::mail == "andrea@pappacoda.it")};
-			if (studentResult.empty()) {
+			std::unique_ptr<student> studentResult {database->query_one<student>(odb::query<student>::mail == "andrea@pappacoda.it")};
+			if (!studentResult) {
 				student pappacoda {"andrea@pappacoda.it", "Andrea", "Pappacoda"};
 				return database->persist(pappacoda);
 			}
 			else {
-				return studentResult.begin()->id;
+				return studentResult->id;
 			}
 		}()};
 
@@ -132,11 +132,31 @@ int main() {
 
 
 		// Aggiornare un oggetto conoscendo già l'id
-		odb::transaction transaction2 {database->begin()};
-		std::unique_ptr<student> studentPappacoda {database->load<student>(studentPappacodaId)};
-		studentPappacoda->name = "Tachi";
-		database->update(*studentPappacoda);
-		transaction2.commit();
+		{
+			odb::transaction transactionn {database->begin()};
+			std::unique_ptr<student> studentPappacoda {database->load<student>(studentPappacodaId)};
+			studentPappacoda->name = "Tachi";
+			database->update(*studentPappacoda);
+			std::cout << "Ora il nome dello studente con id " << studentPappacoda->id << " è \"" << studentPappacoda->name.get() << "\"\n";
+			transactionn.commit();
+		}
+
+
+
+		// Aggiornare un oggetto solo senza conoscere l'id
+		{
+			odb::transaction transactionn {database->begin()};
+			std::unique_ptr<student> studentPappacoda {database->query_one<student>(odb::query<student>::mail == "andrea@pappacoda.it")};
+			if (studentPappacoda) {
+				studentPappacoda->name = "Andrea";
+				database->update(*studentPappacoda);
+				std::cout << "Ora il nome dello studente con id " << studentPappacoda->id << " è \"" << studentPappacoda->name.get() << "\"\n";
+			}
+			else {
+				std::cout << "Non esiste nessuno studente con la mail \"andrea@pappacoda.it\"\n";
+			}
+			transactionn.commit();
+		}
 	}
 
 	struct sigaction sigIntHandler { .sa_flags = 0 };
