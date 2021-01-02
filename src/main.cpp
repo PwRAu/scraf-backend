@@ -63,8 +63,59 @@ int main() {
 			std::cout << "Il codice del Cobianchi è " << school.code << '\n';
 		}
 
-		student pappacoda {"andrea@pappacoda.it", "Andrea", "Pappacoda"};
-		std::cerr << pappacoda.name.get() << '\n';
+		// Credo che questo sia il modo in cui bisogna lavorare con l'ODB. 
+		// Per lavorare su un oggetto mi serve il suo id.
+		// Per poter ottenere l'id devo fare un paio di controlli;
+		// se l'oggetto sul quale voglio lavorare esiste già nel database dovrò prendere l'id già esistente,
+		// se invece l'oggetto non esiste devo crearlo e poi usare l'id assegnato.
+		// L'id non dev'essere modificato dal mio programma (una chiave primaria è immutabile)
+		// quindi lo dichiaro const. Dichiarandolo const però ho un problema:
+		// come faccio a sapere se l'oggetto esiste già nel db prima ancora di crearlo?
+		// Normalmente creerei studentPappacodaId vuoto, faccio tutti i controlli
+		// e poi assegno il valore corretto alla variabile, ma facendo così dovrei dire addio a const.
+		// Fortunatamente in C++ esistono le lambda, ovvero funzioni usa e getta che avevo già spiegato
+		// in un commit che mannaggia a git non so dove caz sia finito... Vabbè, tanto non ho niente da fare, vero Fauster?
+		//
+		// Una lambda è una funzione usa e getta che posso dichiarare così:
+		// [*captures*](*parameters*) {*body*}
+		//
+		// Le captures sono le variabili che la lambda può "catturare" dall'esterno;
+		// in questo caso metto &, che sta a significare che la lambda può accedere a tutte le variabili esterne
+		// per riferimento, quindi senza copie inutili e potenzialmente dannose. 
+		// Se volessi dire esplicitamente che la lambda può accedere solamente alla variabile database
+		// scriverei [&database].
+		//
+		// In parameters posso passare dei parametri come farei normalmente con una funzione,
+		// che boh ok va bene si può fare ma a me non è mai servito
+		// perché sveglia C++ ci sono già le captures che fanno la stessa indentica fucking cosa, quindi lascio vuoto.
+		//
+		// Infine in body scrivo il corpo della lamda, ez.
+		// In questo caso nel corpo ci scrivo l'if che controlla se l'oggetto esiste già e agisce di conseguenza,
+		// così che posso ritornare l'id direttamente durante l'inizializzazione e non dire addio al bellissimo const.
+		// Ah, non so se l'ho già detto ma in C++ ci sono 48173 modi diversi per inizializzare una variabile, tipo:
+		// std::string paolo("nazionale");
+		// std::string paolo = "nazionale";
+		// std::string paolo = std::string("nazionale");
+		// std::string paolo = {"nazionale"};
+		// std::string paolo {"nazionale"};
+		// Per una serie di motivi che non ho voglia di spiegare la migliore inizializzazione è l'ultima,
+		// quella con {"..."} e senza l'uguale. Quindi abituati a usare quella. Sempre. Solo per l'inizializzazione.
+		// Anche il classicissimo for va scritto con {}, quindi sarebbe
+		// for (int i {0}; i < nv; ++i) {
+		//     ...
+		// }
+		// So che viene naturale scrivere int i = 0, ma è meglio usare {0}.
+		const std::int64_t studentPappacodaId {[&]() {
+			odb::result studentResult {database->query<student>(odb::query<student>::mail == "andrea@pappacoda.it")};
+			if (studentResult.empty()) {
+				return database->persist(student{"andrea@pappacoda.it", "Andrea", "Pappacoda"});
+			}
+			else {
+				return studentResult.begin()->id;
+			}
+		}()};
+
+		std::cerr << "L'id dello studente con la mail andrea@pappacoda.it è " << studentPappacodaId << '\n';
 
 		// In pratica preparo prima una serie di robe da fare, ma non le faccio,
 		// e poi con transaction.commit() le faccio effettivamente.

@@ -31,7 +31,7 @@ else()
 	set(ODB_CPP_STANDARD_FLAG "-std=c++2a")
 	message("Paoilo")
 endif()
-odb_compile(Scraf_SOURCES FILES ${Scraf_ODB_HEADERS} DB pgsql STANDARD "c++17" X_CPP_OPTION "-fconcepts" X_CPP_OPTION ${ODB_CPP_STANDARD_FLAG} GENERATE_QUERY)
+odb_compile(Scraf_SOURCES FILES ${Scraf_ODB_HEADERS} DB pgsql STANDARD "c++17" X_CPP_OPTION "-fconcepts" X_CPP_OPTION ${ODB_CPP_STANDARD_FLAG} GENERATE_QUERY GENERATE_SCHEMA)
 
 # Per creare l'eseguibile, devo scrivere qui tutti i file .cpp appartenenti al progetto
 add_executable(${PROJECT_NAME} ${Scraf_SOURCES})
