@@ -11,6 +11,7 @@
 #include "student_odb.hpp"
 
 #include <pistache/endpoint.h>
+#include <csignal>
 
 using namespace Pistache;
 
@@ -27,6 +28,11 @@ public:
 		//}, "SELECT code FROM school WHERE name LIKE '%Cobianchi%'");
 	}
 };
+
+void signalHandler(int signal) {
+	std::cerr << "Caught signal " << signal << '\n';
+	std::exit(EXIT_SUCCESS);
+}
 
 int main() {
 	std::unique_ptr<odb::database> database(new odb::pgsql::database("scraf", "ollareollare", "scraf_prova", "postgres.barto.paoloap.ml", 5432));
@@ -108,7 +114,8 @@ int main() {
 		const std::int64_t studentPappacodaId {[&]() {
 			odb::result studentResult {database->query<student>(odb::query<student>::mail == "andrea@pappacoda.it")};
 			if (studentResult.empty()) {
-				return database->persist(student{"andrea@pappacoda.it", "Andrea", "Pappacoda"});
+				student pappacoda {"andrea@pappacoda.it", "Andrea", "Pappacoda"};
+				return database->persist(pappacoda);
 			}
 			else {
 				return studentResult.begin()->id;
@@ -122,5 +129,11 @@ int main() {
 		// Questo mi permette di fare più cose in una sola volta, migliorando le prestazioni.
 		transaction.commit();
 	}
+
+	struct sigaction sigIntHandler { .sa_flags = 0 };
+	sigIntHandler.sa_handler = signalHandler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigaction(SIGINT, &sigIntHandler, nullptr);
+
 	Http::listenAndServe<HelloHandler>(Address(Ipv4::any(), Port(10780)), Http::Endpoint::options().threads(1));
 }
