@@ -58,6 +58,8 @@ if(CMAKE_BUILD_TYPE MATCHES Release)
 	endif()
 endif(CMAKE_BUILD_TYPE MATCHES Release)
 
+find_package(GTest CONFIG REQUIRED)
+
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_USE_SSL ON CACHE BOOL "Only statically linked library")
@@ -66,6 +68,7 @@ add_subdirectory(vendor/pistache)
 target_link_libraries(${PROJECT_NAME}
 	pistache_static
 	${ODB_LIBRARIES}
+	GTest::gtest
 )
 
 target_include_directories(${PROJECT_NAME}
