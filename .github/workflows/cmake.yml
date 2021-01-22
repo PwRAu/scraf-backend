@@ -22,7 +22,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo apt-get update && sudo apt-get install --assume-yes libpq-dev gcc-10-plugin-dev
+        sudo apt-get update && sudo apt-get install --assume-yes gcc-10-plugin-dev libgtest-dev
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
     
     - name: build2 cache
