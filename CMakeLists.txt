@@ -58,7 +58,7 @@ if(CMAKE_BUILD_TYPE MATCHES Release)
 	endif()
 endif(CMAKE_BUILD_TYPE MATCHES Release)
 
-find_package(GTest CONFIG REQUIRED)
+find_package(GTest REQUIRED) # st CONFIG RE 
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
