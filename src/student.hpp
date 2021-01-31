@@ -3,15 +3,12 @@
 #include <odb/core.hxx>
 #include <odb/nullable.hxx>
 #include <utility>
-#include <optional>
 
 #include "concepts.hpp"
 
 #pragma db object
 class student {
 public:
-	#pragma db id auto
-	std::int64_t id;	// Intero a 64 bit, grande quando un bigint SQL
 	#pragma db unique
 	std::string mail;
 	// Per esprimere che un oggetto può essere NULL nel database, lo dichiaro odb::nullable (o forse in futuro std::optional)
@@ -34,7 +31,14 @@ public:
 	//student(type... arguments)
 	//	: student(std::forward<type>(arguments)...) {}
 
+	[[nodiscard]] std::int64_t getId() const {
+		return id;
+	}
+
 private:
+	#pragma db id auto
+	std::int64_t id;	// Intero a 64 bit, grande quando un bigint SQL
+
 	student() = default;
 	friend class odb::access;
 };

@@ -1,0 +1,119 @@
+#%RAML 1.0
+---
+title: Scraf
+baseUri: https://api.scraf.pappacoda.it/{version}
+version: v1
+/students:
+  get:
+    queryParameters:
+      number:
+        displayName: Number
+        type: number
+        description: Number of students registered on Scraf
+        example: 107
+        required: false
+  post:
+    description: Register a new student to Scraf and get its id
+    queryParameters:
+      mail:
+        displayName: Mail
+        type: string
+        description: Student's mail address
+        example: andrea@pappacoda.it
+        required: true
+      password:
+        displayName: Password
+        type: string
+        description: Student's password
+        example: coconutnut1986
+        required: true
+      name:
+        displayName: Name
+        type: string
+        description: Student's name or nickname
+        example: Andrea
+        required: false
+      surname:
+        displayName: Surname
+        type: string
+        description: Student's surname
+        example: Pappacoda
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "data": {
+                  "id": 107
+                },
+                "success": true,
+                "status": 200
+              }
+  /{id}:
+    get:
+      queryParameters:
+        name:
+          displayName: Name
+          type: string
+          description: Student's name or nickname
+          example: Andrea
+          required: false
+        surname:
+          displayName: Surname
+          type: string
+          description: Student's surname
+          example: Pappacoda
+          required: false
+        mail:
+          displayName: Mail
+          type: string
+          description: Student's mail address
+          example: andrea@pappacoda.it
+          required: false
+        is_school_president:
+          displayName: Is school president
+          type: boolean
+          description: Whether or not the student is a school president
+          example: false
+          required: false
+        is_class_president:
+          displayName: Is class president
+          type: boolean
+          description: Whether or not the student is a class president
+          example: true
+          required: false
+    put:
+      queryParameters:
+        name:
+          displayName: Name
+          type: string
+          description: Student's name or nickname
+          example: Andrea
+          required: false
+        surname:
+          displayName: Surname
+          type: string
+          description: Student's surname
+          example: Pappacoda
+          required: false
+        mail:
+          displayName: Mail
+          type: string
+          description: Student's mail address
+          example: andrea@pappacoda.it
+          required: false
+        is_school_president:
+          displayName: Is school president
+          type: boolean
+          description: Whether or not the student is a school president
+          example: false
+          required: false
+        is_class_president:
+          displayName: Is class president
+          type: boolean
+          description: Whether or not the student is a class president
+          example: true
+          required: false
+    delete:

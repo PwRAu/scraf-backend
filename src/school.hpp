@@ -1,15 +1,17 @@
 #pragma once
 
-#include <string>
-#include <utility>
-#include <iostream>
 // Includo l'header dell'ODB
 #include <odb/core.hxx>
+#include <string>
+#include <utility>
+#include <memory>
+#include <vector>
 
 #include "concepts.hpp"
 
+class school_class;
 // Dico che la classe school è un oggetto del database
-#pragma db object
+#pragma db object pointer(std::shared_ptr)
 class school {
 public:
 	// Dico che code è l'id (PRIMARY KEY) della school;
@@ -17,6 +19,8 @@ public:
 	#pragma db id
 	std::string code;
 	std::string name;
+	#pragma db value_not_null inverse(primaryKey.school_fk)
+	std::vector<std::weak_ptr<school_class>> classes;
 
 	//school(std::string code, std::string name) 
 	//	: code(std::move(code)), name(std::move(name)) {}
@@ -80,3 +84,7 @@ private:
  * in tutti i file in cui andrò a usare la tabella school,
  * e compilare e linkare il .cxx col resto del mio programma.
  */
+
+#ifdef ODB_COMPILER
+	#include "school_class.hpp"
+#endif

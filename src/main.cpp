@@ -118,7 +118,7 @@ int main() {
 				return database->persist(pappacoda);
 			}
 			else {
-				return studentResult->id;
+				return studentResult->getId();
 			}
 		}()};
 
@@ -137,7 +137,7 @@ int main() {
 			std::unique_ptr<student> studentPappacoda {database->load<student>(studentPappacodaId)};
 			studentPappacoda->name = "Tachi";
 			database->update(*studentPappacoda);
-			std::cout << "Ora il nome dello studente con id " << studentPappacoda->id << " è \"" << studentPappacoda->name.get() << "\"\n";
+			std::cout << "Ora il nome dello studente con id " << studentPappacoda->getId() << " è \"" << studentPappacoda->name.get() << "\"\n";
 			transactionn.commit();
 		}
 
@@ -150,7 +150,7 @@ int main() {
 			if (studentPappacoda) {
 				studentPappacoda->name = "Andrea";
 				database->update(*studentPappacoda);
-				std::cout << "Ora il nome dello studente con id " << studentPappacoda->id << " è \"" << studentPappacoda->name.get() << "\"\n";
+				std::cout << "Ora il nome dello studente con id " << studentPappacoda->getId() << " è \"" << studentPappacoda->name.get() << "\"\n";
 			}
 			else {
 				std::cout << "Non esiste nessuno studente con la mail \"andrea@pappacoda.it\"\n";

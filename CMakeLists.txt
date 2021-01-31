@@ -24,7 +24,12 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/vendor/OdbCmake/cmake/Modules
 find_package(ODB REQUIRED COMPONENTS pgsql)
 include(${ODB_USE_FILE})
 set(Scraf_SOURCES src/main.cpp)
-set(Scraf_ODB_HEADERS src/school.hpp src/student.hpp)
+set(Scraf_ODB_HEADERS
+	src/school_class.hpp
+	src/school.hpp
+	src/student.hpp
+	src/teacher.hpp
+)
 odb_compile(Scraf_SOURCES FILES ${Scraf_ODB_HEADERS} DB pgsql STANDARD "c++17" X_CPP_OPTION "-std=c++20" GENERATE_QUERY GENERATE_SCHEMA)
 
 # Per creare l'eseguibile, devo scrivere qui tutti i file .cpp appartenenti al progetto

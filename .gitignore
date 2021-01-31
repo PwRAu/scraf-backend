@@ -5,6 +5,9 @@ build*/
 compile_commands.json
 .cache/
 
+# File a caso
+-.s
+
 # Prerequisites
 *.d
 
