@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Publish API spec
 
 # Controls when the action will run. 
 on:
@@ -28,8 +28,9 @@ jobs:
           mkdir gh-pages
           raml2html scraf.raml --output gh-pages/index.html
       
-      - name: Deploy
+      - name: Publish page
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./gh-pages
+          cname: api.scraf.pwrau.ml
