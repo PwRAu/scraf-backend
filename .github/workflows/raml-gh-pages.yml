@@ -32,4 +32,4 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          folder: ./gh-pages
+          publish_dir: ./gh-pages
