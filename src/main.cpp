@@ -1,8 +1,8 @@
 #include <iostream>
 #include <memory>
+#include <csignal>
 
 #include <odb/database.hxx>
-#include <odb/forward.hxx>
 #include <odb/transaction.hxx>
 #include <odb/pgsql/database.hxx>
 #include "school.hpp"
@@ -11,7 +11,6 @@
 #include "student_odb.hpp"
 
 #include <pistache/endpoint.h>
-#include <csignal>
 
 using namespace Pistache;
 
@@ -29,9 +28,14 @@ public:
 	}
 };
 
-void signalHandler(int signal) {
-	std::cerr << "Caught signal " << signal << '\n';
-	std::exit(EXIT_SUCCESS);
+void handleSignals() {
+	struct sigaction sigIntHandler { .sa_flags = 0 };
+	sigIntHandler.sa_handler = [](int signal) {
+		std::cerr << "\nCaught signal " << signal << '\n';
+		std::exit(EXIT_SUCCESS);
+	};
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigaction(SIGINT, &sigIntHandler, nullptr);
 }
 
 int main() {
@@ -159,10 +163,7 @@ int main() {
 		}
 	}
 
-	struct sigaction sigIntHandler { .sa_flags = 0 };
-	sigIntHandler.sa_handler = signalHandler;
-	sigemptyset(&sigIntHandler.sa_mask);
-	sigaction(SIGINT, &sigIntHandler, nullptr);
+	handleSignals();
 
 	Http::listenAndServe<HelloHandler>(Address(Ipv4::any(), Port(10780)), Http::Endpoint::options().threads(1));
 }
