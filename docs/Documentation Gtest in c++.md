@@ -136,27 +136,27 @@ I want to verify that his math grade is equal to 7 while his Italian grade is gr
 1) First I'll write the function to collect the votes:
 ```
 int GradesDonnyMath(){
-body of function that return the grade in math of donnypaolo;
+    body of function that return the grade in math of donnypaolo;
 return MathGrade;
 }
 int GradesDonnyItalian(){
-body of function that return the grade in italian of donnypaolo
+    body of function that return the grade in italian of donnypaolo
 return ItalianGrade;
 }
 
 int main(){
-int MathGrade, ItalianGrade;
-MathGrade = GradesDonnyMath();
-ItalianGrade = GradesDonnyItalian()
+    int MathGrade, ItalianGrade;
+    MathGrade = GradesDonnyMath();
+    ItalianGrade = GradesDonnyItalian()
 }
 ```
 2) After that, i'll write the two test to verify that the votes collected are correct (all of this will be done in another file in our case ):
 ```
 TEST(TestGrade,TestMathGrade){
-ASSERT_EQ(MathGrade, 7);
+    ASSERT_EQ(MathGrade, 7);
 }
 TEST(TestGrade,TestItalianGrade){
-EXPECT_GT(ItalianGrade, 4);
+    EXPECT_GT(ItalianGrade, 4);
 }
 ```
 (in this case, for me, it's better to write assert(fatal test) in mathgrade test, because if the test fail, the another test fail too. This indicates that the first test fail,
@@ -171,8 +171,50 @@ A test fixtures allow to reuse the same configuration of object in different tes
 
 How to write code with a "Test fixture class":
 
-1)
+1) Create the "TestFixture" class or whatever you want to call it. The class must be derived from :: testing :: Test and must have "Protected" access.
 
+2) Inside the classroom create the objects that will be needed for your tests.
+
+3) Next we will set a base constructor with "SetUp()" if necessary and an override.
+
+4) If necessary, use a TearDown () as a deconstructor, to drop all the data you allocated with SetUp ().
+
+Definition of a TextFixture class:
+```
+class FixtureClassTest : public :: testing :: Test{
+    protected:
+        myTestFixture1( ) { 
+            // initialization code here
+        } 
+        void SetUp() override {
+            // code here will execute just before the test ensues 
+        }
+        void TearDown() {
+            // code here will be called just after the test completes
+            // ok to through exceptions from here if need b    
+        }
+}
+
+```
+5) In the test we will use "TEST_F()" instead of "TEST()" and the TextFixture's name in the TestSuiteName camp.
+
+```
+TEST_F(FixtureClassTest,Test1){
+    //in this test we will use the object declareted in the TestFixture Class
+    //for example, if we have declared an object objnumber1, with attributes like id, we could do a test of this type 
+    EXPECT_EQ(objnumber1.id,2);
+    //otherwise we can initialing a var in the test with the value of the object's attribute
+    int var1 = objnumber1.id;
+    EXPECT_GT(var1,0);
+}
+
+```
+
+
+I'm not sure if you write it like this but as soon as I understand how to use these TestFixture classes I will return :)
+
+
+the basic idea, however, is to use objects only for tests and then to delete them
 
 
 
