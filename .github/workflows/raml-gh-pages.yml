@@ -1,10 +1,6 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Publish API spec
 
-# Controls when the action will run. 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
   push:
     branches: [ main ]
   pull_request:
@@ -15,12 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       - name: Install raml2html
-        run: | 
-          sudo apt install --assume-yes --no-install-recommends npm
+        run: |
+          sudo apt-get update && sudo apt-get install --assume-yes --no-install-recommends npm
           sudo npm install --global raml2html
       
       - name: Build webpage from RAML file
