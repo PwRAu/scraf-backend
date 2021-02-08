@@ -11,7 +11,7 @@
 
 class school_class;
 // Dico che la classe school è un oggetto del database
-#pragma db object pointer(std::shared_ptr)
+#pragma db object
 class school {
 public:
 	// Dico che code è l'id (PRIMARY KEY) della school;
@@ -19,8 +19,9 @@ public:
 	#pragma db id
 	std::string code;
 	std::string name;
-	#pragma db value_not_null inverse(primaryKey.school_fk)
-	std::vector<std::weak_ptr<school_class>> classes;
+
+	//#pragma db inverse(primaryKey.school_fk)
+	//std::vector<std::weak_ptr<school_class>> classes;
 
 	//school(std::string code, std::string name) 
 	//	: code(std::move(code)), name(std::move(name)) {}
