@@ -74,39 +74,27 @@ version: v1
   /{studentId}:
     get:
       description: Get data about a student
-      
-      queryParameters:
-        name:
-          displayName: Name
-          type: string
-          description: Student's name or nickname
-          example: Andrea
-          required: false
-        surname:
-          displayName: Surname
-          type: string
-          description: Student's surname
-          example: Pappacoda
-          required: false
-        mail:
-          displayName: Mail
-          type: string
-          description: Student's mail address
-          example: andrea@pappacoda.it
-          required: false
-        is_school_president:
-          displayName: Is school president
-          type: boolean
-          description: Whether or not the student is a school president
-          example: false
-          required: false
-        is_class_president:
-          displayName: Is class president
-          type: boolean
-          description: Whether or not the student is a class president
-          example: true
-          required: false
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                {
+                  "name": "Andrea",
+                  "surname": "Pappacoda",
+                  "mail": "andrea@pappacoda.it",
+                  "is_class_president": true,
+                  "is_school_president": false
+                }
+        404:
+          body:
+            application/json:
+              example: |
+                {
+                  "message": "Student not found"
+                }
     put:
+      description: Updates data about a student
       queryParameters:
         name:
           displayName: Name
@@ -139,3 +127,4 @@ version: v1
           example: true
           required: false
     delete:
+      description: Deletes a student based on its id
