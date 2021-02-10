@@ -184,17 +184,44 @@ pre code {
     }
   ]
 }
-</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="students_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/students</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register a new student to Scraf and get its id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#students_post_request" data-toggle="tab">Request</a></li><li><a href="#students_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="students_post_request"><h3>Query Parameters</h3><ul><li><strong>mail</strong>: <em><span class="required">required</span>(string)</em><p>Student&#39;s mail address</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>andrea@pappacoda.it</code></pre></div></li><li><strong>password</strong>: <em><span class="required">required</span>(string)</em><p>Student&#39;s password</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>coconutnut1986</code></pre></div></li><li><strong>name</strong>: <em><span class="required">required</span>(string)</em><p>Student&#39;s name or nickname</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Andrea</code></pre></div></li><li><strong>surname</strong>: <em>(string)</em><p>Student&#39;s surname</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Pappacoda</code></pre></div></li></ul></div><div class="tab-pane" id="students_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: any</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
-  "data": {
-    "id": 107
-  },
-  "success": true,
-  "status": 200
+</code></pre></div></div></div></div></div></div></div><div class="modal fade" tabindex="0" id="students_post"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_post">post</span> <span class="parent"></span>/students</h4></div><div class="modal-body"><div class="alert alert-info"><p>Register a new student to Scraf and get its id</p></div><ul class="nav nav-tabs"><li class="active"><a href="#students_post_request" data-toggle="tab">Request</a></li><li><a href="#students_post_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="students_post_request"><h3>Query Parameters</h3><ul><li><strong>mail</strong>: <em><span class="required">required</span>(string)</em><p>Student&#39;s mail address</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>andrea@pappacoda.it</code></pre></div></li><li><strong>password</strong>: <em><span class="required">required</span>(string)</em><p>Student&#39;s password</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>coconutnut1986</code></pre></div></li><li><strong>name</strong>: <em><span class="required">required</span>(string)</em><p>Student&#39;s name or nickname</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Andrea</code></pre></div></li><li><strong>surname</strong>: <em>(string)</em><p>Student&#39;s surname</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>Pappacoda</code></pre></div></li></ul></div><div class="tab-pane" id="students_post_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+  "type": "integer",
+  "multipleOf": 1
 }
-</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_students__studentid_"><span class="parent">/students</span>/{studentId}</a> <span class="methods"><a href="#students__studentid__get"><span class="badge badge_get">get</span></a> <a href="#students__studentid__put"><span class="badge badge_put">put</span></a> <a href="#students__studentid__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_students__studentid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#students__studentid__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get data about a student</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#students__studentid__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Updates data about a student</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#students__studentid__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Deletes a student based on its id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="students__studentid__get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/students</span>/{studentId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get data about a student</p></div><ul class="nav nav-tabs"><li class="active"><a href="#students__studentid__get_request" data-toggle="tab">Request</a></li><li><a href="#students__studentid__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="students__studentid__get_request"><h3>URI Parameters</h3><ul><li><strong>studentId</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="students__studentid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>: any</p><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+</code></pre><p><strong>Example</strong>:</p><div class="examples"><pre><code>107</code></pre></div></div></div></div></div></div></div></div><div class="panel panel-white resource-modal"><div class="panel-heading"><h4 class="panel-title"><a class="collapsed" data-toggle="collapse" href="#panel_students__studentid_"><span class="parent">/students</span>/{studentId}</a> <span class="methods"><a href="#students__studentid__get"><span class="badge badge_get">get</span></a> <a href="#students__studentid__put"><span class="badge badge_put">put</span></a> <a href="#students__studentid__delete"><span class="badge badge_delete">delete</span></a></span></h4></div><div id="panel_students__studentid_" class="panel-collapse collapse"><div class="panel-body"><div class="list-group"><div onclick="window.location.href = '#students__studentid__get'" class="list-group-item"><span class="badge badge_get">get</span><div class="method_description"><p>Get data about a student</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#students__studentid__put'" class="list-group-item"><span class="badge badge_put">put</span><div class="method_description"><p>Updates data about a student</p></div><div class="clearfix"></div></div><div onclick="window.location.href = '#students__studentid__delete'" class="list-group-item"><span class="badge badge_delete">delete</span><div class="method_description"><p>Deletes a student based on its id</p></div><div class="clearfix"></div></div></div></div></div><div class="modal fade" tabindex="0" id="students__studentid__get"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title" id="myModalLabel"><span class="badge badge_get">get</span> <span class="parent">/students</span>/{studentId}</h4></div><div class="modal-body"><div class="alert alert-info"><p>Get data about a student</p></div><ul class="nav nav-tabs"><li class="active"><a href="#students__studentid__get_request" data-toggle="tab">Request</a></li><li><a href="#students__studentid__get_response" data-toggle="tab">Response</a></li></ul><div class="tab-content"><div class="tab-pane active" id="students__studentid__get_request"><h3>URI Parameters</h3><ul><li><strong>studentId</strong>: <em><span class="required">required</span>(string)</em></li></ul></div><div class="tab-pane" id="students__studentid__get_response"><h2>HTTP status code <a href="http://httpstatus.es/200" target="_blank">200</a></h2><h3>Body</h3><p><strong>Media type</strong>: application/json</p><p><strong>Type</strong>:</p><pre><code>{
+  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+  "$id": "http://api.scraf.pwrau.ml/schemas/student.json",
+  "type": "object",
+  "required": true,
+  "properties": {
+    "mail": {
+      "type": "string",
+      "format": "email",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "surname": {
+      "type": "string",
+      "required": false
+    },
+    "is_class_president": {
+      "type": "boolean",
+      "required": false
+    },
+    "is_school_president": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}
+</code></pre><p><strong>Example</strong>:</p><div class="examples"><pre><code>{
+  "mail": "andrea@pappacoda.it",
   "name": "Andrea",
   "surname": "Pappacoda",
-  "mail": "andrea@pappacoda.it",
   "is_class_president": true,
   "is_school_president": false
 }
