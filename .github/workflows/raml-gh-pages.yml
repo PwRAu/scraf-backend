@@ -16,7 +16,7 @@ jobs:
       - name: Install raml2html
         run: |
           sudo apt-get -qq update && sudo apt-get -qq install --assume-yes --no-install-recommends npm
-          sudo npm install --global raml2html
+          sudo npm install --global --silent raml2html
       
       - name: Build webpage from RAML file
         run: |
@@ -24,7 +24,7 @@ jobs:
           raml2html scraf.raml --output gh-pages/index.html
       
       - name: Publish page
-        uses: peaceiris/actions-gh-pages@v3.7.3
+        uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./gh-pages

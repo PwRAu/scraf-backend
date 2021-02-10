@@ -60,16 +60,24 @@ version: v1
         example: Pappacoda
         required: false
     responses:
-      200:
+      201:
         body:
           application/json:
             type: |
               {
                 "$schema": "http://json-schema.org/draft/2019-09/schema#",
-                "type": "integer",
-                "multipleOf": 1
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "multipleOf": 1
+                  }
+                }
               }
-            example: 107
+            example: |
+              {
+                "id": 107
+              }
   /{studentId}:
     get:
       description: Get data about a student
@@ -118,6 +126,16 @@ version: v1
         404:
           body:
             application/json:
+              type: |
+                {
+                  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+                  "type": "object"
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
               example: |
                 {
                   "message": "Student not found"
