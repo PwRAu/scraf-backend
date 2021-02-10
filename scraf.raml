@@ -63,14 +63,13 @@ version: v1
       200:
         body:
           application/json:
-            example: |
+            type: |
               {
-                "data": {
-                  "id": 107
-                },
-                "success": true,
-                "status": 200
+                "$schema": "http://json-schema.org/draft/2019-09/schema#",
+                "type": "integer",
+                "multipleOf": 1
               }
+            example: 107
   /{studentId}:
     get:
       description: Get data about a student
@@ -78,11 +77,41 @@ version: v1
         200:
           body:
             application/json:
+              type: |
+                {
+                  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+                  "$id": "http://api.scraf.pwrau.ml/schemas/student.json",
+                  "type": "object",
+                  "required": true,
+                  "properties": {
+                    "mail": {
+                      "type": "string",
+                      "format": "email",
+                      "required": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "surname": {
+                      "type": "string",
+                      "required": false
+                    },
+                    "is_class_president": {
+                      "type": "boolean",
+                      "required": false
+                    },
+                    "is_school_president": {
+                      "type": "boolean",
+                      "required": false
+                    }
+                  }
+                }
               example: |
                 {
+                  "mail": "andrea@pappacoda.it",
                   "name": "Andrea",
                   "surname": "Pappacoda",
-                  "mail": "andrea@pappacoda.it",
                   "is_class_president": true,
                   "is_school_president": false
                 }
