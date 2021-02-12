@@ -22,7 +22,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes gcc-10-plugin-dev libgtest-dev
+        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes gcc-10-plugin-dev libgtest-dev libsimdjson-dev nlohmann-json3-dev
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
     
     - name: build2 cache
