@@ -1,5 +1,4 @@
-# Imposto la versione minima richiesta da CMake (3.13 è quella presente in Debian 10, quindi va bene)
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.15)
 
 # Imposto il nome del progetto più qualche dettaglio
 project(Scraf
@@ -53,17 +52,16 @@ if(CMAKE_BUILD_TYPE MATCHES Release)
 	include(CheckIPOSupported)
 	check_ipo_supported(RESULT ipo_result OUTPUT ipo_output)
 	if(ipo_result)
-		if(CMAKE_VERSION VERSION_GREATER 3.8)
-			# Enable IPO for CMake versions that support it
-			cmake_policy(SET CMP0069 NEW)
-			set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
-		endif()
+		cmake_policy(SET CMP0069 NEW)
+		set(CMAKE_POLICY_DEFAULT_CMP0069 NEW)
 		set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 		#set_property(TARGET ${PROJECT_NAME} PROPERTY INTERPROCEDURAL_OPTIMIZATION TRUE) così da abilitare l'LTO solo per Scraf in caso dia problemi col resto del progetto
 	endif()
 endif(CMAKE_BUILD_TYPE MATCHES Release)
 
 find_package(GTest REQUIRED) # st CONFIG RE 
+find_package(simdjson REQUIRED)
+find_package(nlohmann_json REQUIRED)
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
@@ -73,6 +71,8 @@ add_subdirectory(vendor/pistache)
 target_link_libraries(${PROJECT_NAME}
 	pistache_static
 	${ODB_LIBRARIES}
+	simdjson::simdjson
+	nlohmann_json::nlohmann_json
 	GTest::gtest
 )
 
