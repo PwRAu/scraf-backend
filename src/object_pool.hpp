@@ -10,7 +10,7 @@
 #include <queue>
 #include <utility>
 
-template<typename T> class ObjectPool {
+template<typename type> class ObjectPool {
 public:
 	~ObjectPool(){
 		invalidate();
@@ -20,9 +20,9 @@ public:
 	 * Attempt to get the first value in the queue.
 	 * Returns true if a value was successfully written to the out parameter, false otherwise.
 	 */
-	bool tryPop(T& out){
+	bool tryPop(type& out){
 		std::lock_guard<std::mutex> lock {m_mutex};
-		if(m_queue.empty() || !m_valid) {
+		if (m_queue.empty() || !m_valid) {
 			return false;
 		}
 		out = std::move(m_queue.front());
@@ -35,9 +35,9 @@ public:
 	 * Will block until a value is available unless clear is called or the instance is destructed.
 	 * Returns true if a value was successfully written to the out parameter, false otherwise.
 	 */
-	bool waitPop(T& out) {
+	bool waitPop(type& out) {
 		std::unique_lock<std::mutex> lock {m_mutex};
-		m_condition.wait(lock, [this] () {
+		m_condition.wait(lock, [this]() {
 			return !m_queue.empty() || !m_valid;
 		});
 		/*
@@ -53,7 +53,7 @@ public:
 	}
 
 	/// Push a new value onto the queue.
-	void push(T value) {
+	void push(type value) {
 		std::lock_guard<std::mutex> lock {m_mutex};
 		m_queue.push(std::move(value));
 		m_condition.notify_one();
@@ -96,6 +96,6 @@ public:
 private:
 	std::atomic_bool m_valid {true};
 	mutable std::mutex m_mutex;
-	std::queue<T> m_queue;
+	std::queue<type> m_queue;
 	std::condition_variable m_condition;
 };
