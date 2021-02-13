@@ -22,8 +22,10 @@ jobs:
     
     - name: Install dependencies
       run: |
-        cat /etc/apt/sources.list
-        cat /etc/apt/sources.list.d/*
+        sudo apt-get update
+        sudo apt-get install --assume-yes bat
+        batcat --paging never --style header /etc/apt/sources.list
+        batcat --paging never --style header /etc/apt/sources.list.d/*
         sudo apt-get -qq update && sudo apt-get -qq install --assume-yes gcc-10-plugin-dev libgtest-dev libsimdjson-dev nlohmann-json3-dev
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
     
