@@ -62,6 +62,8 @@ endif(CMAKE_BUILD_TYPE MATCHES Release)
 find_package(GTest REQUIRED) # st CONFIG RE 
 find_package(simdjson REQUIRED)
 find_package(nlohmann_json REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(LIBSODIUM REQUIRED libsodium)
 
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
@@ -73,6 +75,7 @@ target_link_libraries(${PROJECT_NAME}
 	${ODB_LIBRARIES}
 	simdjson::simdjson
 	nlohmann_json::nlohmann_json
+	${LIBSODIUM_LIBRARIES}
 	GTest::gtest
 )
 
@@ -81,9 +84,11 @@ target_include_directories(${PROJECT_NAME}
 		${ODB_INCLUDE_DIRS}
 		${ODB_COMPILE_OUTPUT_DIR}
 		src
+		${LIBSODIUM_INCLUDE_DIRS}
 )
 
 target_compile_definitions(${PROJECT_NAME}
 	PRIVATE
 		DATABASE_PGSQL
+		${LIBSODIUM_CFLAGS}
 )
