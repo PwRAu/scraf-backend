@@ -5,6 +5,7 @@ if meson.get_compiler('cpp').get_id() == 'clang' and get_option('buildtype').sta
 	linker_args = ['-fuse-ld=lld']
 else
 	cpp_args = []
+	linker_args = []
 endif
 
 if not meson.is_cross_build()
