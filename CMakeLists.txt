@@ -19,7 +19,7 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Release)
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/vendor/OdbCmake/cmake/Modules")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/subprojects/OdbCmake/cmake/Modules")
 find_package(ODB REQUIRED COMPONENTS pgsql)
 include(${ODB_USE_FILE})
 set(Scraf_SOURCES src/main.cpp)
@@ -68,7 +68,7 @@ pkg_check_modules(LIBSODIUM REQUIRED libsodium)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_INSTALL OFF CACHE BOOL "Only statically linked library")
 set(PISTACHE_USE_SSL ON CACHE BOOL "Only statically linked library")
-add_subdirectory(vendor/pistache)
+add_subdirectory(subprojects/pistache)
 
 target_link_libraries(${PROJECT_NAME}
 	pistache_static
