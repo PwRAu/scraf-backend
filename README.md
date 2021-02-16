@@ -12,6 +12,8 @@ scraf-backend can only run and compile on Linux (because of [Pistache](https://g
 
 scraf-backend uses C++20 and requires a modern compiler. It should work on Clang and GCC 10 or newer.
 
+If using Clang, you must link the program using LLD (probably a Meson bug related to static libraries)
+
 #### Libraries
 
 ##### ODB

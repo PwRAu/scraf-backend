@@ -1,9 +1,10 @@
 project('Scraf', 'cpp', default_options: ['cpp_std=c++2a', 'c_std=c11', 'b_ndebug=if-release', 'b_lto=true'])
 
 if meson.get_compiler('cpp').get_id() == 'clang' and get_option('buildtype').startswith('debug')
-	extra_flags = ['-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Wall', '-Wextra', '-Weverything', '-Wpedantic', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command']
+	cpp_args = ['-fuse-ld=lld', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Wall', '-Wextra', '-Weverything', '-Wpedantic', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command']
+	linker_args = ['-fuse-ld=lld']
 else
-	extra_flags = []
+	cpp_args = []
 endif
 
 if not meson.is_cross_build()
@@ -31,7 +32,9 @@ odb_generator = generator(
 )
 
 cmake = import('cmake')
-pistache_subproject = cmake.subproject('pistache')
+
+pistache_options = cmake.subproject_options()
+pistache_options.add_cmake_defines({'BUILD_SHARED_LIBS': false, 'PISTACHE_INSTALL': false, 'PISTACHE_USE_SSL': true})
 
 executable(
 	'Scraf',
@@ -46,10 +49,14 @@ executable(
 	],
 	include_directories: 'src',
 	dependencies: [
-		pistache_subproject.dependency('pistache_static'),
+		cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
+		dependency('libodb'),
+		dependency('libodb-pgsql'),
 		dependency('gtest'),
 		dependency('simdjson'),
 		dependency('nlohmann_json'),
 		dependency('libsodium')
-	]
+	],
+	cpp_args: cpp_args,
+	link_args: linker_args
 )

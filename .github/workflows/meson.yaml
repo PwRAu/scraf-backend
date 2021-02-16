@@ -1,17 +1,9 @@
-name: CMake
+name: Meson
 
 on: [push]
 
-env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
-
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: ubuntu-20.04
 
     steps:
@@ -25,7 +17,7 @@ jobs:
         sudo rm /etc/apt/sources.list /etc/apt/sources.list.d/*
         printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security devel\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
         printf "APT::Default-Release \"focal\";\n" | sudo tee /etc/apt/apt.conf.d/00default-release
-        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev
+        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes meson gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
     
     - name: build2 cache
@@ -60,34 +52,19 @@ jobs:
         yes | bpkg build libodb-pgsql --trust-yes --quiet
         bpkg install --all --recursive --quiet
 
-    - name: Create Build Environment
-      # Some projects don't allow in-source building, so create a separate build directory
-      # We'll use this as our working directory for all subsequent commands
-      run: cmake -E make_directory ${{runner.workspace}}/build
-
-    - name: Configure CMake
-      # Use a bash shell so we can use the same syntax for environment variable
-      # access regardless of the host operating system
-      shell: bash
-      working-directory: ${{runner.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source
-      # and build directories, but this is only available with CMake 3.13 and higher.
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+    - name: Configure Meson
+      run: meson setup build --buildtype=release
 
     - name: Build
-      working-directory: ${{runner.workspace}}/build
-      shell: bash
-      # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build . --config $BUILD_TYPE
+      run: meson compile -C build
 
-    - name: Test
-      working-directory: ${{runner.workspace}}/build
-      shell: bash
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C $BUILD_TYPE
-    
+#    - name: Test
+#      working-directory: ${{runner.workspace}}/build
+#      shell: bash
+#      # Execute tests defined by the CMake configuration.
+#      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+#      run: ctest -C $BUILD_TYPE
+
     - name: Store compiled program
       uses: actions/upload-artifact@v2
       with: 

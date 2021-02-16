@@ -1,6 +1,3 @@
-[submodule "subprojects/OdbCmake"]
-	path = subprojects/OdbCmake
-	url = https://github.com/PwRAu/OdbCmake.git
 [submodule "subprojects/pistache"]
 	path = subprojects/pistache
 	url = https://github.com/pistacheio/pistache.git
