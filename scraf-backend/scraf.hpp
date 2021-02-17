@@ -8,9 +8,9 @@
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
 #include <odb/pgsql/database.hxx>
-#include "school.hpp"
+#include <scraf-backend/school.hpp>
 #include "school_odb.hpp"
-#include "student.hpp"
+#include <scraf-backend/student.hpp>
 #include "student_odb.hpp"
 
 #include <pistache/endpoint.h>
@@ -23,7 +23,7 @@
 
 using namespace Pistache;
 
-template<typename Database = odb::database, typename Endpoint = Http::Endpoint>
+template<typename Database = odb::database, typename DbTransaction = odb::transaction, typename Endpoint = Http::Endpoint>
 class Scraf {
 public:
 	Scraf(Database& database, Endpoint& endpoint, int threads)
@@ -32,13 +32,14 @@ public:
 			parserPool.push(std::make_unique<simdjson::dom::parser>());
 		}
 		endpoint.init(Http::Endpoint::options().threads(threads));
-		Rest::Routes::Post(router, "/students", Rest::Routes::bind(&Scraf::createStudent, this));
+		Rest::Routes::Post(router, "/students", Rest::Routes::bind(&Scraf::createStudent<Rest::Request, Http::ResponseWriter>, this));
 		endpoint.setHandler(router.handler());
 		endpoint.serve();
 	}
 
-private:
-	void createStudent(const Rest::Request& request, Http::ResponseWriter response) {
+public:
+	template<typename Request = Rest::Request, typename ResponseWriter = Http::ResponseWriter>
+	void createStudent(const Request& request, ResponseWriter response) {
 		std::unique_ptr<simdjson::dom::parser> parser;
 		if (!parserPool.waitPop(parser)) {
 			std::cerr << "Error: parserPool\n";
@@ -48,7 +49,7 @@ private:
 		const std::string_view password {parsed["password"]};
 		if (crypto_pwhash_str(hashedPassword.data(), password.data(), password.length(), crypto_pwhash_OPSLIMIT_INTERACTIVE, crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
 			std::cerr << "Error: password hashing\n";
-		} 
+		}
 		student student {[&]() -> class student {
 			std::string_view surname;
 			if (parsed["surname"].get(surname)) {
@@ -59,7 +60,7 @@ private:
 			}
 		}()};
 		{
-			odb::transaction transaction(database->begin());
+			DbTransaction transaction(database->begin());
 			database->persist(student);
 			transaction.commit();
 		}

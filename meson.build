@@ -63,7 +63,6 @@ executable(
 		cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
 		dependency('libodb'),
 		dependency('libodb-pgsql'),
-		dependency('gtest'),
 		dependency('simdjson'),
 		dependency('nlohmann_json'),
 		dependency('libsodium')
@@ -71,3 +70,29 @@ executable(
 	cpp_args: cpp_args,
 	link_args: linker_args
 )
+
+#test(
+#	'ScrafTest',
+#	executable(
+#		'scraffoonetest',
+#		sources: [
+#			'scraf-backend/main.test.cpp',
+#			'scraf-backend/scraf.test.cpp',
+#			odb_generator.process(
+#				'scraf-backend/student.hpp',
+#				'scraf-backend/school_class.hpp',
+#				'scraf-backend/school.hpp',
+#				'scraf-backend/teacher.hpp'
+#			)
+#		],
+#		include_directories: 'scraf-backend',
+#		dependencies: [
+#			dependency('gtest'),
+#			cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
+#			dependency('libodb'),
+#			dependency('simdjson'),
+#			dependency('nlohmann_json'),
+#			dependency('libsodium')
+#		]
+#	)
+#)
