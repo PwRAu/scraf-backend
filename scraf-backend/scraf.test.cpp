@@ -1,0 +1,3 @@
+/*
+ * Scraf class unit tests
+ */

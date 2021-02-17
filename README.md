@@ -1,12 +1,18 @@
-# Scraf
+# scraf-backend
+
+scraf-backend is the backend of Scraf. It is developed as a REST API, and handles all the interactions between the frontend and the persistent storage (database) as well as the integration with the various online school registers.
+
+This project follows the [Canonical Project Structure](https://wg21.link/P1204R0) for C++ projects: no separation of `src/` and `include/`, unit tests in the same directory as the main [source directory](scraf-backend) and integration tests in the [`tests/`](tests) directory.
 
 ## Build
+
+scraf-backend uses the Meson build system.
 
 ### Dependencies
 
 #### Linux
 
-scraf-backend can only run and compile on Linux (because of [Pistache](https://github.com/pistacheio/pistache)).
+scraf-backend can only run and compile on Linux (because of [Pistache](subprojects/pistache)).
 
 #### Compiler
 

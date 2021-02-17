@@ -1,4 +1,14 @@
-project('Scraf', 'cpp', default_options: ['cpp_std=c++2a', 'c_std=c11', 'b_ndebug=if-release', 'b_lto=true'])
+project(
+	'Scraf',
+	'cpp',
+	default_options: [
+		'cpp_std=c++2a',
+		'c_std=c11',
+		'b_ndebug=if-release',
+		'b_lto=true'
+	],
+	meson_version: '>=0.55.0'
+)
 
 if meson.get_compiler('cpp').get_id() == 'clang' and get_option('buildtype').startswith('debug')
 	cpp_args = ['-fuse-ld=lld', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Wall', '-Wextra', '-Weverything', '-Wpedantic', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command']
@@ -12,7 +22,7 @@ if not meson.is_cross_build()
 	add_project_arguments('-march=native', language: 'cpp')
 endif
 
-src = ['src/main.cpp']
+src = ['scraf-backend/main.cpp']
 
 odb_generator = generator(
 	find_program('odb'),
@@ -42,13 +52,13 @@ executable(
 	sources: [
 		src,
 		odb_generator.process(
-			'src/student.hpp',
-			'src/school_class.hpp',
-			'src/school.hpp',
-			'src/teacher.hpp'
+			'scraf-backend/student.hpp',
+			'scraf-backend/school_class.hpp',
+			'scraf-backend/school.hpp',
+			'scraf-backend/teacher.hpp'
 		)
 	],
-	include_directories: 'src',
+	include_directories: 'scraf-backend',
 	dependencies: [
 		cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
 		dependency('libodb'),
