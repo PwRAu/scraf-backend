@@ -2,6 +2,9 @@ name: Meson
 
 on: [push]
 
+env:
+  CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
+
 jobs:
   build:
     runs-on: ubuntu-20.04
