@@ -11,7 +11,7 @@ project(
 )
 
 if meson.get_compiler('cpp').get_id() == 'clang' and get_option('buildtype').startswith('debug')
-	cpp_args = ['-fuse-ld=lld', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Wall', '-Wextra', '-Weverything', '-Wpedantic', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command']
+	cpp_args = ['-fuse-ld=lld', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Wall', '-Wextra', '-Weverything', '-Wpedantic', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command, -Wno-unknown-pragmas']
 	linker_args = ['-fuse-ld=lld']
 else
 	cpp_args = []
@@ -71,28 +71,29 @@ executable(
 	link_args: linker_args
 )
 
-#test(
-#	'ScrafTest',
-#	executable(
-#		'scraffoonetest',
-#		sources: [
-#			'scraf-backend/main.test.cpp',
-#			'scraf-backend/scraf.test.cpp',
-#			odb_generator.process(
-#				'scraf-backend/student.hpp',
-#				'scraf-backend/school_class.hpp',
-#				'scraf-backend/school.hpp',
-#				'scraf-backend/teacher.hpp'
-#			)
-#		],
-#		include_directories: 'scraf-backend',
-#		dependencies: [
-#			dependency('gtest'),
-#			cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
-#			dependency('libodb'),
-#			dependency('simdjson'),
-#			dependency('nlohmann_json'),
-#			dependency('libsodium')
-#		]
-#	)
-#)
+test(
+	'ScrafTest',
+	executable(
+		'ScrafTest',
+		sources: [
+			'scraf-backend/main.test.cpp',
+			'scraf-backend/scraf.test.cpp',
+			odb_generator.process(
+				'scraf-backend/student.hpp',
+				'scraf-backend/school_class.hpp',
+				'scraf-backend/school.hpp',
+				'scraf-backend/teacher.hpp'
+			)
+		],
+		include_directories: 'scraf-backend',
+		dependencies: [
+			dependency('gtest'),
+			cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
+			dependency('libodb'),
+			dependency('simdjson'),
+			dependency('nlohmann_json'),
+			dependency('libsodium'),
+			subproject('cpr').get_variable('cpr_dep')
+		]
+	)
+)

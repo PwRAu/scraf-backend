@@ -4,6 +4,10 @@
 
 #include <gtest/gtest.h>
 #include <scraf-backend/scraf.hpp>
+#include <cpr/cpr.h>
+#include <thread>
+
+using namespace Pistache;
 
 class FakeDatabase {
 public:
@@ -21,45 +25,26 @@ public:
 	void commit() {}
 };
 
-class FakeRequest {
-public:
-	FakeRequest(const std::string_view body)
-		: _body(body) {}
-
-	[[nodiscard]] std::string body() const {
-		return _body;
-	}
-private:
-	std::string _body;
-};
-
-class FakeResponse {
-public:
-	void send(const Http::Code code, const std::string_view response) {
-		_code = code;
-		_response = response;
-	}
-
-	[[nodiscard]] std::pair<Http::Code, std::string> getResponse() const {
-		return std::make_pair(_code, _response);
-	}
-private:
-	Http::Code _code;
-	std::string _response;
-};
-
 TEST(ScrafTest, MailPasswordNameSurname) {
-	const FakeRequest request {nlohmann::json{
-		{"mail", "andrea@pappacoda.it"},
-		{"password", "coconutnut1968"},
-		{"name", "Andrea"},
-		{"surname", "Pappacoda"}
-	}.dump()};
-	FakeResponse response;
+	constexpr std::uint16_t port {10780};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::any(), Port(10780)}};
+	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
 	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-	scraf.createStudent(request, response);
-	const auto[httpCode, httpResponse] {response.getResponse()};
-	EXPECT_EQ(httpCode, Http::Code::Created);
+	std::thread servingThread {[&]() {
+		scraf.serve();
+	}};
+	EXPECT_EQ(
+		cpr::Post(
+			cpr::Url{"localhost:" + std::to_string(port) + "/students"},
+			cpr::Header{{"Content-Type", "application/json"}},
+			cpr::Body{nlohmann::json{
+				{"mail", "andrea@pappacoda.it"},
+				{"password", "coconutnut1968"},
+				{"name", "Andrea"},
+				{"surname", "Pappacoda"}
+			}.dump()}
+		).status_code, 
+		static_cast<std::int32_t>(Http::Code::Created));
+	scraf.shutdown();
+	servingThread.join();
 }

@@ -23,23 +23,37 @@
 
 using namespace Pistache;
 
-template<typename Database = odb::database, typename DbTransaction = odb::transaction, typename Endpoint = Http::Endpoint>
+template<typename Database = odb::database, typename DbTransaction = odb::transaction>
 class Scraf {
 public:
-	Scraf(Database& database, Endpoint& endpoint, int threads)
+	Scraf(Database& database, Http::Endpoint& endpoint, int threads)
 		: database(database), endpoint(endpoint) {
-		for (int i {0}; i < threads; ++i) {
+		endpoint.init(Http::Endpoint::options().threads(threads));
+		while (threads-- > 0) {
 			parserPool.push(std::make_unique<simdjson::dom::parser>());
 		}
-		endpoint.init(Http::Endpoint::options().threads(threads));
-		Rest::Routes::Post(router, "/students", Rest::Routes::bind(&Scraf::createStudent<Rest::Request, Http::ResponseWriter>, this));
+		Rest::Routes::Post(router, "/students", Rest::Routes::bind(&Scraf::createStudent, this));
 		endpoint.setHandler(router.handler());
-		endpoint.serve();
 	}
 
-public:
-	template<typename Request = Rest::Request, typename ResponseWriter = Http::ResponseWriter>
-	void createStudent(const Request& request, ResponseWriter response) {
+	void serve() {
+		endpoint.serve();
+		off = false;
+	}
+
+	void shutdown() {
+		endpoint.shutdown();
+		off = true;
+	}
+
+	~Scraf() {
+		if (!off) {
+			endpoint.shutdown();
+		}
+	}
+
+private:
+	void createStudent(const Rest::Request& request, Http::ResponseWriter response) {
 		std::unique_ptr<simdjson::dom::parser> parser;
 		if (!parserPool.waitPop(parser)) {
 			std::cerr << "Error: parserPool\n";
@@ -70,8 +84,9 @@ public:
 
 private:
 	Database& database;
-	Endpoint& endpoint;
+	Http::Endpoint& endpoint;
 	Rest::Router router;
 	// Pool thread-safe di parser
 	ObjectPool<std::unique_ptr<simdjson::dom::parser>> parserPool;
+	bool off {false};
 };

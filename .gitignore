@@ -8,6 +8,10 @@ compile_commands.json
 # File a caso
 -.s
 
+# Meson wrap
+subprojects/packagecache
+subprojects/cpr-*
+
 # Prerequisites
 *.d
 

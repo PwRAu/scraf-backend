@@ -41,4 +41,5 @@ int main() {
 	Http::Endpoint endpoint{{Ipv4::any(), Port(10780)}};
 	handleSignals();
 	Scraf scraf {database, endpoint, 1};
+	scraf.serve();
 }
