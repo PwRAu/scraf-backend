@@ -11,9 +11,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Checkout submodules
-      run: git submodule update --init --recursive
+      with:
+        submodules: 'recursive'
     
     - name: Install dependencies
       run: |
@@ -68,4 +67,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with: 
         name: scraf-backend-main
-        path: ${{runner.workspace}}/build/Scraf
+        path: ${{runner.workspace}}/scraf-backend/build/Scraf
