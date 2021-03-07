@@ -35,7 +35,7 @@ cd /directory/of/your/choice/where/you/ll/store/build/cache
 
 mkdir build2-build && cd build2-build
 curl -sSfO https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-sh build2-install-0.13.0.sh --yes --no-check --trust yes ~/build2
+sh build2-install-0.13.0.sh --yes --no-check --trust yes
 
 cd /directory/of/your/choice/where/you/ll/store/build/cache
 
