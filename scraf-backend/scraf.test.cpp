@@ -99,8 +99,8 @@ TEST(ScrafTest, PasswordNameSurnameWhithoutEmail) {
 				{"surname", "Lettini"}
 			}.dump()}
 		).status_code, 
-		static_cast<std::int32_t>(Http::Code::Not_Acceptable)); //la richiesta effettuata senza l'email dovrebbe dare uno status code che indica che la richiesta è incompleta
-	scraf.shutdown();											//lo status code corrispondente al NOT_ACCEPTABLE è il 406
+		static_cast<std::int32_t>(Http::Code::Bad_Request)); //la richiesta effettuata senza l'email dovrebbe dare uno status code che indica che la richiesta è incompleta
+	scraf.shutdown();											//lo status code corrispondente al Bad_Request è il 400
 	servingThread.join();
 }
 
@@ -123,8 +123,8 @@ TEST(ScrafTest, MailNameSurnameWhithoutPassword) {
 				{"surname", "IlSupremo"}
 			}.dump()}
 		).status_code, 
-		static_cast<std::int32_t>(Http::Code::Not_Acceptable)); //la richiesta effettuata senza la password dovrebbe dare uno status code che indica che la richiesta è incompleta
-	scraf.shutdown();											//lo status code corrispondente al NOT_ACCEPTABLE è il 406
+		static_cast<std::int32_t>(Http::Code::Bad_Request)); //la richiesta effettuata senza la password dovrebbe dare uno status code che indica che la richiesta è incompleta
+	scraf.shutdown();											//lo status code corrispondente al Bad_Request è il 400
 	servingThread.join();
 }
 
@@ -147,7 +147,7 @@ TEST(ScrafTest, MailPasswordSurnameWhithoutName) {
 				{"surname", "IlSupremo"}
 			}.dump()}
 		).status_code, 
-		static_cast<std::int32_t>(Http::Code::Not_Acceptable)); //la richiesta effettuata senza il nome dovrebbe dare uno status code che indica che la richiesta è incompleta
-	scraf.shutdown();											//lo status code corrispondente al NOT_ACCEPTABLE è il 406
+		static_cast<std::int32_t>(Http::Code::Bad_Request)); //la richiesta effettuata senza il nome dovrebbe dare uno status code che indica che la richiesta è incompleta
+	scraf.shutdown();											//lo status code corrispondente al Bad_Request è il 400
 	servingThread.join();
 }
