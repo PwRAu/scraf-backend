@@ -22,6 +22,7 @@
 #include <sodium.h>
 
 using namespace Pistache;
+using namespace std::chrono_literals;
 
 template<typename Database = odb::database, typename DbTransaction = odb::transaction>
 class Scraf {
@@ -54,32 +55,38 @@ public:
 
 private:
 	void createStudent(const Rest::Request& request, Http::ResponseWriter response) {
+		response.timeoutAfter(2s);
 		std::unique_ptr<simdjson::dom::parser> parser;
 		if (!parserPool.waitPop(parser)) {
 			std::cerr << "Error: parserPool\n";
 		}
-		const simdjson::dom::element parsed {parser->parse(request.body())};
-		std::array<char, crypto_pwhash_STRBYTES> hashedPassword;
-		const std::string_view password {parsed["password"]};
-		if (crypto_pwhash_str(hashedPassword.data(), password.data(), password.length(), crypto_pwhash_OPSLIMIT_INTERACTIVE, crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
-			std::cerr << "Error: password hashing\n";
+		try {
+			const simdjson::dom::element parsed {parser->parse(request.body())};
+			std::array<char, crypto_pwhash_STRBYTES> hashedPassword;
+			const std::string_view password {parsed["password"]};
+			if (crypto_pwhash_str(hashedPassword.data(), password.data(), password.length(), crypto_pwhash_OPSLIMIT_INTERACTIVE, crypto_pwhash_MEMLIMIT_INTERACTIVE) != 0) {
+				std::cerr << "Error: password hashing\n";
+			}
+			student student {[&]() -> class student {
+				std::string_view surname;
+				if (parsed["surname"].get(surname)) {
+					return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value()};
+				}
+				else {
+					return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value(), surname.data()};
+				}
+			}()};
+			{
+				DbTransaction transaction(database->begin());
+				database->persist(student);
+				transaction.commit();
+			}
+			response.send(Http::Code::Created, nlohmann::json{{"id", student.getId()}}.dump());
 		}
-		student student {[&]() -> class student {
-			std::string_view surname;
-			if (parsed["surname"].get(surname)) {
-				return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value()};
-			}
-			else {
-				return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value(), surname.data()};
-			}
-		}()};
-		{
-			DbTransaction transaction(database->begin());
-			database->persist(student);
-			transaction.commit();
+		catch (const simdjson::simdjson_error& exception) {
+			response.send(Http::Code::Bad_Request, nlohmann::json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
 		}
 		parserPool.push(std::move(parser));
-		response.send(Http::Code::Created, nlohmann::json{{"id", student.getId()}}.dump());
 	}
 
 private:

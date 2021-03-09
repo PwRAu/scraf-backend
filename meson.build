@@ -5,17 +5,18 @@ project(
 		'cpp_std=c++2a',
 		'c_std=c11',
 		'b_ndebug=if-release',
-		'b_lto=true'
+		'b_lto=true',
+		'warning_level=3'
 	],
 	meson_version: '>=0.55.0'
 )
 
-if meson.get_compiler('cpp').get_id() == 'clang' and get_option('buildtype').startswith('debug')
-	cpp_args = ['-fuse-ld=lld', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Wall', '-Wextra', '-Weverything', '-Wpedantic', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command, -Wno-unknown-pragmas']
-	linker_args = ['-fuse-ld=lld']
-else
-	cpp_args = []
-	linker_args = []
+if meson.get_compiler('cpp').get_id() == 'clang'
+	add_project_arguments('-fuse-ld=lld', language: 'cpp')
+	add_project_link_arguments('-fuse-ld=lld', language: 'cpp')
+	if get_option('debug')
+		add_project_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Weverything', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command, -Wno-unknown-pragmas'], language: 'cpp')
+	endif
 endif
 
 if not meson.is_cross_build()
@@ -67,8 +68,6 @@ executable(
 		dependency('nlohmann_json'),
 		dependency('libsodium')
 	],
-	cpp_args: cpp_args,
-	link_args: linker_args
 )
 
 test(
@@ -94,6 +93,6 @@ test(
 			dependency('nlohmann_json'),
 			dependency('libsodium'),
 			subproject('cpr').get_variable('cpr_dep')
-		]
+		],
 	)
 )
