@@ -25,8 +25,13 @@ public:
 	void commit() {}
 };
 
+std::uint16_t getPort() {
+	static std::atomic<std::uint16_t> port {10780};
+	return ++port;
+}
+
 TEST(ScrafTest, MailPasswordNameSurname) {
-	constexpr std::uint16_t port {10780};
+	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
 	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
@@ -52,7 +57,7 @@ TEST(ScrafTest, MailPasswordNameSurname) {
 
 //test in cui la richiesta è effettuata senza il cognome = dovrebbe andare a buon fine
 TEST(ScrafTest, MailPasswordNameWhithoutSurname) {
-	constexpr std::uint16_t port {10780};
+	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
 	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
@@ -77,7 +82,7 @@ TEST(ScrafTest, MailPasswordNameWhithoutSurname) {
 
 //test in cui la richiesta è effettuata senza l'email = dovrebbe non funzionare
 TEST(ScrafTest, PasswordNameSurnameWhithoutEmail) {
-	constexpr std::uint16_t port {10780};
+	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
 	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
@@ -101,7 +106,7 @@ TEST(ScrafTest, PasswordNameSurnameWhithoutEmail) {
 
 //test in cui la richiesta è effettuata senza la password = dovrebbe non funzionare
 TEST(ScrafTest, MailNameSurnameWhithoutPassword) {
-	constexpr std::uint16_t port {10780};
+	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
 	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
@@ -125,7 +130,7 @@ TEST(ScrafTest, MailNameSurnameWhithoutPassword) {
 
 //test in cui la richiesta è effettuata senza il nome = dovrebbe non funzionare
 TEST(ScrafTest, MailPasswordSurnameWhithoutName) {
-	constexpr std::uint16_t port {10780};
+	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
 	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
