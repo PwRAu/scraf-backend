@@ -1,6 +1,11 @@
 name: Meson
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+    paths-ignore:
+      - docs
+      - '**.md'
 
 env:
   CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307

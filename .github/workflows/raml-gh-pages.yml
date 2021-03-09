@@ -3,6 +3,8 @@ name: Publish API spec
 on:
   push:
     branches: [ main ]
+    paths:
+      - scraf.raml
 
 jobs:
   build-and-deploy:
