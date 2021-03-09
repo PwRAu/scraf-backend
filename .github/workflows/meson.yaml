@@ -13,29 +13,29 @@ jobs:
     - uses: actions/checkout@v2
       with:
         submodules: 'recursive'
-    
+
     - name: Install dependencies
       run: |
         sudo rm /etc/apt/sources.list /etc/apt/sources.list.d/*
-        printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security devel\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
+        printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security hirsute\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
         printf "APT::Default-Release \"focal\";\n" | sudo tee /etc/apt/apt.conf.d/00default-release
         sudo apt-get -qq update && sudo apt-get -qq install --assume-yes meson/hirsute gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev libcurl4-openssl-dev
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
-    
+
     - name: build2 cache
       id: build2-cache
       uses: actions/cache@v2
       with:
         path: ~/build2
         key: ${{runner.os}}-build2
-    
+
     - name: Install build2
       if: steps.build2-cache.outputs.cache-hit != 'true'
       run: |
         mkdir build2-build && cd build2-build
         curl -sSfO https://download.build2.org/0.13.0/build2-install-0.13.0.sh 
         sh build2-install-0.13.0.sh --yes --no-check --trust yes ~/build2
-    
+
     - name: Install odb
       run: |
         export PATH=$HOME/build2/bin:$PATH
@@ -61,7 +61,9 @@ jobs:
       run: meson compile -C build
 
     - name: Test
-      run: meson test -C build
+      run: |
+        meson test -C build
+        cat build/meson-logs/testlog.txt
 
     - name: Store compiled program
       uses: actions/upload-artifact@v2
