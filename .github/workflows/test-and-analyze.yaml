@@ -91,12 +91,14 @@ jobs:
       run: |
         meson test -C build_release
         cat build_release/meson-logs/testlog.txt
+      continue-on-error: true
 
     - name: Test debug
       run: |
         meson test -C build_debug
         cat build_debug/meson-logs/testlog.txt
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -g subprojects
+      continue-on-error: true
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
