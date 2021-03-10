@@ -1,4 +1,4 @@
-name: Meson
+name: Test and analyze
 
 on:
   push:
@@ -6,22 +6,42 @@ on:
     paths-ignore:
       - docs
       - '**.md'
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ main ]
+    paths-ignore:
+      - docs
+      - '**.md'
+  schedule:
+    - cron: '45 10 * * 5'
 
 env:
   CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
 jobs:
-  build:
+  test-and-analyze:
+    name: Test and analyze
     runs-on: ubuntu-20.04
 
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'cpp' ]
+
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout repository
+      uses: actions/checkout@v2
       with:
         submodules: 'recursive'
 
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+
     - name: Install dependencies
       run: |
-        sudo rm /etc/apt/sources.list /etc/apt/sources.list.d/*
+        sudo rm /etc/apt/sources.list* /etc/apt/sources.list.d/*
         printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security hirsute\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
         printf "APT::Default-Release \"focal\";\n" | sudo tee /etc/apt/apt.conf.d/00default-release
         sudo apt-get -qq update && sudo apt-get -qq install --assume-yes meson/hirsute gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev libcurl4-openssl-dev
@@ -59,19 +79,15 @@ jobs:
         yes | bpkg build libodb-pgsql --trust-yes --quiet
         bpkg install --all --recursive --quiet
 
-    - name: Configure Meson
-      run: meson setup build --buildtype=release
-
     - name: Build
-      run: meson compile -C build
+      run: |
+        meson setup build --buildtype=release
+        meson compile -C build
 
     - name: Test
       run: |
         meson test -C build
         cat build/meson-logs/testlog.txt
 
-    - name: Store compiled program
-      uses: actions/upload-artifact@v2
-      with: 
-        name: scraf-backend-main
-        path: ${{runner.workspace}}/scraf-backend/build/Scraf
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
