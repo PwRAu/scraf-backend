@@ -9,9 +9,6 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ main ]
-    paths-ignore:
-      - docs
-      - '**.md'
   schedule:
     - cron: '45 10 * * 5'
 
@@ -80,15 +77,26 @@ jobs:
         yes | bpkg build libodb-pgsql --trust-yes --quiet
         bpkg install --all --recursive --quiet
 
-    - name: Build
+    - name: Build release
       run: |
-        meson setup build --buildtype=release
-        meson compile -C build
+        meson setup build_release --buildtype=release
+        meson compile -C build_release
 
-    - name: Test
+    - name: Build debug
       run: |
-        meson test -C build
-        cat build/meson-logs/testlog.txt
+        meson setup build_debug --buildtype=debug -Db_coverage=true
+        meson compile -C build_debug
+
+    - name: Test release
+      run: |
+        meson test -C build_release
+        cat build_release/meson-logs/testlog.txt
+
+    - name: Test debug
+      run: |
+        meson test -C build_debug
+        cat build_debug/meson-logs/testlog.txt
+        bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -g subprojects
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
