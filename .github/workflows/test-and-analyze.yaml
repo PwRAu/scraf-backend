@@ -42,7 +42,7 @@ jobs:
         sudo mkdir /etc/apt/sources.list.d
         printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security hirsute\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
         printf "APT::Default-Release \"focal\";\n" | sudo tee /etc/apt/apt.conf.d/00default-release
-        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes meson/hirsute gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev libcurl4-openssl-dev
+        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes meson/hirsute gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev libcurl4-openssl-dev lcov
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
 
     - name: build2 cache
@@ -90,13 +90,14 @@ jobs:
     - name: Test release
       run: |
         meson test -C build_release || cat build_release/meson-logs/testlog.txt
-      continue-on-error: true
 
     - name: Test debug
       run: |
         meson test -C build_debug || cat build_debug/meson-logs/testlog.txt
-        bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -s build_debug -g subprojects
-      continue-on-error: true
+        lcov --directory . --capture --output-file coverage.info
+        lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*/tests/*' '*/subprojects/*' --output-file coverage.info
+        lcov --list coverage.info
+        bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
