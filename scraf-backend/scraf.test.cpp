@@ -30,7 +30,7 @@ std::uint16_t getPort() {
 	return ++port;
 }
 
-TEST(ScrafTest, MailPasswordNameSurname) {
+TEST(CreateStudent, MailPasswordNameSurname) {
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -56,7 +56,7 @@ TEST(ScrafTest, MailPasswordNameSurname) {
 
 
 //test in cui la richiesta è effettuata senza il cognome = dovrebbe andare a buon fine
-TEST(ScrafTest, MailPasswordNameWhithoutSurname) {
+TEST(CreateStudent, MailPasswordNameWhithoutSurname) {
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -81,7 +81,7 @@ TEST(ScrafTest, MailPasswordNameWhithoutSurname) {
 }
 
 //test in cui la richiesta è effettuata senza l'email = dovrebbe non funzionare
-TEST(ScrafTest, PasswordNameSurnameWhithoutEmail) {
+TEST(CreateStudent, PasswordNameSurnameWhithoutEmail) {
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -105,7 +105,7 @@ TEST(ScrafTest, PasswordNameSurnameWhithoutEmail) {
 }
 
 //test in cui la richiesta è effettuata senza la password = dovrebbe non funzionare
-TEST(ScrafTest, MailNameSurnameWhithoutPassword) {
+TEST(CreateStudent, MailNameSurnameWhithoutPassword) {
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -129,7 +129,7 @@ TEST(ScrafTest, MailNameSurnameWhithoutPassword) {
 }
 
 //test in cui la richiesta è effettuata senza il nome = dovrebbe non funzionare
-TEST(ScrafTest, MailPasswordSurnameWhithoutName) {
+TEST(CreateStudent, MailPasswordSurnameWhithoutName) {
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
