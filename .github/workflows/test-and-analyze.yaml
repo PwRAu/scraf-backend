@@ -89,8 +89,7 @@ jobs:
 
     - name: Test release
       run: |
-        meson test -C build_release
-        cat build_release/meson-logs/testlog.txt
+        meson test -C build_release || cat build_release/meson-logs/testlog.txt
       continue-on-error: true
 
     - name: Test debug
