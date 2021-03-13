@@ -52,6 +52,13 @@ cmake = import('cmake')
 pistache_options = cmake.subproject_options()
 pistache_options.add_cmake_defines({'BUILD_SHARED_LIBS': false, 'PISTACHE_INSTALL': false, 'PISTACHE_USE_SSL': true})
 
+simdjson_dep = dependency('simdjson', required: false)
+if not simdjson_dep.found()
+	simdjson_options = cmake.subproject_options()
+	simdjson_options.add_cmake_defines({'SIMDJSON_JUST_LIBRARY': true})
+	simdjson_dep = cmake.subproject('simdjson', options: simdjson_options).dependency('simdjson')
+endif
+
 executable(
 	'Scraf',
 	sources: [
@@ -66,9 +73,9 @@ executable(
 	include_directories: 'scraf-backend',
 	dependencies: [
 		cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
-		dependency('libodb'),
-		dependency('libodb-pgsql'),
-		dependency('simdjson'),
+		dependency('libodb', version: '>=2.5.0'),
+		dependency('libodb-pgsql', version: '>=2.5.0'),
+		simdjson_dep,
 		dependency('nlohmann_json'),
 		dependency('libsodium')
 	],
@@ -93,9 +100,9 @@ test(
 		dependencies: [
 			dependency('gtest'),
 			cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
-			dependency('libodb'),
-			dependency('libodb-pgsql'),
-			dependency('simdjson'),
+			dependency('libodb', version: '>=2.5.0'),
+			dependency('libodb-pgsql', version: '>=2.5.0'),
+			simdjson_dep,
 			dependency('nlohmann_json'),
 			dependency('libsodium'),
 			dependency('cpr', fallback: ['cpr', 'cpr_dep'])

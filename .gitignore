@@ -10,3 +10,5 @@ build*/
 # Meson Wrap DB cache
 /subprojects/*
 !/subprojects/*.wrap
+!/subprojects/pistache
+!/subprojects/simdjson
