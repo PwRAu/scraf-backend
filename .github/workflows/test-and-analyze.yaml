@@ -85,12 +85,12 @@ jobs:
 
     - name: Build release
       run: |
-        meson setup build_release --buildtype=release
+        meson setup build_release --buildtype=release -Dscraf_build_tests=true
         meson compile -C build_release
 
     - name: Build debug
       run: |
-        meson setup build_debug --buildtype=debug -Db_coverage=true
+        meson setup build_debug --buildtype=debug -Db_coverage=true -Dscraf_build_tests=true
         meson compile -C build_debug
 
     - name: Test release

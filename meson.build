@@ -82,31 +82,33 @@ executable(
 	cpp_args: cpp_args
 )
 
-test(
-	'ScrafTest',
-	executable(
+if get_option('scraf_build_tests')
+	test(
 		'ScrafTest',
-		sources: [
-			'scraf-backend/main.test.cpp',
-			'scraf-backend/scraf.test.cpp',
-			odb_generator.process(
-				'scraf-backend/student.hpp',
-				'scraf-backend/school_class.hpp',
-				'scraf-backend/school.hpp',
-				'scraf-backend/teacher.hpp'
-			)
-		],
-		include_directories: 'scraf-backend',
-		dependencies: [
-			dependency('gtest'),
-			cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
-			dependency('libodb', version: '>=2.5.0'),
-			dependency('libodb-pgsql', version: '>=2.5.0'),
-			simdjson_dep,
-			dependency('nlohmann_json'),
-			dependency('libsodium'),
-			dependency('cpr', fallback: ['cpr', 'cpr_dep'])
-		],
-		cpp_args: cpp_args
+		executable(
+			'ScrafTest',
+			sources: [
+				'scraf-backend/main.test.cpp',
+				'scraf-backend/scraf.test.cpp',
+				odb_generator.process(
+					'scraf-backend/student.hpp',
+					'scraf-backend/school_class.hpp',
+					'scraf-backend/school.hpp',
+					'scraf-backend/teacher.hpp'
+				)
+			],
+			include_directories: 'scraf-backend',
+			dependencies: [
+				dependency('gtest'),
+				cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
+				dependency('libodb', version: '>=2.5.0'),
+				dependency('libodb-pgsql', version: '>=2.5.0'),
+				simdjson_dep,
+				dependency('nlohmann_json'),
+				dependency('libsodium'),
+				dependency('cpr', fallback: ['cpr', 'cpr_dep'])
+			],
+			cpp_args: cpp_args
+		)
 	)
-)
+endif
