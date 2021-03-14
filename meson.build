@@ -55,7 +55,7 @@ pistache_options.add_cmake_defines({'BUILD_SHARED_LIBS': false, 'PISTACHE_INSTAL
 simdjson_dep = dependency('simdjson', required: false)
 if not simdjson_dep.found()
 	simdjson_options = cmake.subproject_options()
-	simdjson_options.add_cmake_defines({'SIMDJSON_JUST_LIBRARY': true})
+	simdjson_options.add_cmake_defines({'SIMDJSON_JUST_LIBRARY': true, 'BUILD_SHARED_LIBS': false, 'SIMDJSON_BUILD_STATIC': true})
 	simdjson_dep = cmake.subproject('simdjson', options: simdjson_options).dependency('simdjson')
 endif
 
