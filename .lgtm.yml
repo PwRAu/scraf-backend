@@ -81,7 +81,7 @@ extraction:
     - curl --silent --remote-name https://stage.build2.org/0/0.14.0-a.0/build2-install-0.14.0-a.0-stage.sh
     - export CFLAGS=-march=native
     - export CXXFLAGS=-march=native
-    - sh build2-install-0.14.0-a.0-stage.sh --yes --cxx g++ --sudo false --jobs $(nproc) --trust yes --no-check $HOME/.local >/dev/null 2>&1
+    - sh build2-install-0.14.0-a.0-stage.sh --yes --cxx g++ --sudo false --trust yes --no-check $HOME/.local >/dev/null 2>&1
     - unset CFLAGS
     - unset CXXFLAGS
     - export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH
@@ -89,13 +89,13 @@ extraction:
     # Install ODB
     - mkdir odb-build
     - cd odb-build
-    - bpkg --quiet create --directory odb-gcc-10 cc config.cxx=g++ config.c.std=gnu17 config.cxx.std=gnu++17 config.cc.coptions='-O3 -march=native' config.bin.rpath=$HOME/.local/lib config.install.root=$HOME/.local
+    - bpkg --quiet create --directory odb-gcc-10 cc config.cxx=g++ config.c.std=gnu17 config.cxx.std=gnu++17 config.cc.coptions=-O1 config.bin.rpath=$HOME/.local/lib config.install.root=$HOME/.local
     - cd odb-gcc-10
     - bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
     - bpkg --quiet test odb
     - bpkg --quiet install odb
     - cd ..
-    - bpkg --quiet create --directory gcc-10 cc config.cxx=g++ config.c.std=gnu17 config.cxx.std=gnu++17 config.cc.coptions='-O3 -march=native' config.install.root=$HOME/.local
+    - bpkg --quiet create --directory gcc-10 cc config.cxx=g++ config.c.std=gnu17 config.cxx.std=gnu++17 config.cc.coptions=-O1 config.install.root=$HOME/.local
     - cd gcc-10
     - bpkg --quiet add https://pkg.cppget.org/1/beta
     - bpkg --quiet --trust-yes fetch
