@@ -54,12 +54,12 @@ extraction:
     - ../gcc/configure CC=clang CXX=clang++ CFLAGS='-march=native -w' CXXFLAGS='-march=native -w' --prefix=$HOME/.local --enable-languages=c,c++ --enable-checking=release --disable-bootstrap --with-gcc-major-version-only --with-default-libstdcxx-abi=new --enable-libstdcxx-time=yes --enable-linker-build-id --enable-gnu-unique-object --enable-plugin --disable-werror --enable-lto --with-cpu=native --with-arch=native --with-tune=native --disable-multilib --disable-libada --disable-libsanitizer --enable-silent-rules --quiet >/dev/null 2>&1
     - make --jobs=$(nproc) --quiet >/dev/null 2>&1
     - make install --quiet >/dev/null 2>&1
+    - export PATH=$HOME/.local/bin:$PATH
     - export LD_LIBRARY_PATH=$HOME/.local/lib64:$HOME/.local/lib:$LD_LIBRARY_PATH
     - export LIBRARY_PATH=$HOME/.local/lib64:$HOME/.local/lib:$LIBRARY_PATH
     - export LD_RUN_PATH=$HOME/.local/lib64:$HOME/.local/lib:$LD_RUN_PATH
     - export CPLUS_INCLUDE_PATH=$HOME/.local/include/c++/$(g++ -dumpspecs | grep --after-context=1 '*version:' | tail --lines=1):$CPLUS_INCLUDE_PATH
     - export CPATH=$HOME/.local/include:$CPATH
-    - export PATH=$HOME/.local/bin:$PATH
     - unset CC
     - unset CXX
     - cd ..
@@ -81,7 +81,7 @@ extraction:
     - curl --silent --remote-name https://stage.build2.org/0/0.14.0-a.0/build2-install-0.14.0-a.0-stage.sh
     - export CFLAGS=-march=native
     - export CXXFLAGS=-march=native
-    - sh build2-install-0.14.0-a.0-stage.sh --yes --cxx g++ --sudo false --trust yes --no-check $HOME/.local >/dev/null 2>&1
+    - sh build2-install-0.14.0-a.0-stage.sh --yes --cxx g++ --sudo false --jobs $(nproc) --trust yes --no-check $HOME/.local >/dev/null 2>&1
     - unset CFLAGS
     - unset CXXFLAGS
     - export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH
