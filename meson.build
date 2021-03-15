@@ -2,13 +2,13 @@ project(
 	'Scraf',
 	'cpp',
 	default_options: [
-		'cpp_std=c++2a',
+		'cpp_std=c++20',
 		'c_std=c11',
 		'b_ndebug=if-release',
 		'b_lto=true',
 		'warning_level=3'
 	],
-	meson_version: '>=0.55.0'
+	meson_version: '>=0.57.0'
 )
 
 compiler = meson.get_compiler('cpp')
