@@ -90,6 +90,7 @@ if get_option('scraf_build_tests')
 			sources: [
 				'scraf-backend/main.test.cpp',
 				'scraf-backend/scraf.test.cpp',
+				'scraf-backend/scraf_curl.cpp',
 				odb_generator.process(
 					'scraf-backend/student.hpp',
 					'scraf-backend/school_class.hpp',
@@ -106,7 +107,7 @@ if get_option('scraf_build_tests')
 				simdjson_dep,
 				dependency('nlohmann_json'),
 				dependency('libsodium'),
-				dependency('cpr', fallback: ['cpr', 'cpr_dep'])
+				dependency('libcurl')
 			],
 			cpp_args: cpp_args
 		)

@@ -105,7 +105,7 @@ extraction:
     - cd ..
     configure:
       command:
-      - meson setup build --buildtype=release
+      - meson setup build --buildtype=debug -Db_lto=false
     index:
       build_command:
       - meson compile -C build

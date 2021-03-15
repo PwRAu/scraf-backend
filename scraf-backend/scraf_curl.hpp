@@ -1,0 +1,49 @@
+#include <curl/curl.h>
+#include <string>
+#include <array>
+
+class ScrafCurl {
+public:
+	ScrafCurl();
+	~ScrafCurl();
+
+	void get(std::string_view url);
+
+	template<std::size_t count>
+	void post(const std::string_view url, const std::array<std::string_view, count>& headers, const std::string_view request) {
+		curl_easy_setopt(curl, CURLOPT_POST, 1L);
+		curl_easy_setopt(curl, CURLOPT_URL, url.data());
+		struct curl_slist* curlHeaders {nullptr};
+		for (std::string_view header : headers) {
+			curlHeaders = curl_slist_append(curlHeaders, header.data());
+		}
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curlHeaders);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, request.data());
+		curl_easy_perform(curl);
+	}
+
+
+	template<std::size_t count>
+	void put(const std::string_view url, const std::array<std::string_view, count>& headers, const std::string_view request) {
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+		curl_easy_setopt(curl, CURLOPT_URL, url.data());
+		struct curl_slist* curlHeaders {nullptr};
+		for (std::string_view header : headers) {
+			curlHeaders = curl_slist_append(curlHeaders, header.data());
+		}
+		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curlHeaders);
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, request.data());
+		curl_easy_perform(curl);
+	}
+
+	[[nodiscard]] long getResponseCode();
+
+private:
+	CURL* curl;
+	std::string _responseBody;
+	long _responseCode;
+	static bool _isCurlInitialised;
+
+private:
+	static std::size_t writeData(char* incomingBuffer, std::size_t size, std::size_t count, std::string* data);
+};
