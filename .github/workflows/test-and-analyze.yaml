@@ -42,7 +42,7 @@ jobs:
         sudo mkdir /etc/apt/sources.list.d
         printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security hirsute\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
         printf "APT::Default-Release \"focal\";\n" | sudo tee /etc/apt/apt.conf.d/00default-release
-        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev libcurl4-openssl-dev lcov python3-pip
+        sudo apt-get -qq update && sudo apt-get -qq install --assume-yes gcc-10-plugin-dev libgtest-dev libsimdjson-dev/hirsute nlohmann-json3-dev libsodium-dev libcurl4-openssl-dev lcov python3-pip clang lld
         sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10
         sudo pip3 install -qqq --ignore-installed meson
 
@@ -70,13 +70,13 @@ jobs:
       run: |
         export PATH=$HOME/build2/bin:$PATH
         mkdir odb-build && cd odb-build
-        bpkg --quiet create --directory odb-gcc-10 cc config.cxx=g++ config.cc.coptions=-O3 config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+        bpkg --quiet create --directory odb-gcc-10 cc config.cxx=g++ config.cc.coptions='-O3 -march=native' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
         cd odb-gcc-10
         bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
         bpkg --quiet test odb
         bpkg --quiet install odb
         cd ..
-        bpkg --quiet create --directory gcc-10 cc config.cxx=g++ config.cc.coptions=-O3 config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+        bpkg --quiet create --directory gcc-10 cc config.cxx=g++ config.cc.coptions='-O3 -march=native' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
         cd gcc-10
         bpkg --quiet add https://pkg.cppget.org/1/beta
         bpkg --quiet --trust-yes fetch
@@ -106,6 +106,26 @@ jobs:
         lcov --list coverage.info
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
         if [ "$SCRAF_TEST_DEBUG_FAILED" == "true" ]; then false; fi
+
+    - name: Memory sanitizer
+      run: |
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_memory_sanitizer --buildtype=debug --b_sanitize=memory
+        meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false)
+
+    - name: Address sanitizer
+      run: |
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_address_sanitizer --buildtype=debug --b_sanitize=address
+        meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && false)
+
+    - name: Undefined behavior sanitizer
+      run: |
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_behavior_sanitizer --buildtype=debug --b_sanitize=behavior
+        meson test -C build_behavior_sanitizer || (cat build_behavior_sanitizer/meson-logs/testlog.txt && false)
+
+    - name: Thread sanitizer
+      run: |
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_thread_sanitizer --buildtype=debug --b_sanitize=thread
+        meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1

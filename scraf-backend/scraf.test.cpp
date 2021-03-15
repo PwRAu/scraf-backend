@@ -191,7 +191,7 @@ TEST(CreateStudent, MailPasswordSurnameWhithoutName) {
 }
 
 
-TEST(GetStudents, GetStudentsNameLenghtLess3){
+TEST(GetStudents, DISABLED_GetStudentsNameLenghtLess3){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
