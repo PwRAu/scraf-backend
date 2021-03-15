@@ -81,7 +81,7 @@ extraction:
     - curl --silent --remote-name https://stage.build2.org/0/0.14.0-a.0/build2-install-0.14.0-a.0-stage.sh
     - export CFLAGS=-march=native
     - export CXXFLAGS=-march=native
-    - sh build2-install-0.14.0-a.0-stage.sh --yes --cxx g++ --sudo false --trust yes --no-check $HOME/.local >/dev/null 2>&1
+    - sh build2-install-0.14.0-a.0-stage.sh --yes --local --no-bdep --no-modules --cxx g++ --sudo false --trust yes --no-check $HOME/.local >/dev/null 2>&1
     - unset CFLAGS
     - unset CXXFLAGS
     - export PKG_CONFIG_PATH=$HOME/.local/lib/pkgconfig:$PKG_CONFIG_PATH
