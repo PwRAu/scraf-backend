@@ -8,10 +8,10 @@ public:
 	ScrafCurl();
 	~ScrafCurl();
 
-	void get(std::string_view url);
+	void get(std::string_view url) noexcept;
 
 	template<std::size_t count>
-	void post(const std::string_view url, const std::array<std::string_view, count>& headers, const std::string_view request) {
+	void post(const std::string_view url, const std::array<std::string_view, count>& headers, const std::string_view request) noexcept {
 		curl_easy_setopt(curl, CURLOPT_POST, 1L);
 		curl_easy_setopt(curl, CURLOPT_URL, url.data());
 		struct curl_slist* curlHeaders {nullptr};
@@ -25,7 +25,7 @@ public:
 
 
 	template<std::size_t count>
-	void put(const std::string_view url, const std::array<std::string_view, count>& headers, const std::string_view request) {
+	void put(const std::string_view url, const std::array<std::string_view, count>& headers, const std::string_view request) noexcept {
 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
 		curl_easy_setopt(curl, CURLOPT_URL, url.data());
 		struct curl_slist* curlHeaders {nullptr};
@@ -37,7 +37,7 @@ public:
 		curl_easy_perform(curl);
 	}
 
-	[[nodiscard]] long getResponseCode();
+	[[nodiscard]] long getResponseCode() noexcept;
 
 private:
 	CURL* curl;
@@ -46,5 +46,5 @@ private:
 	static std::once_flag _isCurlInitialised;
 
 private:
-	static std::size_t writeData(char* incomingBuffer, std::size_t size, std::size_t count, std::string* data);
+	static std::size_t writeData(char* incomingBuffer, std::size_t size, std::size_t count, std::string* data) noexcept;
 };

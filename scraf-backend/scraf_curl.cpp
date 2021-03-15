@@ -21,18 +21,18 @@ ScrafCurl::~ScrafCurl() {
 	curl_easy_cleanup(curl);
 }
 
-void ScrafCurl::get(const std::string_view url) {
+void ScrafCurl::get(const std::string_view url) noexcept {
 	curl_easy_setopt(curl, CURLOPT_HTTPGET, 1L);
 	curl_easy_setopt(curl, CURLOPT_URL, url.data());
 	curl_easy_perform(curl);
 }
 
-[[nodiscard]] long ScrafCurl::getResponseCode() {
+[[nodiscard]] long ScrafCurl::getResponseCode() noexcept {
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &_responseCode);
 	return _responseCode;
 }
 
-std::size_t ScrafCurl::writeData(char* /*incomingBuffer*/, std::size_t size, std::size_t count, std::string* /*data*/) {
+std::size_t ScrafCurl::writeData(char* /*incomingBuffer*/, std::size_t size, std::size_t count, std::string* /*data*/) noexcept {
 	// data->append(incomingBuffer, size * count);
 	return size * count;
 }

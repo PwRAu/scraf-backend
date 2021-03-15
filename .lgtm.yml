@@ -63,6 +63,14 @@ extraction:
     - unset CC
     - unset CXX
     - cd ..
+    # Install gold from source
+    - curl --silent --remote-name --http2-prior-knowledge --parallel --proto https --proto-default https --tlsv1.2 https://ftp.gnu.org/gnu/binutils/binutils-2.35.2.tar.bz2
+    - tar xf binutils-2.35.2.tar.bz2
+    - mkdir binutils-build
+    - cd binutils-build
+    - ../binutils-2.35.2/configure CFLAGS='-march=native -w' CXXFLAGS='-march=native -w' --prefix=$HOME/.local --enable-gold=default --disable-ld --disable-libada --disable-bootstrap --enable-lto --disable-objc-gc --with-gcc-major-version-only --enable-plugins --enable-threads --disable-nls --enable-shared --with-cpu=native --with-arch=native --with-tune=native --disable-multilib --enable-silent-rules --quiet >/dev/null 2>&1
+    - make --jobs=$(nproc) --quiet >/dev/null 2>&1
+    - make install --quiet >/dev/null 2>&1
     # Install LLD from source
     #- git clone https://github.com/llvm/llvm-project.git --branch=release/11.x --single-branch --depth=1 --quiet
     #- cd llvm-project
