@@ -64,7 +64,7 @@ extraction:
     - unset CXX
     - cd ..
     # Install gold from source
-    - curl --silent --remote-name --http2-prior-knowledge --parallel --proto https --proto-default https --tlsv1.2 https://ftp.gnu.org/gnu/binutils/binutils-2.35.2.tar.bz2
+    - curl --silent --remote-name --http2-prior-knowledge --proto https --proto-default https --tlsv1.2 https://ftp.gnu.org/gnu/binutils/binutils-2.35.2.tar.bz2
     - tar xf binutils-2.35.2.tar.bz2
     - mkdir binutils-build
     - cd binutils-build
