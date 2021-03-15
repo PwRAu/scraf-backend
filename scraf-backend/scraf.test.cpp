@@ -63,7 +63,6 @@ TEST(CreateStudent, MailPasswordNameSurname) {
 	scraf.shutdown();
 }
 
-
 //test in cui la richiesta è effettuata senza il cognome = dovrebbe andare a buon fine
 TEST(CreateStudent, MailPasswordNameWhithoutSurname) {
 	const std::uint16_t port {getPort()};

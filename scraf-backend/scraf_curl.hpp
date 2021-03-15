@@ -1,4 +1,5 @@
 #include <curl/curl.h>
+#include <mutex>
 #include <string>
 #include <array>
 
@@ -42,7 +43,7 @@ private:
 	CURL* curl;
 	std::string _responseBody;
 	long _responseCode;
-	static bool _isCurlInitialised;
+	static std::once_flag _isCurlInitialised;
 
 private:
 	static std::size_t writeData(char* incomingBuffer, std::size_t size, std::size_t count, std::string* data);

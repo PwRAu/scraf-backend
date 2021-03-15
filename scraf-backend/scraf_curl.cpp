@@ -1,12 +1,12 @@
 #include <scraf-backend/scraf_curl.hpp>
 
-constinit bool ScrafCurl::_isCurlInitialised {false};
+// Must define static class members in cpp units
+std::once_flag ScrafCurl::_isCurlInitialised;
 
 ScrafCurl::ScrafCurl() {
-	if (!_isCurlInitialised) {
+	std::call_once(_isCurlInitialised, []() {
 		curl_global_init(CURL_GLOBAL_NOTHING);
-		_isCurlInitialised = true;
-	}
+	});
 	curl = curl_easy_init();
 	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
 	curl_easy_setopt(curl, CURLOPT_NOSIGNAL, 1L);
