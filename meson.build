@@ -3,7 +3,7 @@ project(
 	'cpp',
 	default_options: [
 		'cpp_std=c++20',
-		'c_std=c11',
+		'c_std=c17',
 		'b_ndebug=if-release',
 		'b_lto=true',
 		'warning_level=3'
@@ -14,7 +14,7 @@ project(
 compiler = meson.get_compiler('cpp')
 
 if compiler.get_id() == 'clang'
-	add_project_arguments('-fuse-ld=lld', language: 'cpp')
+	add_project_arguments(['-fuse-ld=lld', '-Wno-unused-command-line-argument'], language: 'cpp')
 	add_project_link_arguments('-fuse-ld=lld', language: 'cpp')
 	if get_option('debug')
 		add_project_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Weverything', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command'], language: 'cpp')
