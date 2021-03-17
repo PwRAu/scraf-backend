@@ -69,11 +69,11 @@ private:
 			}
 			student student {[&]() -> class student {
 				std::string_view surname;
-				if (parsed["surname"].get(surname)) {
-					return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value()};
+				if (parsed["surname"].get(surname) == 0) {
+					return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value(), surname.data()};
 				}
 				else {
-					return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value(), surname.data()};
+					return {parsed["mail"].get_c_str().value(), hashedPassword.data(), parsed["name"].get_c_str().value()};
 				}
 			}()};
 			{
