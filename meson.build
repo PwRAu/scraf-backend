@@ -27,8 +27,6 @@ endif
 
 cpp_args = compiler.get_supported_arguments(['-Wno-unknown-pragmas', '-Wno-comment'])
 
-src = ['scraf-backend/main.cpp']
-
 odb_generator = generator(
 	find_program('odb'),
 	output: ['@BASENAME@_odb.hpp', '@BASENAME@_odb.cpp', '@BASENAME@_odb.ipp'],
@@ -59,26 +57,32 @@ if not simdjson_dep.found()
 	simdjson_dep = cmake.subproject('simdjson', options: simdjson_options).dependency('simdjson')
 endif
 
+src = ['scraf-backend/main.cpp']
+
+odb_src = odb_generator.process(
+	'scraf-backend/student.hpp',
+	'scraf-backend/school_class.hpp',
+	'scraf-backend/school.hpp',
+	'scraf-backend/teacher.hpp'
+)
+
+scraf_dependencies = [
+	cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
+	dependency('libodb', version: '>=2.5.0'),
+	dependency('libodb-pgsql', version: '>=2.5.0'),
+	simdjson_dep,
+	dependency('nlohmann_json'),
+	dependency('libsodium')
+]
+
 executable(
 	'Scraf',
 	sources: [
 		src,
-		odb_generator.process(
-			'scraf-backend/student.hpp',
-			'scraf-backend/school_class.hpp',
-			'scraf-backend/school.hpp',
-			'scraf-backend/teacher.hpp'
-		)
+		odb_src
 	],
 	include_directories: 'scraf-backend',
-	dependencies: [
-		cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
-		dependency('libodb', version: '>=2.5.0'),
-		dependency('libodb-pgsql', version: '>=2.5.0'),
-		simdjson_dep,
-		dependency('nlohmann_json'),
-		dependency('libsodium')
-	],
+	dependencies: scraf_dependencies,
 	cpp_args: cpp_args
 )
 
@@ -91,22 +95,12 @@ if get_option('scraf_build_tests')
 				'scraf-backend/main.test.cpp',
 				'scraf-backend/scraf.test.cpp',
 				#'scraf-backend/scraf_curl.cpp',
-				odb_generator.process(
-					'scraf-backend/student.hpp',
-					'scraf-backend/school_class.hpp',
-					'scraf-backend/school.hpp',
-					'scraf-backend/teacher.hpp'
-				)
+				odb_src
 			],
 			include_directories: 'scraf-backend',
 			dependencies: [
+				scraf_dependencies,
 				dependency('gtest'),
-				cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
-				dependency('libodb', version: '>=2.5.0'),
-				dependency('libodb-pgsql', version: '>=2.5.0'),
-				simdjson_dep,
-				dependency('nlohmann_json'),
-				dependency('libsodium'),
 				dependency('libcurl')
 			],
 			cpp_args: cpp_args
