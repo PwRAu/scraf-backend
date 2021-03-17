@@ -15,27 +15,28 @@ public:
 		curl_easy_setopt(curl, CURLOPT_POST, 1L);
 		curl_easy_setopt(curl, CURLOPT_URL, url.data());
 		struct curl_slist* curlHeaders {nullptr};
-		for (std::string_view header : headers) {
+		for (const std::string_view header : headers) {
 			curlHeaders = curl_slist_append(curlHeaders, header.data());
 		}
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curlHeaders);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, request.data());
 		curl_easy_perform(curl);
 	}
-
+	void post(std::string_view url, std::string_view header, std::string_view request) noexcept;
 
 	template<std::size_t count>
 	void put(const std::string_view url, const std::array<std::string_view, count>& headers, const std::string_view request) noexcept {
 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
 		curl_easy_setopt(curl, CURLOPT_URL, url.data());
 		struct curl_slist* curlHeaders {nullptr};
-		for (std::string_view header : headers) {
+		for (const std::string_view header : headers) {
 			curlHeaders = curl_slist_append(curlHeaders, header.data());
 		}
 		curl_easy_setopt(curl, CURLOPT_HTTPHEADER, curlHeaders);
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, request.data());
 		curl_easy_perform(curl);
 	}
+	void put(std::string_view url, std::string_view header, std::string_view request) noexcept;
 
 	[[nodiscard]] long getResponseCode() noexcept;
 

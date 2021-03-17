@@ -100,8 +100,8 @@ if get_option('scraf_build_tests')
 			include_directories: 'scraf-backend',
 			dependencies: [
 				scraf_dependencies,
-				dependency('gtest'),
-				dependency('libcurl')
+				dependency('gtest')
+				#dependency('libcurl')
 			],
 			cpp_args: cpp_args
 		)
