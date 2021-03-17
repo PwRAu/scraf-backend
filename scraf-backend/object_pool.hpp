@@ -20,12 +20,12 @@ public:
 	 * Attempt to get the first value in the queue.
 	 * Returns true if a value was successfully written to the out parameter, false otherwise.
 	 */
-	bool tryPop(type& out){
+	bool tryPop(type* out){
 		std::scoped_lock lock {_mutex};
 		if (_queue.empty() || !_valid) {
 			return false;
 		}
-		out = std::move(_queue.front());
+		*out = std::move(_queue.front());
 		_queue.pop();
 		return true;
 	}
@@ -35,7 +35,7 @@ public:
 	 * Will block until a value is available unless clear is called or the instance is destructed.
 	 * Returns true if a value was successfully written to the out parameter, false otherwise.
 	 */
-	bool waitPop(type& out) {
+	bool waitPop(type* out) {
 		std::unique_lock<std::mutex> lock {_mutex};
 		_condition.wait(lock, [this]() {
 			return !_queue.empty() || !_valid;
@@ -47,7 +47,7 @@ public:
 		if (!_valid) {
 			return false;
 		}
-		out = std::move(_queue.front());
+		*out = std::move(_queue.front());
 		_queue.pop();
 		return true;
 	}

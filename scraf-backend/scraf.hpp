@@ -57,7 +57,7 @@ private:
 	void createStudent(const Rest::Request& request, Http::ResponseWriter response) {
 		response.timeoutAfter(2s);
 		std::unique_ptr<simdjson::dom::parser> parser;
-		if (!parserPool.waitPop(parser)) {
+		if (!parserPool.waitPop(&parser)) {
 			std::cerr << "Error: parserPool\n";
 		}
 		try {
