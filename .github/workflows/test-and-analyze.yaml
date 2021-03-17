@@ -7,8 +7,8 @@ on:
       - docs
       - '**.md'
       - '**.raml'
-      - .github/raml-gh-pages.yaml
-      - .github/codacy-analysis.yaml
+      - .github/workflows/raml-gh-pages.yaml
+      - .github/workflows/codacy-analysis.yaml
       - .vscode
       - .lgtm
 
@@ -111,7 +111,7 @@ jobs:
         lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*/tests/*' '*/subprojects/*' --output-file coverage.info
         lcov --list coverage.info
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
-        if [ "$SCRAF_TEST_DEBUG_FAILED" == "true" ]; then false; fi
+        if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then false; fi
 
     - name: Memory sanitizer
       run: |

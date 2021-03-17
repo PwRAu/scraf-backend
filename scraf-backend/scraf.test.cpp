@@ -2,12 +2,17 @@
  * Scraf class unit tests
  */
 
-//#include <gtest/gtest.h>
-//#include <scraf-backend/scraf.hpp>
+#include <gtest/gtest.h>
+#include <scraf-backend/scraf.hpp>
 //#include <scraf-backend/scraf_curl.hpp>
-//#include <thread>
-//
-//using namespace Pistache;
+#include <thread>
+
+using namespace Pistache;
+
+TEST(StoPerdendoOgniSperanza, ParteUno) {
+	EXPECT_EQ(4, std::thread::hardware_concurrency());
+}
+
 //using namespace std::literals;
 //using namespace nlohmann;
 //
