@@ -93,7 +93,7 @@ jobs:
     - name: Build release
       run: |
         meson setup build_release --buildtype=release -Dscraf_build_tests=false
-        meson compile -C build_release --jobs 1
+        meson compile -C build_release --jobs 1 --verbose
 
     - name: Build debug
       run: |
