@@ -1,0 +1,177 @@
+#%RAML 1.0
+---
+title: Scraf
+baseUri: https://api.scraf.pwrau.ml/{version}
+version: v1
+/students:
+  get:
+    description: Get a list of students based on their name
+    queryParameters:
+      name:
+        description: "Name of the student to search"
+        type: string
+        example: "Andrea Pa"
+        minLength: 3
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "students": [
+                  {
+                    "id": 107
+                    "name": "Andrea"
+                    "surname": "Pappacoda"
+                  },
+                  {
+                    "id": 238
+                    "name": "Paolo"
+                    "surname": "Andreoli"
+                  }
+                ]
+              }
+  post:
+    description: Register a new student to Scraf and get its id
+    queryParameters:
+      mail:
+        displayName: Mail
+        type: string
+        description: Student's mail address
+        example: andrea@pappacoda.it
+        required: true
+      password:
+        displayName: Password
+        type: string
+        description: Student's password
+        example: coconutnut1986
+        required: true
+      name:
+        displayName: Name
+        type: string
+        description: Student's name or nickname
+        example: Andrea
+        required: true
+      surname:
+        displayName: Surname
+        type: string
+        description: Student's surname
+        example: Pappacoda
+        required: false
+    responses:
+      201:
+        body:
+          application/json:
+            type: |
+              {
+                "$schema": "http://json-schema.org/draft/2019-09/schema#",
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "multipleOf": 1
+                  }
+                }
+              }
+            example: |
+              {
+                "id": 107
+              }
+  /{studentId}:
+    get:
+      description: Get data about a student
+      responses:
+        200:
+          body:
+            application/json:
+              type: |
+                {
+                  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+                  "$id": "http://api.scraf.pwrau.ml/schemas/student.json",
+                  "type": "object",
+                  "required": true,
+                  "properties": {
+                    "mail": {
+                      "type": "string",
+                      "format": "email",
+                      "required": true
+                    },
+                    "name": {
+                      "type": "string",
+                      "required": true
+                    },
+                    "surname": {
+                      "type": "string",
+                      "required": false
+                    },
+                    "is_class_president": {
+                      "type": "boolean",
+                      "required": false
+                    },
+                    "is_school_president": {
+                      "type": "boolean",
+                      "required": false
+                    }
+                  }
+                }
+              example: |
+                {
+                  "mail": "andrea@pappacoda.it",
+                  "name": "Andrea",
+                  "surname": "Pappacoda",
+                  "is_class_president": true,
+                  "is_school_president": false
+                }
+        404:
+          body:
+            application/json:
+              type: |
+                {
+                  "$schema": "http://json-schema.org/draft/2019-09/schema#",
+                  "type": "object"
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              example: |
+                {
+                  "message": "Student not found"
+                }
+    put:
+      description: Updates data about a student
+      queryParameters:
+        name:
+          displayName: Name
+          type: string
+          description: Student's name or nickname
+          example: Andrea
+          required: false
+        surname:
+          displayName: Surname
+          type: string
+          description: Student's surname
+          example: Pappacoda
+          required: false
+        mail:
+          displayName: Mail
+          type: string
+          description: Student's mail address
+          example: andrea@pappacoda.it
+          required: false
+        is_school_president:
+          displayName: Is school president
+          type: boolean
+          description: Whether or not the student is a school president
+          example: false
+          required: false
+        is_class_president:
+          displayName: Is class president
+          type: boolean
+          description: Whether or not the student is a class president
+          example: true
+          required: false
+    delete:
+      description: Deletes a student based on its id

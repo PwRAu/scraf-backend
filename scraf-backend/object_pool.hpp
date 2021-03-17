@@ -21,12 +21,12 @@ public:
 	 * Returns true if a value was successfully written to the out parameter, false otherwise.
 	 */
 	bool tryPop(type& out){
-		std::lock_guard<std::mutex> lock {m_mutex};
-		if (m_queue.empty() || !m_valid) {
+		std::scoped_lock lock {_mutex};
+		if (_queue.empty() || !_valid) {
 			return false;
 		}
-		out = std::move(m_queue.front());
-		m_queue.pop();
+		out = std::move(_queue.front());
+		_queue.pop();
 		return true;
 	}
 
@@ -36,42 +36,42 @@ public:
 	 * Returns true if a value was successfully written to the out parameter, false otherwise.
 	 */
 	bool waitPop(type& out) {
-		std::unique_lock<std::mutex> lock {m_mutex};
-		m_condition.wait(lock, [this]() {
-			return !m_queue.empty() || !m_valid;
+		std::unique_lock<std::mutex> lock {_mutex};
+		_condition.wait(lock, [this]() {
+			return !_queue.empty() || !_valid;
 		});
 		/*
 		 * Using the condition in the predicate ensures that spurious wakeups with a valid
 		 * but empty queue will not proceed, so only need to check for validity before proceeding.
 		 */
-		if (!m_valid) {
+		if (!_valid) {
 			return false;
 		}
-		out = std::move(m_queue.front());
-		m_queue.pop();
+		out = std::move(_queue.front());
+		_queue.pop();
 		return true;
 	}
 
 	/// Push a new value onto the queue.
 	void push(type value) {
-		std::lock_guard<std::mutex> lock {m_mutex};
-		m_queue.push(std::move(value));
-		m_condition.notify_one();
+		std::scoped_lock lock {_mutex};
+		_queue.push(std::move(value));
+		_condition.notify_one();
 	}
 
 	/// Check whether or not the queue is empty.
 	bool empty() const {
-		std::lock_guard<std::mutex> lock {m_mutex};
-		return m_queue.empty();
+		std::scoped_lock lock {_mutex};
+		return _queue.empty();
 	}
 
 	/// Clear all items from the queue.
 	void clear() {
-		std::lock_guard<std::mutex> lock {m_mutex};
-		while (!m_queue.empty()) {
-			m_queue.pop();
+		std::scoped_lock lock {_mutex};
+		while (!_queue.empty()) {
+			_queue.pop();
 		}
-		m_condition.notify_all();
+		_condition.notify_all();
 	}
 
 	/**
@@ -82,20 +82,20 @@ public:
 	 * to continue using a queue after this method has been called.
 	 */
 	void invalidate() {
-		std::lock_guard<std::mutex> lock {m_mutex};
-		m_valid = false;
-		m_condition.notify_all();
+		std::scoped_lock lock {_mutex};
+		_valid = false;
+		_condition.notify_all();
 	}
 
 	/// Returns whether or not this queue is valid.
 	bool isValid() const {
-		std::lock_guard<std::mutex> lock {m_mutex};
-		return m_valid;
+		std::scoped_lock lock {_mutex};
+		return _valid;
 	}
 
 private:
-	std::atomic_bool m_valid {true};
-	mutable std::mutex m_mutex;
-	std::queue<type> m_queue;
-	std::condition_variable m_condition;
+	std::atomic_bool _valid {true};
+	mutable std::mutex _mutex;
+	std::queue<type> _queue;
+	std::condition_variable _condition;
 };

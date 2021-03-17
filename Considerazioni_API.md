@@ -1,6 +1,6 @@
 # Modellazione API Scraf
 
-Per ottenere i voti di uno studente si potrebbe fare in due modi: 
+Per ottenere i voti di uno studente si potrebbe fare in due modi:
 
 - `GET api.scraf/students/{studentId}/marks/{subjectId}`
 - `GET api.scraf/students/{studentId}/subjects/{subjectId}/marks`
@@ -23,3 +23,7 @@ In poche parole, bisogna far sì che ci siano poche gerarchie ma molto profonde,
 - eccetera
 
 Questo tipo di modellazione sembra quindi molto efficace per quanto riguarda l'ottenere informazioni relative a singole entità (voto di uno studente), ma per quanto riguarda ottenere informazioni aggregate per fare, ad esempio, grafici sull'andamento generale degli studenti di una classe di un coordinatore di classe? Bella domandina.
+
+## Relazione studenti-insegnanti
+
+Ogni studente ha più insegnanti, e ogni insegnante ha più studenti. Per definire questa situazione nell'API ho fatto che sotto a /students/{studentId} è presente /teachers, sulla quale si può fare una GET per ottenere la lista di insegnanti che insegnano a uno studente, e uguale per gli insegnanti. Il problema però è: come aggiungo/rimuovo insegnanti da uno studente? L'unica soluzione che mi è venuta in mente è quella di poter fare una POST su /teachers contenente solo il {teacherId} per inserire quell'insegnante nella lista di insegnanti di uno studente, e una DELETE su /teachers/{teacherId} per rimuoverlo. Per ottenere i dettagli di un insegnante o di uno studente è comunque sempre necessario fare una GET su /students/{studentId} o /teacher/{teacherId}.
