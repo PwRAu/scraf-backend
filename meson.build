@@ -90,7 +90,7 @@ if get_option('scraf_build_tests')
 			sources: [
 				'scraf-backend/main.test.cpp',
 				'scraf-backend/scraf.test.cpp',
-				'scraf-backend/scraf_curl.cpp',
+				#'scraf-backend/scraf_curl.cpp',
 				odb_generator.process(
 					'scraf-backend/student.hpp',
 					'scraf-backend/school_class.hpp',
