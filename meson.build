@@ -62,8 +62,8 @@ src = ['scraf-backend/main.cpp']
 odb_src = odb_generator.process(
 	'scraf-backend/student.hpp',
 	'scraf-backend/school_class.hpp',
-	'scraf-backend/school.hpp',
-	'scraf-backend/teacher.hpp'
+	'scraf-backend/school.hpp'
+#	'scraf-backend/teacher.hpp'
 )
 
 scraf_dependencies = [
