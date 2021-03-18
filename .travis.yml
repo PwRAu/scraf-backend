@@ -7,6 +7,8 @@ compiler:
   - gcc
   - clang
 
+dist: focal
+
 arch:
   - amd64
   - arm64
@@ -28,8 +30,9 @@ addons:
     update: true
 
 env:
-  - PATH: $HOME/.local/bin:$PATH
-  - CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
+  global:
+    - PATH: $HOME/.local/bin:$PATH
+    - CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
 install:
   - sudo pip3 install -qqq --ignore-installed meson
