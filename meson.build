@@ -62,8 +62,8 @@ src = ['scraf-backend/main.cpp']
 odb_src = odb_generator.process(
 	'scraf-backend/student.hpp',
 	'scraf-backend/school_class.hpp',
-	'scraf-backend/school.hpp'
-#	'scraf-backend/teacher.hpp'
+	'scraf-backend/school.hpp',
+	'scraf-backend/teacher.hpp'
 )
 
 scraf_dependencies = [
@@ -94,14 +94,14 @@ if get_option('scraf_build_tests')
 			sources: [
 				'scraf-backend/main.test.cpp',
 				'scraf-backend/scraf.test.cpp',
-				#'scraf-backend/scraf_curl.cpp',
+				'scraf-backend/scraf_curl.cpp',
 				odb_src
 			],
 			include_directories: 'scraf-backend',
 			dependencies: [
 				scraf_dependencies,
-				dependency('gtest')
-				#dependency('libcurl')
+				dependency('gtest'),
+				dependency('libcurl')
 			],
 			cpp_args: cpp_args
 		)
