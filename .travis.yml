@@ -1,0 +1,72 @@
+language: cpp
+
+git:
+  quiet: true
+
+compiler:
+  - gcc
+  - clang
+
+arch:
+  - amd64
+  - arm64
+  - ppc64le
+  - s390x
+
+addons:
+  apt:
+    packages:
+      - ninja-build
+      - libsimdjson-dev
+      - nlohmann-json3-dev
+      - libsodium-dev
+      - gcc-10-plugin-dev
+      - libgtest-dev
+      - libcurl4-openssl-dev
+      - lcov
+      - python3-pip
+    update: true
+
+env:
+  - PATH: $HOME/.local/bin:$PATH
+  - CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
+
+install:
+  - sudo pip3 install -qqq --ignore-installed meson
+  - mkdir build2-build
+    cd build2-build
+    curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
+    sh build2-install-0.13.0.sh --yes --no-check --trust yes
+    cd ..
+  - mkdir odb-build
+    cd odb-build
+    bpkg --quiet create --directory odb-$CC-$($CXX -dumpversion) cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+    cd odb-$CC-$($CXX -dumpversion)
+    bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
+    bpkg --quiet test odb
+    bpkg --quiet install odb
+    cd ..
+    bpkg --quiet create --directory $CC-$($CXX -dumpversion) cc config.cxx=CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+    cd $CC-$($CXX -dumpversion)
+    bpkg --quiet add https://pkg.cppget.org/1/beta
+    bpkg --quiet --trust-yes fetch
+    bpkg --quiet build --yes libodb
+    bpkg --quiet build --yes libodb-pgsql
+    bpkg --quiet install --all --recursive
+    cd ..
+
+before_script:
+  - meson setup build_release --buildtype=release -Dscraf_build_tests=true
+  - meson setup build_debug --buildtype=debug -Dscraf_build_tests=true -Db_coverage=true
+
+script:
+  - meson compile -C build_release
+  - meson test -C build_release || (cat build_release/meson-logs/testlog.txt && false)
+  - meson compile -C build_debug
+  - meson test -C build_debug || (cat build_debug/meson-logs/testlog.txt && false)
+
+after_success:
+  - lcov --directory . --capture --output-file coverage.info
+  - lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*/tests/*' '*/subprojects/*' --output-file coverage.info
+  - lcov --list coverage.info
+  - bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
