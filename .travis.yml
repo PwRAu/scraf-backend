@@ -36,26 +36,26 @@ env:
 
 install:
   - sudo pip3 install -qqq --ignore-installed meson
-  - mkdir build2-build
-    cd build2-build
-    curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-    sh build2-install-0.13.0.sh --yes --no-check --trust yes
+  - mkdir build2-build &&
+    cd build2-build &&
+    curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh &&
+    sh build2-install-0.13.0.sh --yes --no-check --trust yes &&
     cd ..
-  - mkdir odb-build
-    cd odb-build
-    bpkg --quiet create --directory odb-$CC-$($CXX -dumpversion) cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
-    cd odb-$CC-$($CXX -dumpversion)
-    bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
-    bpkg --quiet test odb
-    bpkg --quiet install odb
-    cd ..
-    bpkg --quiet create --directory $CC-$($CXX -dumpversion) cc config.cxx=CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
-    cd $CC-$($CXX -dumpversion)
-    bpkg --quiet add https://pkg.cppget.org/1/beta
-    bpkg --quiet --trust-yes fetch
-    bpkg --quiet build --yes libodb
-    bpkg --quiet build --yes libodb-pgsql
-    bpkg --quiet install --all --recursive
+  - mkdir odb-build &&
+    cd odb-build &&
+    bpkg --quiet create --directory odb-$CC-$($CXX -dumpversion) cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo &&
+    cd odb-$CC-$($CXX -dumpversion) &&
+    bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta &&
+    bpkg --quiet test odb &&
+    bpkg --quiet install odb &&
+    cd .. &&
+    bpkg --quiet create --directory $CC-$($CXX -dumpversion) cc config.cxx=CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo &&
+    cd $CC-$($CXX -dumpversion) &&
+    bpkg --quiet add https://pkg.cppget.org/1/beta &&
+    bpkg --quiet --trust-yes fetch &&
+    bpkg --quiet build --yes libodb &&
+    bpkg --quiet build --yes libodb-pgsql &&
+    bpkg --quiet install --all --recursive &&
     cd ..
 
 before_script:
