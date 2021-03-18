@@ -3,9 +3,9 @@ language: cpp
 git:
   quiet: true
 
-compiler:
-  - gcc
-  - clang
+#compiler:
+#  - gcc
+#  - clang
 
 dist: focal
 
@@ -33,6 +33,35 @@ env:
   global:
     - PATH: $HOME/.local/bin:$PATH
     - CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
+
+matrix:
+  include:
+    - os: linux
+      addons:
+        apt:
+          packages:
+            - g++-10
+      env:
+         - MATRIX_EVAL: CC=gcc-10 && CXX=g++-10
+
+    - os: linux
+      addons:
+        apt:
+          packages:
+            - clang-10
+      env:
+        - MATRIX_EVAL: CC=clang-10 && CXX=clang++-10
+
+    - os: linux
+      addons:
+        apt:
+          packages:
+            - lld-10
+      env:
+        - MATRIX_EVAL: CC_LD=lld-10 && CXX=lld-10
+
+before_install:
+  - eval "${MATRIX_EVAL}"
 
 install:
   - sudo pip3 install -qqq --ignore-installed meson
