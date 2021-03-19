@@ -31,7 +31,6 @@ addons:
 
 env:
   global:
-    - PATH: $HOME/.local/bin:$PATH
     - CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
 matrix:
@@ -49,24 +48,16 @@ matrix:
         apt:
           packages:
             - clang-10
-      env:
-        - MATRIX_EVAL: CC=clang-10 && CXX=clang++-10
-
-    - os: linux
-      addons:
-        apt:
-          packages:
             - lld-10
       env:
-        - MATRIX_EVAL: CC_LD=lld-10 && CXX=lld-10
+        - MATRIX_EVAL: CC=clang-10 && CXX=clang++-10 && CC_LD=lld-10 && CXX_LD=lld-10
 
 before_install:
   - eval "${MATRIX_EVAL}"
 
 install:
   - sudo pip3 install -qqq --ignore-installed meson
-  - mkdir build2-build &&
-    cd build2-build &&
+  - mkdir build2-build && cd build2-build &&
     curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh &&
     sh build2-install-0.13.0.sh --yes --no-check --trust yes &&
     cd ..
@@ -78,7 +69,7 @@ install:
     bpkg --quiet test odb &&
     bpkg --quiet install odb &&
     cd .. &&
-    bpkg --quiet create --directory $CC-$($CXX -dumpversion) cc config.cxx=CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo &&
+    bpkg --quiet create --directory $CC-$($CXX -dumpversion) cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo &&
     cd $CC-$($CXX -dumpversion) &&
     bpkg --quiet add https://pkg.cppget.org/1/beta &&
     bpkg --quiet --trust-yes fetch &&
