@@ -19,7 +19,7 @@ addons:
   apt:
     packages:
       - ninja-build
-      - libsimdjson-dev
+#      - libsimdjson-dev
       - nlohmann-json3-dev
       - libsodium-dev
       - gcc-10-plugin-dev
