@@ -2,34 +2,11 @@ language: cpp
 
 git:
   quiet: true
+  depth: 1
 
 os: linux
 
 dist: focal
-
-#arch:
-#  - amd64
-#  - arm64
-#  - ppc64le
-#  - s390x
-
-#compiler:
-#  - gcc
-#  - clang
-
-#addons:
-#  apt:
-#    packages:
-#      - ninja-build
-##      - libsimdjson-dev
-#      - nlohmann-json3-dev
-#      - libsodium-dev
-#      - gcc-10-plugin-dev
-#      - libgtest-dev
-#      - libcurl4-openssl-dev
-#      - lcov
-#      - python3-pip
-#    update: true
 
 env:
   global:
@@ -46,26 +23,21 @@ _apt_packages: &_apt_packages
   - lcov
   - python3-pip
 
-#_env_clang_10_lld: &_env_clang_10_lld
-#  - CC: clang-10
-#  - CXX: clang++-10
-#  - CC_LD: lld-10
-#  - CXX_LD: lld-10
-#
-#_env_gcc_10: &_env_gcc_10
-#  - CC: gcc-10
-#  - CXX: g++-10
+_env_clang_10_lld: &_env_clang_10_lld
+  - CC: clang-10
+  - CXX: clang++-10
+  - CC_LD: lld-10
+  - CXX_LD: lld-10
+
+_env_gcc_10: &_env_gcc_10
+  - CC: gcc-10
+  - CXX: g++-10
 
 jobs:
   include:
-  - arch:
-      - amd64
-      - arm64
-      - ppc64le
-      - s390x
-    env:
-      - CC: gcc-10
-      - CXX: g++-10
+  - name: GCC 10, amd64
+    arch: amd64
+    env: *_env_gcc_10
     addons:
       apt:
         packages:
@@ -73,16 +45,72 @@ jobs:
           - g++-10
         update: true
 
-  - arch:
-      - amd64
-      - arm64
-      - ppc64le
-      - s390x
-    env:
-      - CC: clang-10
-      - CXX: clang++-10
-      - CC_LD: lld-10
-      - CXX_LD: lld-10
+  - name: Clang 10, LLD, amd64
+    arch: amd64
+    env: *_env_clang_10_lld
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - clang-10
+          - lld-10
+        update: true
+
+  - name: GCC 10, arm64
+    arch: arm64
+    env: *_env_gcc_10
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - g++-10
+        update: true
+
+  - name: Clang 10, LLD, arm64
+    arch: arm64
+    env: *_env_clang_10_lld
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - clang-10
+          - lld-10
+        update: true
+
+  - name: GCC 10, ppc64le
+    arch: ppc64le
+    env: *_env_gcc_10
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - g++-10
+        update: true
+
+  - name: Clang 10, LLD, ppc64le
+    arch: ppc64le
+    env: *_env_clang_10_lld
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - clang-10
+          - lld-10
+        update: true
+
+  - name: GCC 10, s390x
+    arch: s390x
+    env: *_env_gcc_10
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - g++-10
+        update: true
+
+  - name: Clang 10, LLD, s390x
+    arch: s390x
+    env: *_env_clang_10_lld
     addons:
       apt:
         packages:
