@@ -17,44 +17,79 @@ arch:
 #  - gcc
 #  - clang
 
-addons:
-  apt:
-    packages:
-      - ninja-build
-#      - libsimdjson-dev
-      - nlohmann-json3-dev
-      - libsodium-dev
-      - gcc-10-plugin-dev
-      - libgtest-dev
-      - libcurl4-openssl-dev
-      - lcov
-      - python3-pip
-    update: true
+#addons:
+#  apt:
+#    packages:
+#      - ninja-build
+##      - libsimdjson-dev
+#      - nlohmann-json3-dev
+#      - libsodium-dev
+#      - gcc-10-plugin-dev
+#      - libgtest-dev
+#      - libcurl4-openssl-dev
+#      - lcov
+#      - python3-pip
+#    update: true
 
 env:
   global:
     - CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
+_apt_packages: &_apt_packages
+  - ninja-build
+  # libsimdjson-dev
+  - nlohmann-json3-dev
+  - libsodium-dev
+  - gcc-10-plugin-dev
+  - libgtest-dev
+  - libcurl4-openssl-dev
+  - lcov
+  - python3-pip
+
+#_env_clang_10_lld: &_env_clang_10_lld
+#  - CC: clang-10
+#  - CXX: clang++-10
+#  - CC_LD: lld-10
+#  - CXX_LD: lld-10
+#
+#_env_gcc_10: &_env_gcc_10
+#  - CC: gcc-10
+#  - CXX: g++-10
+
 jobs:
   include:
-      addons:
-        apt:
-          packages:
-            - g++-10
-      env:
-         - CC: gcc-10
-         - CXX: g++-10
+  - arch:
+      - amd64
+      - arm64
+      - ppc64le
+      - s390x
+    env:
+      - CC: gcc-10
+      - CXX: g++-10
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - g++-10
+        update: true
 
-      addons:
-        apt:
-          packages:
-            - clang-10
-            - lld-10
-      env:
-        - CC: clang-10
-        - CXX: clang++-10
-        - CC_LD: lld-10
-        - CXX_LD: lld-10
+  - arch:
+      - amd64
+      - arm64
+      - ppc64le
+      - s390x
+    env:
+      - CC: clang-10
+      - CXX: clang++-10
+      - CC_LD: lld-10
+      - CXX_LD: lld-10
+    addons:
+      apt:
+        packages:
+          - *_apt_packages
+          - clang-10
+          - lld-10
+        update: true
 
 install:
   - sudo pip3 install -qqq --ignore-installed meson
@@ -64,7 +99,7 @@ install:
     cd ..
   - mkdir odb-build &&
     cd odb-build &&
-    bpkg --quiet --jobs 2 create --directory odb-$CC-$($CXX -dumpversion) cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo &&
+    bpkg --quiet --jobs 2 create --directory odb-gcc-10 cc config.cxx=g++-10 config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo &&
     cd odb-$CC-$($CXX -dumpversion) &&
     bpkg --quiet --jobs 2 --trust-yes build --yes odb@https://pkg.cppget.org/1/beta &&
     bpkg --quiet --jobs 2 test odb &&
