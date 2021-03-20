@@ -128,13 +128,13 @@ install:
   - mkdir odb-build &&
     cd odb-build &&
     bpkg --quiet --jobs 2 create --directory odb-gcc-10 cc config.cxx=g++-10 config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo &&
-    cd odb-$CC-$($CXX -dumpversion) &&
+    cd odb-gcc-10 &&
     bpkg --quiet --jobs 2 --trust-yes build --yes odb@https://pkg.cppget.org/1/beta &&
     bpkg --quiet --jobs 2 test odb &&
     bpkg --quiet --jobs 2 install odb &&
     cd .. &&
-    bpkg --quiet --jobs 2 create --directory $CC-$($CXX -dumpversion) cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo &&
-    cd $CC-$($CXX -dumpversion) &&
+    bpkg --quiet --jobs 2 create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo &&
+    cd $CC &&
     bpkg --quiet --jobs 2 add https://pkg.cppget.org/1/beta &&
     bpkg --quiet --jobs 2 --trust-yes fetch &&
     bpkg --quiet --jobs 2 build --yes libodb &&
