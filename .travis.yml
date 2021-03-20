@@ -7,11 +7,11 @@ os: linux
 
 dist: focal
 
-arch:
-  - amd64
-  - arm64
-  - ppc64le
-  - s390x
+#arch:
+#  - amd64
+#  - arm64
+#  - ppc64le
+#  - s390x
 
 #compiler:
 #  - gcc
