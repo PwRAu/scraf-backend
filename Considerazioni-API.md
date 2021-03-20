@@ -33,3 +33,37 @@ Ok, forse questo approccio non è proprio tanta roba... Credo vada un po' contro
 
 O forse no... Bah, sì, credo che l'approccio precedente possa funzionare, quindi credo userò quello.
 
+## Interdipendenze delle risorse
+
+Risorse da sistemare:
+
+- [x] Studente
+- [x] Insegnante
+- [x] Scuola
+- [x] Voto
+- [x] Classe
+- [x] Materia
+
+Ogni scuola ha la sua lista di materie, non ha senso che due scuole condividano la stessa materia. Ogni materia è fortemente dipendente da una scuola. Quindi non avrò una risorsa /subjects ma bensì /school/{schoolId}/subjects. Stessa cosa per le classi.
+
+Per gli studenti invece? Beh, è diverso, perché uno prima o poi la scuola la cambia (da superiori a università, per esempio).
+
+I voti invece sono dipendenti dalle materie, perché ogni voto è di una e una sola materia. Ma è anche di uno studente soltanto...
+
+Allora, devo capire che cosa deve fare Scraf per poter capire come organizzare l'API.
+
+Prima di tutto, grafici. Quindi andamento di uno studente in tutte le materie, andamento generale di una sola materia, andamento generale della classe, andamento degli alunni di un insegnante, dell'istituto, di una materia nel contesto dell'intero istituto, e di una materia nel contesto globale. Aspe, quest'ultima cosa non ha senso, o comunque è difficile da fare, perché ogni materia è legata a un singolo istituto (e non è possibile fare altrimenti, dato che ogni scuola chiama le materie un po' come vuole).
+
+Quindi dato che i voti sono un tipo di dato così fondamentale e legato a così tante entità diverse credo sia opportuno renderlo "globale", ovvero creare una risorsa /marks. Anzi no, vanno lasciati sotto a una materia, sennò diventa un casino. Per fare la media di tutti i voti di uno studente mi vado a prendere tutti le sue materie, tutti i voti delle varie materie e faccio la media, e così per tutto.
+
+Non ha senso rendere accessibili le materie da uno studente, in quanto ogni studente di una determinata classe ha le stesse materie degli altri; ha più senso andare a cercare le materie di uno studente nella lista di materie di una determinata classe. È importante ricordare che le materie però non sono specifiche di una classe ma di un istituto, e una stessa materia può essere condivisa tra più classi. Stessa cosa per gli insegnanti; nonostante un insegnante possa appartenere a più classi, ottenere una lista delle materie seguirebbe lo stesso approccio.
+
+Mi sono accorto che avere teachers sotto a /students/{studentId} non ha molto senso, in quanto un insegnante non è assegnato a un singolo studente ma a una intera classe, quindi per ottenere la lista di insegnanti di uno studente è meglio ottenere la classe dello studente e da lì ottenere la lista degli insegnanti assegnati alla classe.
+
+Adesso però c'è un altro problemino. Se da /students/{studentId} non posso accedere alle materie perché posso andarmele a prendere dalla classe, come faccio ad ottenere una lista dei suoi voti? Non posso (credo), quindi devo per forza avere /subjects/{subjectId}/marks sotto a /students/{studentId} (e /teachers).
+
+In /students la risorsa subjects può essere di sola lettura (solo GET), mentre in /teachers no, in quanto un insegnante 
+
+## Struttura API
+
+Prendiamo come esempio /students. /students rappresenta la risorsa degli studenti. È una risorsa "libera" (non dipende da altri). Facendo una GET su di essa è possibile effettuare una ricerca degli studenti in base al nome, ottenendo un id, facendo una POST può essere creato un nuovo studente. Per ottenere dei dettagli su un determinato studente basta fare una GET su /students/{studentId}, per aggiornarne qualche campo una PATCH e per eliminarlo definitivamente una DELETE. Per ottenere una lista dei suoi insegnanti si può fare una GET su /students/{studentId}/teachers, che restituisce una lista di id. Non è possibile ottenere i dettagli di un insegnante da /students/{studentId}/teachers/{teachersId}, ma è necessario prendere l'id ottenuto dalla GET precedente e fare una GET sul percorso della risorsa "originale", che in questo caso è /teachers/{teacherId}. Oltre a poter ottenere una lista di insegnanti di un determinato studente è possibile aggiungere un insegnante a quella lista facendo una POST con l'id dell'insegnante da aggiungere su /students/{studentId}/teachers, ed è anche possibile eliminare un determinato insegnante dalla lista con una DELETE su /students/{studentId}/teachers/{teacherId}. Utilizzare questo approccio è però sconsigliato, ed è meglio ottenere una lista degli insegnanti 

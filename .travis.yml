@@ -18,6 +18,7 @@ _apt_packages: &_apt_packages
   - nlohmann-json3-dev
   - libsodium-dev
   - gcc-10-plugin-dev
+  - g++-10
   - libgtest-dev
   - libcurl4-openssl-dev
   - lcov
@@ -121,14 +122,15 @@ jobs:
 
 install:
   - sudo pip3 install -qqq --ignore-installed meson
-  - mkdir build2-build && cd build2-build
+  - mkdir build2-build
+  - cd build2-build
   - curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-  - sh build2-install-0.13.0.sh --yes --jobs 2 --no-check --trust yes
+  - sh build2-install-0.13.0.sh --yes --cxx $CXX --jobs 2 --no-check --trust yes
   - cd ..
   - mkdir odb-build
   - cd odb-build
-  - bpkg --quiet --jobs 2 create --directory odb-$CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
-  - cd odb-$CC
+  - bpkg --quiet --jobs 2 create --directory odb-gcc-10 cc config.cxx=g++-10 config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+  - cd odb-gcc-10
   - travis_wait bpkg --quiet --jobs 2 --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
   - bpkg --quiet --jobs 2 test odb
   - bpkg --quiet --jobs 2 install odb
@@ -140,6 +142,7 @@ install:
   - travis_wait bpkg --quiet --jobs 2 build --yes libodb
   - travis_wait bpkg --quiet --jobs 2 build --yes libodb-pgsql
   - bpkg --quiet --jobs 2 install --all --recursive
+  - cd ..
   - cd ..
 
 before_script:

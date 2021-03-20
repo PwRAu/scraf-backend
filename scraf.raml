@@ -13,19 +13,9 @@ version: v1
     delete:
     /subjects:
       get:
-      post:
       /{subjectId}:
-        delete:
         /marks:
           get:
-          post:
-          /{markId}:
-            delete:
-    /teachers:
-      get:
-      post:
-      /{teacherId}:
-        delete:
 
 /teachers:
   get:
@@ -41,38 +31,47 @@ version: v1
         delete:
         /marks:
           get:
+
+/school:
+  get:
+  post:
+  /{schoolId}:
+    get:
+    patch:
+    delete:
+    /subjects:
+      get:
+      post:
+      /{subjectId}:
+        get:
+        patch:
+        delete:
+        /marks:
+          get:
           post:
           /{markId}:
+            get:
+            patch:
             delete:
-    /students:
+    /classes:
       get:
       post:
-      /{studentId}:
+      /{classId}:
+        get:
+        patch:
         delete:
-
-/classes:
-  get:
-  post:
-  /{classId}:
-    get:
-    patch:
-    delete:
-    /students:
-      get:
-      post:
-
-/marks:
-  get:
-  post:
-  /{markId}:
-    get:
-    patch:
-    delete:
-
-/subjects:
-  get:
-  post:
-  /{subjectId}:
+        /subjects:
+          get:
+          post:
+          /{subjectId}:
+            delete:
+  /students:
     get:
     post:
-    delete:
+    /{studentId}:
+      delete:
+  /teachers:
+    get:
+    post:
+    /{teacherId}:
+      delete:
