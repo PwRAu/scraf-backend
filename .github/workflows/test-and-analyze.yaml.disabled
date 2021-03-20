@@ -116,22 +116,22 @@ jobs:
 
     - name: Memory sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_memory_sanitizer --buildtype=debug --b_sanitize=memory -Dscraf_build_tests=false
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=false
         meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Address sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_address_sanitizer --buildtype=debug --b_sanitize=address -Dscraf_build_tests=false
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=false
         meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Undefined behavior sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_behavior_sanitizer --buildtype=debug --b_sanitize=behavior -Dscraf_build_tests=false
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_behavior_sanitizer --buildtype=debug -Db_sanitize=behavior -Dscraf_build_tests=false
         meson test -C build_behavior_sanitizer || (cat build_behavior_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Thread sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_thread_sanitizer --buildtype=debug --b_sanitize=thread -Dscraf_build_tests=false
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=false
         meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Perform CodeQL Analysis

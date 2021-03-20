@@ -46,7 +46,7 @@ TEST(CreateStudent, MailPasswordNameSurname) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		std::array{"Content-Type: application/json"sv},
+		"Content-Type: application/json",
 		json{
 			{"mail", "andrea@pappacoda.it"},
 			{"password", "coconutnut1968"},
@@ -78,7 +78,7 @@ TEST(CreateStudent, MailPasswordNameWhithoutSurname) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		std::array{"Content-Type: application/json"sv},
+		"Content-Type: application/json",
 		json{
 			{"mail", "luca.lettini@libero.it"},
 			{"password", "tuamammma68"},
@@ -109,7 +109,7 @@ TEST(CreateStudent, PasswordNameSurnameWhithoutEmail) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		std::array{"Content-Type: application/json"sv},
+		"Content-Type: application/json",
 		json{
 			{"password", "ciaociao22"},
 			{"name", "Luca"},
@@ -141,7 +141,7 @@ TEST(CreateStudent, MailNameSurnameWhithoutPassword) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		std::array{"Content-Type: application/json"sv},
+		"Content-Type: application/json",
 		json{
 			{"mail", "lettilu22@gmail.com"},
 			{"name", "Marco"},
@@ -173,7 +173,7 @@ TEST(CreateStudent, MailPasswordSurnameWhithoutName) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		std::array{"Content-Type: application/json"sv},
+		"Content-Type: application/json",
 		json{
 			{"mail", "lucalettini54@gmail.com"},
 			{"password", "marcopolo22"},

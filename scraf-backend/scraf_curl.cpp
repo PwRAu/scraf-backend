@@ -35,6 +35,10 @@ void ScrafCurl::put(const std::string_view url, const std::string_view header, c
 	ScrafCurl::put(url, std::array{header}, request);
 }
 
+void ScrafCurl::patch(const std::string_view url, const std::string_view header, const std::string_view request) noexcept {
+	ScrafCurl::patch(url, std::array{header}, request);
+}
+
 [[nodiscard]] long ScrafCurl::getResponseCode() noexcept {
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &_responseCode);
 	return _responseCode;
