@@ -11,21 +11,7 @@ version: v1
     get:
     put:
     delete:
-    /subjects:
-      get:
-      post:
-      /{subjectId}:
-        delete:
-        /marks:
-          get:
-          post:
-          /{markId}:
-            delete:
-    /teachers:
-      get:
-      post:
-      /{teacherId}:
-        delete:
+
 /teachers:
   get:
   post:
@@ -33,21 +19,7 @@ version: v1
     get:
     put:
     delete:
-    /subjects:
-      get:
-      post:
-      /{subjectId}:
-        delete:
-        /marks:
-          get:
-          post:
-          /{markId}:
-            delete:
-    /students:
-      get:
-      post:
-      /{studentId}:
-        delete:
+
 /classes:
   get:
   post:
@@ -55,6 +27,19 @@ version: v1
     get:
     put:
     delete:
-    /students:
-      get:
-      post:
+
+/marks:
+  get:
+  post:
+  /{markId}:
+    get:
+    put:
+    delete:
+
+/subjects:
+  get:
+  post:
+  /{subjectId}:
+    get:
+    post:
+    delete:
