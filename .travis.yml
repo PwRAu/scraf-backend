@@ -123,7 +123,7 @@ install:
   - sudo pip3 install -qqq --ignore-installed meson
   - mkdir build2-build && cd build2-build
   - curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-  - travis_wait sh build2-install-0.13.0.sh --yes --jobs 2 --no-check --trust yes  >/dev/null 2>&1
+  - sh build2-install-0.13.0.sh --yes --jobs 2 --no-check --trust yes
   - cd ..
   - mkdir odb-build
   - cd odb-build
