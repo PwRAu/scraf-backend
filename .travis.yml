@@ -121,26 +121,26 @@ jobs:
 
 install:
   - sudo pip3 install -qqq --ignore-installed meson
-  - travis_wait (mkdir build2-build && cd build2-build &&
-    curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh &&
-    sh build2-install-0.13.0.sh --yes --jobs 2 --no-check --trust yes  >/dev/null 2>&1 &&
-    cd ..)
-  - travis_wait (mkdir odb-build &&
-    cd odb-build &&
-    bpkg --quiet --jobs 2 create --directory odb-$CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo &&
-    cd odb-$CC &&
-    bpkg --quiet --jobs 2 --trust-yes build --yes odb@https://pkg.cppget.org/1/beta &&
-    bpkg --quiet --jobs 2 test odb &&
-    bpkg --quiet --jobs 2 install odb &&
-    cd .. &&
-    bpkg --quiet --jobs 2 create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo &&
-    cd $CC &&
-    bpkg --quiet --jobs 2 add https://pkg.cppget.org/1/beta &&
-    bpkg --quiet --jobs 2 --trust-yes fetch &&
-    bpkg --quiet --jobs 2 build --yes libodb &&
-    bpkg --quiet --jobs 2 build --yes libodb-pgsql &&
-    bpkg --quiet --jobs 2 install --all --recursive &&
-    cd ..)
+  - mkdir build2-build && cd build2-build
+  - curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
+  - travis_wait sh build2-install-0.13.0.sh --yes --jobs 2 --no-check --trust yes  >/dev/null 2>&1
+  - cd ..
+  - mkdir odb-build
+  - cd odb-build
+  - bpkg --quiet --jobs 2 create --directory odb-$CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+  - cd odb-$CC
+  - travis_wait bpkg --quiet --jobs 2 --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
+  - bpkg --quiet --jobs 2 test odb
+  - bpkg --quiet --jobs 2 install odb
+  - cd ..
+  - bpkg --quiet --jobs 2 create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+  - cd $CC
+  - bpkg --quiet --jobs 2 add https://pkg.cppget.org/1/beta
+  - bpkg --quiet --jobs 2 --trust-yes fetch
+  - travis_wait bpkg --quiet --jobs 2 build --yes libodb
+  - travis_wait bpkg --quiet --jobs 2 build --yes libodb-pgsql
+  - bpkg --quiet --jobs 2 install --all --recursive
+  - cd ..
 
 before_script:
   - meson setup build_release --buildtype=release -Dscraf_build_tests=true

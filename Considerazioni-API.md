@@ -31,3 +31,5 @@ Ogni studente ha più insegnanti, e ogni insegnante ha più studenti. Per defini
 (Due giorni dopo)
 Ok, forse questo approccio non è proprio tanta roba... Credo vada un po' contro la filosofia REST, quindi credo farò in un altro modo. Per ottenere la lista degli studenti appartenenti a una classe dovrò fare una GET su /classes/{classId}, e otterrò un bel JSON pieno di roba, tra cui anche una lista di id degli studenti.
 
+O forse no... Bah, sì, credo che l'approccio precedente possa funzionare, quindi credo userò quello.
+
