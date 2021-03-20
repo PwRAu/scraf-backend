@@ -37,25 +37,25 @@ sudo apt install gcc-10-plugin-dev
 cd /directory/of/your/choice/where/you/ll/store/build/cache
 
 mkdir build2-build && cd build2-build
-curl -sSfO https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-sh build2-install-0.13.0.sh --yes --no-check --trust yes
+curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
+sh build2-install-0.13.0.sh --yes --trust yes --no-check
 
 cd /directory/of/your/choice/where/you/ll/store/build/cache
 
 mkdir odb-build && cd odb-build
-bpkg create --directory odb-gcc-10 cc config.cxx=g++ config.cc.coptions=-O3 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo --quiet
+bpkg --quiet create --directory odb-gcc-10 cc config.cxx=g++ config.c.std=gnu17 config.cxx.std=gnu++17 config.cc.coptions=-O3 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
 cd odb-gcc-10
-yes | bpkg build odb@https://pkg.cppget.org/1/beta --trust-yes --quiet
+bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
 bpkg test odb
-bpkg install odb --quiet
+bpkg --quiet install odb
 cd ..
-bpkg create --directory gcc-10 cc config.cxx=g++ config.cc.coptions=-O3 config.install.root=/usr/local config.install.sudo=sudo --quiet
+bpkg --quiet create --directory gcc-10 cc config.cxx=g++ config.c.std=gnu17 config.cxx.std=gnu++17 config.cc.coptions=-O3 config.install.root=/usr/local config.install.sudo=sudo
 cd gcc-10
-bpkg add https://pkg.cppget.org/1/beta --trust-yes --quiet
-bpkg fetch --trust-yes --quiet
-yes | bpkg build libodb --trust-yes --quiet
-yes | bpkg build libodb-pgsql --trust-yes --quiet
-bpkg install --all --recursive --quiet
+bpkg --quiet add https://pkg.cppget.org/1/beta
+bpkg --quiet --trust-yes fetch
+bpkg --quiet build --yes libodb
+bpkg --quiet build --yes libodb-pgsql
+bpkg --quiet install --all --recursive
 ```
 
 ##### GoogleTest
@@ -64,4 +64,27 @@ We use [GoogleTest](https://github.com/google/googletest) for unit testing. We c
 
 ##### JSON
 
-For parsing and serializing JSON we use [simdjson](https://github.com/simdjson/simdjson) and [nlohmann json](https://github.com/nlohmann/json) (also known as JSON for Modern C++ or the cool JSON library). On a Debian system, you can install them with `apt install libsimdjson-dev nlohmann-json3-dev`.
+For parsing and serializing JSON we use [simdjson](https://github.com/simdjson/simdjson) and [nlohmann json](https://github.com/nlohmann/json) (also known as JSON for Modern C++). On a Debian system, you can install them with `apt install libsimdjson-dev nlohmann-json3-dev`.
+
+### Building
+
+After you installed all the dependencies, you can build Scraf with Meson.
+
+First, clone the repository
+
+```sh
+git clone https://github.com/PwRAu/scraf-backend.git --recurse-submodules
+```
+
+Then configure the build directory
+
+```sh
+cd scraf-backend
+meson setup build --buildtype=release
+```
+
+And finally compile the executable
+
+```sh
+meson compile -C build
+```
