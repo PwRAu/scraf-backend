@@ -5,36 +5,21 @@ baseUri: https://scraf.pwrau.ml/api/{version}
 version: v1
 
 /students:
-  description: Students registered to Scraf
-  get:
-    description: Get a list of students based on their name
-    queryParameters:
-      name:
-        description: "Name of the student to search"
-        type: string
-        example: "Andrea Pa"
-        minLength: 3
-        required: true
-    responses:
-      200:
-        body:
-          application/json:
-            example: |
-              {
-                "students": [
-                  {
-                    "id": 107,
-                    "name": "Andrea",
-                    "surname": "Pappacoda"
-                  },
-                  {
-                    "id": 238,
-                    "name": "Paolo",
-                    "surname": "Andreoli"
-                  }
-                ]
-              }
-  post:
+  type: 
+    collection:
+      example-get-collection: |
+        {
+          "students": [
+            {
+              "id": 107,
+              "name": "Andrea Pappacoda"
+            },
+            {
+              "id": 238,
+              "name": "Paolo Andreoli"
+            }
+          ]
+        }
   /{studentId}:
     get:
     patch:
@@ -93,6 +78,10 @@ version: v1
           post:
           /{subjectId}:
             delete:
+        /students:
+          /{studentId}:
+        /teachers:
+          /{teacherId}:
   /students:
     get:
     post:
@@ -106,8 +95,41 @@ version: v1
 
 resourceTypes:
   collection:
+    description: <<resourcePathName>> registered to Scraf
     get:
+      description: Get a list of <<resourcePathName>> based on their name
+      queryParameters:
+        name:
+          description: "Name of the <<resourcePathName|!singularize>> to search"
+          type: string
+          minLength: 3
+          required: true
+      responses:
+        200:
+          body:
+            application/json:
+              type: search-result
+              example: <<example-get-collection>>
+        400:
+          body:
+            application/json:
     post:
+      description: Register a <<resourcePathName|!singularize>> and get its id
+      body:
+        application/json:
+          type: <<resourcePathName|!singularize>>
+      responses:
+        201:
+          body:
+            application/json:
+              type: id
+              example: |
+                {
+                  "id": 107
+                }
+        400:
+          body:
+            application/json:
   collection-item:
     get:
     patch:
@@ -119,3 +141,100 @@ resourceTypes:
     delete:
   sub-collection-read:
     get:
+
+types:
+  id: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "multipleOf": 1
+        }
+      }
+    }
+  search-result: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "multipleOf": 1
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  student: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "mail": {
+          "type": "string",
+          "format": "email",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "surname": {
+          "type": "string",
+          "required": false
+        }
+      }
+    }
+  teacher: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "mail": {
+          "type": "string",
+          "format": "email",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "surname": {
+          "type": "string",
+          "required": false
+        }
+      }
+    }
+  school: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }
+  class: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": true
+        },
+        "name": {
+          "type": "string",
+          "required": true
+        }
+      }
+    }

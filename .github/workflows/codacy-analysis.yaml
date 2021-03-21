@@ -18,8 +18,8 @@ on:
     - cron: '40 21 * * 5'
 
 jobs:
-  codacy-security-scan:
-    name: Codacy Security Scan
+  security-scan:
+    name: Security Scan
     runs-on: ubuntu-latest
     steps:
       # Checkout the repository to the GitHub Actions runner
@@ -48,8 +48,8 @@ jobs:
         with:
           sarif_file: results.sarif
 
-  codacy-clang-tidy:
-    name: Codacy Clang-Tidy
+  clang-tidy:
+    name: Clang-Tidy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

@@ -5,19 +5,20 @@ project(
 		'cpp_std=c++20',
 		'c_std=c17',
 		'b_ndebug=if-release',
-		'b_lto=true',
-		'warning_level=3'
+		'b_lto=true'
 	],
 	meson_version: '>=0.57.0'
 )
 
 compiler = meson.get_compiler('cpp')
 
+clang_warnings = []
 if compiler.get_id() == 'clang'
 	add_project_arguments(['-fuse-ld=lld', '-Wno-unused-command-line-argument'], language: 'cpp')
 	add_project_link_arguments('-fuse-ld=lld', language: 'cpp')
 	if get_option('debug')
-		add_project_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls', '-Weverything', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command'], language: 'cpp')
+		add_project_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls'], language: 'cpp')
+		clang_warnings = ['-Weverything', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command']
 	endif
 endif
 
@@ -45,13 +46,9 @@ odb_generator = generator(
 	]
 )
 
-cmake = import('cmake')
-
-pistache_options = cmake.subproject_options()
-pistache_options.add_cmake_defines({'BUILD_SHARED_LIBS': false, 'PISTACHE_INSTALL': false, 'PISTACHE_USE_SSL': true})
-
 simdjson_dep = dependency('simdjson', required: false)
 if not simdjson_dep.found()
+	cmake = import('cmake')
 	simdjson_options = cmake.subproject_options()
 	simdjson_options.add_cmake_defines({'SIMDJSON_JUST_LIBRARY': true, 'BUILD_SHARED_LIBS': false, 'SIMDJSON_BUILD_STATIC': true})
 	simdjson_dep = cmake.subproject('simdjson', options: simdjson_options).dependency('simdjson')
@@ -67,7 +64,7 @@ odb_src = odb_generator.process(
 )
 
 scraf_dependencies = [
-	cmake.subproject('pistache', options: pistache_options).dependency('pistache_static'),
+	dependency('pistache', default_options: ['warning_level=0']),
 	dependency('libodb', version: '>=2.5.0'),
 	dependency('libodb-pgsql', version: '>=2.5.0'),
 	simdjson_dep,
@@ -83,7 +80,7 @@ executable(
 	],
 	include_directories: 'scraf-backend',
 	dependencies: scraf_dependencies,
-	cpp_args: cpp_args
+	cpp_args: [cpp_args]
 )
 
 if get_option('scraf_build_tests')
