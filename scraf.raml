@@ -5,7 +5,35 @@ baseUri: https://scraf.pwrau.ml/api/{version}
 version: v1
 
 /students:
+  description: Students registered to Scraf
   get:
+    description: Get a list of students based on their name
+    queryParameters:
+      name:
+        description: "Name of the student to search"
+        type: string
+        example: "Andrea Pa"
+        minLength: 3
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: |
+              {
+                "students": [
+                  {
+                    "id": 107,
+                    "name": "Andrea",
+                    "surname": "Pappacoda"
+                  },
+                  {
+                    "id": 238,
+                    "name": "Paolo",
+                    "surname": "Andreoli"
+                  }
+                ]
+              }
   post:
   /{studentId}:
     get:
@@ -32,7 +60,7 @@ version: v1
         /marks:
           get:
 
-/school:
+/schools:
   get:
   post:
   /{schoolId}:
@@ -75,3 +103,19 @@ version: v1
     post:
     /{teacherId}:
       delete:
+
+resourceTypes:
+  collection:
+    get:
+    post:
+  collection-item:
+    get:
+    patch:
+    delete:
+  sub-collection:
+    get:
+    post:
+  sub-collection-item:
+    delete:
+  sub-collection-read:
+    get:

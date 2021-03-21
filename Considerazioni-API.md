@@ -37,12 +37,12 @@ O forse no... Bah, sì, credo che l'approccio precedente possa funzionare, quind
 
 Risorse da sistemare:
 
-- [x] Studente
-- [x] Insegnante
-- [x] Scuola
-- [x] Voto
-- [x] Classe
-- [x] Materia
+- Studente
+- Insegnante
+- Scuola
+- Voto
+- Classe
+- Materia
 
 Ogni scuola ha la sua lista di materie, non ha senso che due scuole condividano la stessa materia. Ogni materia è fortemente dipendente da una scuola. Quindi non avrò una risorsa /subjects ma bensì /school/{schoolId}/subjects. Stessa cosa per le classi.
 
@@ -62,7 +62,9 @@ Mi sono accorto che avere teachers sotto a /students/{studentId} non ha molto se
 
 Adesso però c'è un altro problemino. Se da /students/{studentId} non posso accedere alle materie perché posso andarmele a prendere dalla classe, come faccio ad ottenere una lista dei suoi voti? Non posso (credo), quindi devo per forza avere /subjects/{subjectId}/marks sotto a /students/{studentId} (e /teachers).
 
-In /students la risorsa subjects può essere di sola lettura (solo GET), mentre in /teachers no, in quanto un insegnante 
+In /students la risorsa subjects può essere di sola lettura (solo GET), mentre in /teachers no, in quanto un insegnante insegna in diverse classi, e le può cambiare.
+
+In /students non ho anche /{classId} in quanto è un po' inutile, dato che uno studente apparteiene a soltanto una classe. Ha senso avere delle sottorisorse soltanto quando ce ne possono essere diverse istanze (materie).
 
 ## Struttura API
 

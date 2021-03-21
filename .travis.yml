@@ -148,10 +148,10 @@ install:
 before_script:
   - meson setup build_release --buildtype=release -Dscraf_build_tests=true
   - meson setup build_debug --buildtype=debug -Dscraf_build_tests=true -Db_coverage=true
-  - meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=false
-  - meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=false
-  - meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=false
-  - meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=false
+  - meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true
+  - meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true
+  - meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=true
+  - meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
 
 script:
   - meson compile -C build_release --jobs 2
