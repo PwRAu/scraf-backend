@@ -126,8 +126,8 @@ jobs:
 
     - name: Undefined behavior sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_behavior_sanitizer --buildtype=debug -Db_sanitize=behavior -Dscraf_build_tests=false
-        meson test -C build_behavior_sanitizer || (cat build_behavior_sanitizer/meson-logs/testlog.txt && false)
+        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=false
+        meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Thread sanitizer
       run: |

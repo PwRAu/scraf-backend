@@ -33,7 +33,9 @@ public:
 		while (threads-- > 0) {
 			parserPool.push(std::make_unique<simdjson::dom::parser>());
 		}
+
 		Rest::Routes::Post(router, "/students", Rest::Routes::bind(&Scraf::createStudent, this));
+
 		endpoint.setHandler(router.handler());
 	}
 
@@ -55,7 +57,6 @@ public:
 
 private:
 	void createStudent(const Rest::Request& request, Http::ResponseWriter response) {
-		response.timeoutAfter(2s);
 		std::unique_ptr<simdjson::dom::parser> parser;
 		if (!parserPool.waitPop(&parser)) {
 			std::cerr << "Error: parserPool\n";
@@ -95,5 +96,5 @@ private:
 	Rest::Router router;
 	// Pool thread-safe di parser
 	ObjectPool<std::unique_ptr<simdjson::dom::parser>> parserPool;
-	bool off {false};
+	bool off {true};
 };
