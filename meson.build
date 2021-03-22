@@ -64,7 +64,7 @@ odb_src = odb_generator.process(
 )
 
 scraf_dependencies = [
-	dependency('pistache', default_options: ['warning_level=0']),
+	dependency('pistache', default_options: 'default_library=static'),
 	dependency('libodb', version: '>=2.5.0'),
 	dependency('libodb-pgsql', version: '>=2.5.0'),
 	simdjson_dep,
