@@ -125,7 +125,7 @@ install:
   - mkdir build2-build
   - cd build2-build
   - curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-  - sh build2-install-0.13.0.sh --yes --cxx $CXX --jobs 2 --no-check --trust yes
+  - sh build2-install-0.13.0.sh --yes --local --no-bdep --no-modules --cxx $CXX --jobs 2 --no-check --trust yes
   - cd ..
   - mkdir odb-build
   - cd odb-build
