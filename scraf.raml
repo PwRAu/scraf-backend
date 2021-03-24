@@ -92,6 +92,11 @@ resourceTypes:
         400:
           body:
             application/json:
+              type: message
+              example: |
+                {
+                  "message": "The query must be at least 3 characters long"
+                }
     post:
       description: Register a <<resourcePathName|!singularize>> and get its id
       body:
@@ -109,12 +114,51 @@ resourceTypes:
         400:
           body:
             application/json:
+              type: message
+              example: |
+                {
+                  "message": "The parameter \"paolo\" does not exist"
+                }
   collection-item:
     get:
+      description: Get details about a <<resourcePathName|!singularize>>
+      responses:
+        200:
+          body:
+            application/json:
+              type: <<resourcePathName|!singularize>>
     patch:
+      description: Change details about a <<resourcePathName|!singularize>>
+      responses:
+        200:
+        400:
+          body:
+            application/json:
+              type: message
+              example: |
+                {
+                  "message": "The parameter \"paolo\" does not exist"
+                }
     delete:
+      description: Delete a <<resourcePathName|!singularize>>
+      responses: 200
   sub-collection:
     get:
+      description: Get the list of <<resourcePathName>> of a particular entity
+        responses: 
+          200:
+            body:
+              application/json:
+                type: id-array
+                example: |
+                  [
+                    {
+                      "id": 107
+                    },
+                    {
+                      "id": 238
+                    }
+                  ]
     post:
   sub-collection-item:
     delete:
@@ -132,16 +176,32 @@ types:
         }
       }
     }
+  id-array: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "array",
+      "items": {
+        "type": object,
+        "properties": {
+          "id": {
+            "type": "integer"
+          }
+        }
+      }
+    }
   search-result: |
     {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer"
-        },
-        "name": {
-          "type": "string"
+      "type": "array",
+      "items": {
+        "type": object,
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          }
         }
       }
     }
@@ -151,6 +211,74 @@ types:
       "type": "object",
       "properties": {
         "message": {
+          "type": "string"
+        }
+      }
+    }
+  student-post: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "mail": {
+          "type": "string",
+          "format": "email"
+        },
+        "name": {
+          "type": "string"
+        },
+        "surname": {
+          "type": "string",
+          "required": false
+        }
+      }
+    }
+  teacher-post: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "mail": {
+          "type": "string",
+          "format": "email"
+        },
+        "name": {
+          "type": "string"
+        },
+        "surname": {
+          "type": "string"
+        }
+      }
+    }
+  school-post: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  class-post: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    }
+  subject-post: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "name": {
           "type": "string"
         }
       }
@@ -168,7 +296,14 @@ types:
           "type": "string"
         },
         "surname": {
-          "type": "string",
+          "type": "string"
+        },
+        "is_class_president": {
+          "type": "boolean",
+          "required": false
+        },
+        "is_school_president": {
+          "type": "boolean",
           "required": false
         }
       }
@@ -187,6 +322,14 @@ types:
         },
         "surname": {
           "type": "string"
+        },
+        "is_class_coordinator": {
+          "type": "boolean",
+          "required": false
+        },
+        "is_school_president": {
+          "type": "boolean",
+          "required": false
         }
       }
     }
@@ -195,9 +338,6 @@ types:
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",
       "properties": {
-        "code": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         }
@@ -210,7 +350,14 @@ types:
       "properties": {
         "name": {
           "type": "string"
-        },
+        }
+      }
+    }
+  subject: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
         "name": {
           "type": "string"
         }
