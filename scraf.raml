@@ -21,77 +21,56 @@ version: v1
           ]
         }
   /{studentId}:
-    get:
-    patch:
-    delete:
+    type: collection-item
     /subjects:
-      get:
+      type: sub-collection-read
       /{subjectId}:
         /marks:
-          get:
+          type: sub-collection-read
 
 /teachers:
-  get:
-  post:
+  type: collection
   /{teacherId}:
-    get:
-    patch:
-    delete:
+    type: collection-item
     /subjects:
-      get:
-      post:
+      type: sub-collection
       /{subjectId}:
-        delete:
+        type: sub-collection-item
         /marks:
-          get:
+          type: sub-collection-read
 
 /schools:
-  get:
-  post:
+  type: collection
   /{schoolId}:
-    get:
-    patch:
-    delete:
+    type: collection-item
     /subjects:
-      get:
-      post:
+      type: collection
       /{subjectId}:
-        get:
-        patch:
-        delete:
+        type: collection-item
         /marks:
-          get:
-          post:
+          type: collection
           /{markId}:
-            get:
-            patch:
-            delete:
+            type: collection-item
     /classes:
-      get:
-      post:
+      type: collection
       /{classId}:
-        get:
-        patch:
-        delete:
+        type: collection-item
         /subjects:
-          get:
-          post:
+          type: sub-collection
           /{subjectId}:
-            delete:
+            type: sub-collection-read
         /students:
           /{studentId}:
         /teachers:
           /{teacherId}:
   /students:
-    get:
-    post:
+    type: sub-collection
     /{studentId}:
-      delete:
+      type: sub-collection-item
   /teachers:
-    get:
-    post:
+    type: sub-collection
     /{teacherId}:
-      delete:
+      type: sub-collection-item
 
 resourceTypes:
   collection:
@@ -149,8 +128,7 @@ types:
       "type": "object",
       "properties": {
         "id": {
-          "type": "integer",
-          "multipleOf": 1
+          "type": "integer"
         }
       }
     }
@@ -160,10 +138,19 @@ types:
       "type": "object",
       "properties": {
         "id": {
-          "type": "integer",
-          "multipleOf": 1
+          "type": "integer"
         },
         "name": {
+          "type": "string"
+        }
+      }
+    }
+  message: |
+    {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "type": "object",
+      "properties": {
+        "message": {
           "type": "string"
         }
       }
@@ -175,12 +162,10 @@ types:
       "properties": {
         "mail": {
           "type": "string",
-          "format": "email",
-          "required": true
+          "format": "email"
         },
         "name": {
-          "type": "string",
-          "required": true
+          "type": "string"
         },
         "surname": {
           "type": "string",
@@ -195,16 +180,13 @@ types:
       "properties": {
         "mail": {
           "type": "string",
-          "format": "email",
-          "required": true
+          "format": "email"
         },
         "name": {
-          "type": "string",
-          "required": true
+          "type": "string"
         },
         "surname": {
-          "type": "string",
-          "required": false
+          "type": "string"
         }
       }
     }
@@ -214,12 +196,10 @@ types:
       "type": "object",
       "properties": {
         "code": {
-          "type": "string",
-          "required": true
+          "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": true
+          "type": "string"
         }
       }
     }
@@ -229,12 +209,10 @@ types:
       "type": "object",
       "properties": {
         "name": {
-          "type": "string",
-          "required": true
+          "type": "string"
         },
         "name": {
-          "type": "string",
-          "required": true
+          "type": "string"
         }
       }
     }

@@ -125,7 +125,7 @@ install:
   - mkdir build2-build
   - cd build2-build
   - curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-  - sh build2-install-0.13.0.sh --yes --local --no-bdep --no-modules --cxx $CXX --jobs 2 --no-check --trust yes
+  - sh build2-install-0.13.0.sh --yes --local --cxx $CXX --jobs 2 --no-check --trust yes
   - cd ..
   - mkdir odb-build
   - cd odb-build
@@ -154,11 +154,21 @@ before_script:
   - meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
 
 script:
+  - contains() {
+    string="$1"
+    substring="$2"
+    if test "${string#*$substring}" != "$string"
+    then
+        return 0
+    else
+        return 1
+    fi }
   - meson compile -C build_release --jobs 2
   - meson test -C build_release || (cat build_release/meson-logs/testlog.txt && false)
   - meson compile -C build_debug --jobs 2
   - meson test -C build_debug || (cat build_debug/meson-logs/testlog.txt && false)
-  - meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false)
+  # Memory sanitizer is only supported by Clang
+  - contains "$CC" "clang" && meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false)
   - meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && false)
   - meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && false)
   - meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && false)
