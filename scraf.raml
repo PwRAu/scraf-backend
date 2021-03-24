@@ -117,7 +117,7 @@ resourceTypes:
               type: message
               example: |
                 {
-                  "message": "The parameter \"paolo\" does not exist"
+                  "message": "The parameter "paolo" does not exist"
                 }
   collection-item:
     get:
@@ -137,28 +137,29 @@ resourceTypes:
               type: message
               example: |
                 {
-                  "message": "The parameter \"paolo\" does not exist"
+                  "message": "The parameter "paolo" does not exist"
                 }
     delete:
       description: Delete a <<resourcePathName|!singularize>>
-      responses: 200
+      responses:
+        200:
   sub-collection:
     get:
       description: Get the list of <<resourcePathName>> of a particular entity
-        responses: 
-          200:
-            body:
-              application/json:
-                type: id-array
-                example: |
-                  [
-                    {
-                      "id": 107
-                    },
-                    {
-                      "id": 238
-                    }
-                  ]
+      responses: 
+        200:
+          body:
+            application/json:
+              type: id-array
+              example: |
+                [
+                  {
+                    "id": 107
+                  },
+                  {
+                    "id": 238
+                  }
+                ]
     post:
   sub-collection-item:
     delete:
