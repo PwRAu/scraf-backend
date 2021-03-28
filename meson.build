@@ -50,7 +50,12 @@ simdjson_dep = dependency('simdjson', required: false)
 if not simdjson_dep.found()
 	cmake = import('cmake')
 	simdjson_options = cmake.subproject_options()
-	simdjson_options.add_cmake_defines({'SIMDJSON_JUST_LIBRARY': true, 'BUILD_SHARED_LIBS': false, 'SIMDJSON_BUILD_STATIC': true})
+	simdjson_options.add_cmake_defines({
+		'CMAKE_BUILD_TYPE': get_option('buildtype'),
+		'BUILD_SHARED_LIBS': false,
+		'SIMDJSON_JUST_LIBRARY': true,
+		'SIMDJSON_BUILD_STATIC': true
+	})
 	simdjson_dep = cmake.subproject('simdjson', options: simdjson_options).dependency('simdjson')
 endif
 
@@ -64,7 +69,7 @@ odb_src = odb_generator.process(
 )
 
 scraf_dependencies = [
-	dependency('pistache', default_options: 'default_library=static'),
+	dependency('pistache', default_options: ['default_library=static', 'cpp_args=' + compiler.get_supported_arguments('-w')[0]]),
 	dependency('libodb', version: '>=2.5.0'),
 	dependency('libodb-pgsql', version: '>=2.5.0'),
 	simdjson_dep,
@@ -80,27 +85,9 @@ executable(
 	],
 	include_directories: 'scraf-backend',
 	dependencies: scraf_dependencies,
-	cpp_args: [cpp_args]
+	cpp_args: cpp_args
 )
 
 if get_option('scraf_build_tests')
-	test(
-		'ScrafTest',
-		executable(
-			'ScrafTest',
-			sources: [
-				'scraf-backend/main.test.cpp',
-				'scraf-backend/scraf.test.cpp',
-				'scraf-backend/scraf_curl.cpp',
-				odb_src
-			],
-			include_directories: 'scraf-backend',
-			dependencies: [
-				scraf_dependencies,
-				dependency('gtest'),
-				dependency('libcurl')
-			],
-			cpp_args: cpp_args
-		)
-	)
+	subdir('tests')
 endif
