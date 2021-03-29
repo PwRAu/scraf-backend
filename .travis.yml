@@ -154,21 +154,13 @@ before_script:
   - meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
 
 script:
-  - contains() {
-    string="$1"
-    substring="$2"
-    if test "${string#*$substring}" != "$string"
-    then
-        return 0
-    else
-        return 1
-    fi }
+  - printf 'contains() {\nstring="$1"\nsubstring="$2"\nif test "${string#*$substring}" != "$string"\nthen\nreturn 0\nelse\nreturn 1\nfi\n}\n' > contains.sh && chmod +x contains.sh
   - meson compile -C build_release --jobs 2
   - meson test -C build_release || (cat build_release/meson-logs/testlog.txt && false)
   - meson compile -C build_debug --jobs 2
   - meson test -C build_debug || (cat build_debug/meson-logs/testlog.txt && false)
   # Memory sanitizer is only supported by Clang
-  - contains "$CC" "clang" && meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false)
+  - ./contains.sh "$CC" "clang" && (meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false))
   - meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && false)
   - meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && false)
   - meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && false)
