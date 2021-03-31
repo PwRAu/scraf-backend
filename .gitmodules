@@ -1,7 +1,6 @@
 [submodule "subprojects/simdjson"]
 	path = subprojects/simdjson
-	url = https://github.com/simdjson/simdjson
+	url = https://github.com/simdjson/simdjson.git
 [submodule "subprojects/pistache"]
 	path = subprojects/pistache
-	url = https://github.com/Tachi107/pistache
-	branch = meson
+	url = https://github.com/pistacheio/pistache.git

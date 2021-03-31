@@ -12,21 +12,17 @@ project(
 
 compiler = meson.get_compiler('cpp')
 
+cpp_args = compiler.get_supported_arguments(['-Wno-unknown-pragmas', '-Wno-comment'])
+
 clang_warnings = []
 if compiler.get_id() == 'clang'
 	add_project_arguments(['-fuse-ld=lld', '-Wno-unused-command-line-argument'], language: 'cpp')
 	add_project_link_arguments('-fuse-ld=lld', language: 'cpp')
 	if get_option('debug')
 		add_project_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls'], language: 'cpp')
-		clang_warnings = ['-Weverything', '-Wno-unused-parameter', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-shadow', '-Wno-documentation', '-Wno-documentation-unknown-command']
+		clang_warnings = ['-Weverything', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-documentation', '-Wno-documentation-unknown-command']
 	endif
 endif
-
-if not meson.is_cross_build()
-	add_project_arguments('-march=native', language: 'cpp')
-endif
-
-cpp_args = compiler.get_supported_arguments(['-Wno-unknown-pragmas', '-Wno-comment'])
 
 odb_generator = generator(
 	find_program('odb'),
@@ -69,7 +65,7 @@ odb_src = odb_generator.process(
 )
 
 scraf_dependencies = [
-	dependency('pistache', default_options: ['default_library=static', 'cpp_args=' + compiler.get_supported_arguments('-w')[0]]),
+	dependency('pistache', default_options: ['default_library=static', 'warning_level=0']),
 	dependency('libodb', version: '>=2.5.0'),
 	dependency('libodb-pgsql', version: '>=2.5.0'),
 	simdjson_dep,
@@ -85,7 +81,7 @@ executable(
 	],
 	include_directories: 'scraf-backend',
 	dependencies: scraf_dependencies,
-	cpp_args: cpp_args
+	cpp_args: [cpp_args, clang_warnings]
 )
 
 if get_option('scraf_build_tests')

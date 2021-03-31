@@ -120,12 +120,17 @@ jobs:
 #          - lld-10
 #        update: true
 
+cache:
+  directories:
+    - $HOME/build2
+
 install:
   - sudo pip3 install -qqq --ignore-installed meson
   - mkdir build2-build
   - cd build2-build
   - curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-  - sh build2-install-0.13.0.sh --yes --local --cxx $CXX --jobs 2 --no-check --trust yes
+  - sh build2-install-0.13.0.sh --yes --local --cxx $CXX --sudo false --jobs 2 --no-check --trust yes $HOME/build2
+  - export PATH=$HOME/build2/bin:$PATH
   - cd ..
   - mkdir odb-build
   - cd odb-build
