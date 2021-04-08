@@ -19,9 +19,6 @@ on:
   schedule:
     - cron: '45 10 * * 5'
 
-env:
-  CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
-
 jobs:
   test-and-analyze:
     name: Test and analyze
@@ -30,21 +27,30 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: [ 'cpp' ]
+        compiler: [ gcc, clang ]
+        include:
+          - compiler: gcc
+            CC: gcc
+            CXX: g++
+          - compiler: clang
+            CC: clang
+            CXX: clang++
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        submodules: 'recursive'
+        submodules: recursive
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
       with:
-        languages: ${{ matrix.language }}
+        languages: cpp
 
     - name: Install dependencies
       run: |
+        export CC=${{ matrix.CC }}
+        export CXX=${{ matrix.CXX }}
         sudo rm -r /etc/apt/*sources.list*
         sudo mkdir /etc/apt/sources.list.d
         printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security hirsute\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
@@ -71,20 +77,20 @@ jobs:
       run: |
         mkdir build2-build && cd build2-build
         curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-        sh build2-install-0.13.0.sh --yes --no-check --trust yes ~/build2
+        sh build2-install-0.13.0.sh --yes --cxx $CXX --sudo false --trust yes --no-check ~/build2
 
     - name: Install odb
       run: |
         export PATH=$HOME/build2/bin:$PATH
         mkdir odb-build && cd odb-build
-        bpkg --quiet create --directory odb-gcc-10 cc config.cxx=g++ config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
-        cd odb-gcc-10
+        bpkg --quiet create --directory odb-gcc cc config.cxx=g++ config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+        cd odb-gcc
         bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
         bpkg --quiet test odb
         bpkg --quiet install odb
         cd ..
-        bpkg --quiet create --directory gcc-10 cc config.cxx=g++ config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
-        cd gcc-10
+        bpkg --quiet create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+        cd $CXX
         bpkg --quiet add https://pkg.cppget.org/1/beta
         bpkg --quiet --trust-yes fetch
         bpkg --quiet build --yes libodb
@@ -94,7 +100,7 @@ jobs:
     - name: Build release
       run: |
         meson setup build_release --buildtype=release -Dscraf_build_tests=true
-        meson compile -C build_release --jobs 1 --verbose
+        meson compile -C build_release
 
     - name: Build debug
       run: |
@@ -113,25 +119,28 @@ jobs:
         lcov --list coverage.info
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
         if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then false; fi
+      env:
+        CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
     - name: Memory sanitizer
+      if: ${{ matrix.compiler }} == clang
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true
+        meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true
         meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Address sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true
+        meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true
         meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Undefined behavior sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=true
+        meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=true
         meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Thread sanitizer
       run: |
-        CC=clang CXX=clang++ CC_LD=lld CXX_LD=lld meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
+        meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
         meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && false)
 
     - name: Perform CodeQL Analysis

@@ -61,6 +61,9 @@ extraction:
     - unset CC
     - unset CXX
     - cd ..
+    - ln --symbolic $HOME/.local/bin/gcc $HOME/.local/bin/cc
+    - export CC=$HOME/.local/bin/gcc
+    - export CXX=$HOME/.local/bin/g++
     # Install gold from source
     - curl --silent --remote-name --http2-prior-knowledge --proto https --proto-default https --tlsv1.2 https://ftp.gnu.org/gnu/binutils/binutils-2.35.2.tar.bz2
     - tar xf binutils-2.35.2.tar.bz2
@@ -72,16 +75,13 @@ extraction:
     # Install LLD from source
     #- git clone https://github.com/llvm/llvm-project.git --branch=release/11.x --single-branch --depth=1 --quiet
     #- cd llvm-project
-    #- cmake -S llvm -B build -G Ninja -DLLVM_ENABLE_PROJECTS='clang;lld' -DCMAKE_INSTALL_PREFIX=$HOME/.local -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_CXX_STANDARD=17 -DLLVM_TARGETS_TO_BUILD=x86 -DLLVM_INCLUDE_EXAMPLES=false -DLLVM_INCLUDE_TESTS=false -DLLVM_INCLUDE_BENCHMARKS=false -DLLVM_ENABLE_UNWIND_TABLES=false -DLLVM_ENABLE_MODULES=true -DLLVM_ENABLE_WARNINGS=false -DLLVM_ENABLE_DIA_SDK=false -DLLVM_ENABLE_LTO=On -DLLVM_USE_LINKER=lld -DLLVM_ENABLE_LLD=true -DLLVM_ENABLE_BINDINGS=false -DCLANG_ENABLE_STATIC_ANALYZER=false
+    #- cmake -S llvm -B build -G Ninja -DLLVM_ENABLE_PROJECTS='lld' -DCMAKE_INSTALL_PREFIX=$HOME/.local -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_STANDARD=17 -DLLVM_TARGETS_TO_BUILD=x86 -DLLVM_INCLUDE_EXAMPLES=false -DLLVM_INCLUDE_TESTS=false -DLLVM_INCLUDE_BENCHMARKS=false -DLLVM_ENABLE_UNWIND_TABLES=false -DLLVM_ENABLE_MODULES=true -DLLVM_ENABLE_WARNINGS=false -DLLVM_ENABLE_DIA_SDK=false -DLLVM_ENABLE_LTO=On -DLLVM_ENABLE_LLD=true -DLLVM_ENABLE_BINDINGS=false -DCLANG_ENABLE_STATIC_ANALYZER=false
     #- cmake --build build
     #- cmake --build build --target install
     #- cd ..
     # Install latest Meson version
     - pip3 install -qqq --user --ignore-installed meson
     # Install build2
-    - ln --symbolic $HOME/.local/bin/gcc $HOME/.local/bin/cc
-    - export CC=$HOME/.local/bin/gcc
-    - export CXX=$HOME/.local/bin/g++
     - mkdir build2-build
     - cd build2-build
     - curl --silent --remote-name https://stage.build2.org/0/0.14.0-a.0/build2-install-0.14.0-a.0-stage.sh
@@ -114,4 +114,4 @@ extraction:
       - meson setup build --buildtype=debug -Db_lto=false
     index:
       build_command:
-      - meson compile -C build
+      - meson compile -C build --jobs=1
