@@ -1,5 +1,6 @@
 # scraf-backend
 
+[![Language grade: C++](https://img.shields.io/lgtm/grade/cpp/g/PwRAu/scraf-backend.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/PwRAu/scraf-backend/context:cpp)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/7a105015c95b49ae94ebfa41739a6c1c)](https://app.codacy.com/gh/PwRAu/scraf-backend?utm_source=github.com&utm_medium=referral&utm_content=PwRAu/scraf-backend&utm_campaign=Badge_Grade_Settings)
 [![codecov](https://codecov.io/gh/PwRAu/scraf-backend/branch/main/graph/badge.svg?token=Q9PWI8IRXH)](https://codecov.io/gh/PwRAu/scraf-backend)
 
