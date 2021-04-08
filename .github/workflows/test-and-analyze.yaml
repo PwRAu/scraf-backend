@@ -11,7 +11,6 @@ on:
       - .github/workflows/codacy-analysis.yaml
       - .vscode
       - .lgtm.yml
-      - .travis.yml
 
   pull_request:
     # The branches below must be a subset of the branches above
@@ -77,8 +76,6 @@ jobs:
     - name: Install build2
       if: steps.build2-cache.outputs.cache-hit != 'true'
       run: |
-        echo $CC
-        echo $CXX
         mkdir build2-build && cd build2-build
         curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
         sh build2-install-0.13.0.sh --yes --cxx $CXX --sudo false --trust yes --no-check ~/build2
@@ -94,7 +91,7 @@ jobs:
         bpkg --quiet install odb
         cd ..
         bpkg --quiet create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
-        cd $CXX
+        cd $CC
         bpkg --quiet add https://pkg.cppget.org/1/beta
         bpkg --quiet --trust-yes fetch
         bpkg --quiet build --yes libodb
