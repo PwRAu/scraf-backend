@@ -15,13 +15,20 @@ compiler = meson.get_compiler('cpp')
 cpp_args = compiler.get_supported_arguments(['-Wno-unknown-pragmas', '-Wno-comment'])
 
 clang_warnings = []
-if compiler.get_id() == 'clang' and get_option('debug')
-	add_global_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls'], language: 'cpp')
-	clang_warnings = ['-Weverything', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-documentation', '-Wno-documentation-unknown-command']
+if compiler.get_id() == 'clang'
+	add_global_arguments(['-fuse-ld=lld', '-Wno-unused-command-line-argument'], language: ['c', 'cpp'])
+	add_global_link_arguments('-fuse-ld=lld', language: ['c', 'cpp'])
+	if get_option('debug')
+		add_global_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls'], language: ['c', 'cpp'])
+		clang_warnings = ['-Weverything', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-documentation', '-Wno-documentation-unknown-command']
+	endif
+	if get_option('b_sanitize') == 'memory'
+		add_global_arguments('-fsanitize-memory-track-origins', language: ['c', 'cpp'])
+	endif
 endif
 
 odb_generator = generator(
-	find_program('odb'),
+	find_program('odb', version: '>=2.5.0'),
 	output: ['@BASENAME@_odb.hpp', '@BASENAME@_odb.cpp', '@BASENAME@_odb.ipp'],
 	arguments: [
 		'--database', 'pgsql',

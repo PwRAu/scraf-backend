@@ -92,7 +92,7 @@ jobs:
         bpkg --quiet test odb
         bpkg --quiet install odb
         cd ..
-        bpkg create --directory $CC cc config.c=$CC config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+        bpkg --quiet create --directory $CC cc config.c=$CC config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
         cd $CC
         bpkg --quiet add https://pkg.cppget.org/1/beta
         bpkg --quiet --trust-yes fetch
@@ -128,13 +128,13 @@ jobs:
     - name: Memory sanitizer
       if: matrix.compiler == 'clang'
       run: |
-        meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true
+        meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true -Db_lundef=false
         meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && true)
 
     - name: Address sanitizer
       if: matrix.compiler == 'clang'
       run: |
-        meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true
+        meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true -Db_lundef=false
         meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && true)
 
     - name: Undefined behavior sanitizer
