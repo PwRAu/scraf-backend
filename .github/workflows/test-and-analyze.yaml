@@ -78,7 +78,7 @@ jobs:
       run: |
         mkdir build2-build && cd build2-build
         curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
-        sh build2-install-0.13.0.sh --yes --cxx $CXX --sudo false --trust yes --no-check ~/build2
+        sh build2-install-0.13.0.sh --yes --local --cxx $CXX --sudo false --trust yes --no-check ~/build2
         cd ..
         rm -r build2-build
 
@@ -92,6 +92,7 @@ jobs:
         bpkg --quiet test odb
         bpkg --quiet install odb
         cd ..
+        rm -r odb-gcc
         bpkg --quiet create --directory $CC cc config.c=$CC config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
         cd $CC
         bpkg --quiet add https://pkg.cppget.org/1/beta
@@ -99,6 +100,8 @@ jobs:
         bpkg --quiet build --yes libodb
         bpkg --quiet build --yes libodb-pgsql
         bpkg --quiet install --all --recursive
+        cd ..
+        rm -r $CC
 
     - name: Build release
       run: |
@@ -113,6 +116,7 @@ jobs:
     - name: Test release
       run: |
         meson test -C build_release || (cat build_release/meson-logs/testlog.txt && false)
+        rm -r build_release
 
     - name: Test debug
       run: |
@@ -122,6 +126,7 @@ jobs:
         lcov --list coverage.info
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
         if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then false; fi
+        rm -r build_debug
       env:
         CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
@@ -130,22 +135,26 @@ jobs:
       run: |
         meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true -Db_lundef=false
         meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && true)
+        rm -r build_memory_sanitizer
 
     - name: Address sanitizer
       if: matrix.compiler == 'clang'
       run: |
         meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true -Db_lundef=false
         meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && true)
+        rm -r build_address_sanitizer
 
     - name: Undefined behavior sanitizer
       run: |
         meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=true
         meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && true)
+        rm -r build_undefined_sanitizer
 
     - name: Thread sanitizer
       run: |
         meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
         meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && true)
+        rm -r build_thread_sanitizer
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
