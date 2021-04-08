@@ -29,7 +29,6 @@ foreach test_name : test_names
 			],
 			include_directories: ['..', '..'/'scraf-backend'],
 			cpp_args: cpp_args
-		),
-		protocol: 'gtest'
+		)
 	)
 endforeach
