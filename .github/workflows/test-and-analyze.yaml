@@ -34,7 +34,7 @@ jobs:
           - compiler: clang
             CC: clang
             CXX: clang++
-    
+
     env:
       CC: ${{ matrix.CC }}
       CXX: ${{ matrix.CXX }}
@@ -71,7 +71,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/build2
-        key: ${{ runner.os }}-${{ steps.get-date.outputs.date }}-build2
+        key: ${{ runner.os }}-${{ matrix.compiler }}-${{ steps.get-date.outputs.date }}-build2
 
     - name: Install build2
       if: steps.build2-cache.outputs.cache-hit != 'true'
@@ -90,12 +90,12 @@ jobs:
         bpkg --quiet test odb
         bpkg --quiet install odb
         cd ..
-        bpkg --quiet create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+        bpkg --quiet create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
         cd $CC
         bpkg --quiet add https://pkg.cppget.org/1/beta
         bpkg --quiet --trust-yes fetch
-        bpkg --quiet build --yes libodb
-        bpkg --quiet build --yes libodb-pgsql
+        bpkg build --yes libodb
+        bpkg build --yes libodb-pgsql
         bpkg --quiet install --all --recursive
 
     - name: Build release
@@ -110,7 +110,7 @@ jobs:
 
     - name: Test release
       run: |
-        meson test -C build_release || (cat build_release/meson-logs/testlog.txt && false)
+        meson test -C build_release || (cat build_release/meson-logs/testlog.txt && true)
 
     - name: Test debug
       run: |
@@ -119,7 +119,7 @@ jobs:
         lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*/tests/*' '*/subprojects/*' --output-file coverage.info
         lcov --list coverage.info
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
-        if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then false; fi
+        if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then true; fi
       env:
         CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
@@ -127,22 +127,22 @@ jobs:
       if: ${{ matrix.compiler }} == clang
       run: |
         meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true
-        meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && false)
+        meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && true)
 
     - name: Address sanitizer
       run: |
         meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true
-        meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && false)
+        meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && true)
 
     - name: Undefined behavior sanitizer
       run: |
         meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=true
-        meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && false)
+        meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && true)
 
     - name: Thread sanitizer
       run: |
         meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
-        meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && false)
+        meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && true)
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v1
