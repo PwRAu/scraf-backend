@@ -84,13 +84,13 @@ jobs:
       run: |
         export PATH=$HOME/build2/bin:$PATH
         mkdir odb-build && cd odb-build
-        bpkg --quiet create --directory odb-gcc cc config.cxx=g++ config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+        bpkg --quiet create --directory odb-gcc cc config.c=gcc config.cxx=g++ config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
         cd odb-gcc
         bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
         bpkg --quiet test odb
         bpkg --quiet install odb
         cd ..
-        bpkg --quiet create --directory $CC cc config.cxx=$CXX config.cc.coptions='-O3 -march=native' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+        bpkg --quiet create --directory $CC cc config.c=$CC config.cxx=$CXX config.cc.coptions='-O3 -march=native' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
         cd $CC
         bpkg --quiet add https://pkg.cppget.org/1/beta
         bpkg --quiet --trust-yes fetch
@@ -124,7 +124,7 @@ jobs:
         CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
     - name: Memory sanitizer
-      if: ${{ matrix.compiler }} == clang
+      if: matrix.compiler == 'clang'
       run: |
         meson setup build_memory_sanitizer --buildtype=debug -Db_sanitize=memory -Dscraf_build_tests=true
         meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && true)
