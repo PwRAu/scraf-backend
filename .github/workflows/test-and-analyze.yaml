@@ -79,24 +79,26 @@ jobs:
         mkdir build2-build && cd build2-build
         curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
         sh build2-install-0.13.0.sh --yes --cxx $CXX --sudo false --trust yes --no-check ~/build2
+        cd ..
+        rm -r build2-build
 
     - name: Install odb
       run: |
         export PATH=$HOME/build2/bin:$PATH
         mkdir odb-build && cd odb-build
-        bpkg create --directory odb-gcc cc config.c=gcc config.cxx=g++ config.cc.coptions='-O3 -march=native' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
+        bpkg --quiet create --directory odb-gcc cc config.c=gcc config.cxx=g++ config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
         cd odb-gcc
-        bpkg --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
-        bpkg test odb
-        bpkg install odb
+        bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
+        bpkg --quiet test odb
+        bpkg --quiet install odb
         cd ..
-        bpkg create --directory $CC cc config.c=$CC config.cxx=$CXX config.cc.coptions='-O3 -march=native' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
+        bpkg create --directory $CC cc config.c=$CC config.cxx=$CXX config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.install.root=/usr/local config.install.sudo=sudo
         cd $CC
-        bpkg add https://pkg.cppget.org/1/beta
-        bpkg --trust-yes fetch
-        bpkg build --yes libodb
-        bpkg build --yes libodb-pgsql
-        bpkg install --all --recursive
+        bpkg --quiet add https://pkg.cppget.org/1/beta
+        bpkg --quiet --trust-yes fetch
+        bpkg --quiet build --yes libodb
+        bpkg --quiet build --yes libodb-pgsql
+        bpkg --quiet install --all --recursive
 
     - name: Build release
       run: |
@@ -110,7 +112,7 @@ jobs:
 
     - name: Test release
       run: |
-        meson test -C build_release || (cat build_release/meson-logs/testlog.txt && true)
+        meson test -C build_release || (cat build_release/meson-logs/testlog.txt && false)
 
     - name: Test debug
       run: |
@@ -119,7 +121,7 @@ jobs:
         lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*/tests/*' '*/subprojects/*' --output-file coverage.info
         lcov --list coverage.info
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
-        if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then true; fi
+        if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then false; fi
       env:
         CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
@@ -130,6 +132,7 @@ jobs:
         meson test -C build_memory_sanitizer || (cat build_memory_sanitizer/meson-logs/testlog.txt && true)
 
     - name: Address sanitizer
+      if: matrix.compiler == 'clang'
       run: |
         meson setup build_address_sanitizer --buildtype=debug -Db_sanitize=address -Dscraf_build_tests=true
         meson test -C build_address_sanitizer || (cat build_address_sanitizer/meson-logs/testlog.txt && true)
