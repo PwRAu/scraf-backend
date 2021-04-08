@@ -51,6 +51,8 @@ jobs:
       run: |
         export CC=${{ matrix.CC }}
         export CXX=${{ matrix.CXX }}
+        echo $CC
+        echo $CXX
         sudo rm -r /etc/apt/*sources.list*
         sudo mkdir /etc/apt/sources.list.d
         printf "Enabled: yes\nTypes: deb\nURIs: http://azure.archive.ubuntu.com/ubuntu/\nSuites: focal focal-updates focal-backports focal-security hirsute\nComponents: main universe multiverse restricted\n" | sudo tee /etc/apt/sources.list.d/system.sources
@@ -75,6 +77,8 @@ jobs:
     - name: Install build2
       if: steps.build2-cache.outputs.cache-hit != 'true'
       run: |
+        echo $CC
+        echo $CXX
         mkdir build2-build && cd build2-build
         curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
         sh build2-install-0.13.0.sh --yes --cxx $CXX --sudo false --trust yes --no-check ~/build2
