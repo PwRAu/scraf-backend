@@ -151,7 +151,7 @@ jobs:
 
     - name: Undefined behavior sanitizer
       run: |
-        meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=true
+        meson setup build_undefined_sanitizer --buildtype=debug -Db_sanitize=undefined -Dscraf_build_tests=true -Db_lundef=false
         meson test -C build_undefined_sanitizer || (cat build_undefined_sanitizer/meson-logs/testlog.txt && true)
         rm -r build_undefined_sanitizer
 
