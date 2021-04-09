@@ -157,7 +157,7 @@ jobs:
 
     - name: Thread sanitizer
       run: |
-        meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true
+        meson setup build_thread_sanitizer --buildtype=debug -Db_sanitize=thread -Dscraf_build_tests=true -Db_lundef=false
         meson test -C build_thread_sanitizer || (cat build_thread_sanitizer/meson-logs/testlog.txt && true)
         rm -r build_thread_sanitizer
 
