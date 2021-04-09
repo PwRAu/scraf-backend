@@ -76,7 +76,8 @@ jobs:
     - name: Install build2
       if: steps.build2-cache.outputs.cache-hit != 'true'
       run: |
-        mkdir build2-build && cd build2-build
+        mkdir build2-build
+        cd build2-build
         curl --silent --remote-name https://download.build2.org/0.13.0/build2-install-0.13.0.sh
         sh build2-install-0.13.0.sh --yes --local --cxx $CXX --sudo false --trust yes --no-check ~/build2
         cd ..
@@ -85,7 +86,8 @@ jobs:
     - name: Install odb
       run: |
         export PATH=$HOME/build2/bin:$PATH
-        mkdir odb-build && cd odb-build
+        mkdir odb-build
+        cd odb-build
         bpkg --quiet create --directory odb-gcc cc config.c=gcc config.cxx=g++ config.cc.coptions='-O3 -march=native -w' config.c.std=gnu17 config.cxx.std=gnu++17 config.bin.rpath=/usr/local/lib config.install.root=/usr/local config.install.sudo=sudo
         cd odb-gcc
         bpkg --quiet --trust-yes build --yes odb@https://pkg.cppget.org/1/beta
@@ -102,6 +104,8 @@ jobs:
         bpkg --quiet install --all --recursive
         cd ..
         rm -r $CC
+        cd ..
+        rm -r odb-build
 
     - name: Build release
       run: |
@@ -120,12 +124,13 @@ jobs:
 
     - name: Test debug
       run: |
-        meson test -C build_debug || (cat build_debug/meson-logs/testlog.txt && export SCRAF_TEST_DEBUG_FAILED=true)
-        lcov --directory . --capture --output-file coverage.info
-        lcov --remove coverage.info '/usr/*' "${HOME}"'/.cache/*' '*/tests/*' '*/subprojects/*' --output-file coverage.info
+        mkdir $HOME/.local/bin
+        if [ "${{ matrix.compiler }}" = 'clang' ]; then printf 'llvm-cov gcov "$@"' > $HOME/.local/bin/cov.sh; else printf 'gcov "$@"' > $HOME/.local/bin/cov.sh; fi && chmod +x $HOME/.local/bin/cov.sh
+        meson test -C build_debug || (cat build_debug/meson-logs/testlog.txt && export SCRAF_TEST_DEBUG_FAILED='true')
+        lcov --capture --output-file coverage.info --directory . --gcov-tool $HOME/.local/bin/cov.sh --exclude '/usr/*' --exclude "${HOME}"'/.cache/*' --exclude '*/tests/*' --exclude '*/subprojects/*'
         lcov --list coverage.info
         bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
-        if [ "$SCRAF_TEST_DEBUG_FAILED" == 'true' ]; then false; fi
+        if [ "$SCRAF_TEST_DEBUG_FAILED" = 'true' ]; then false; fi
         rm -r build_debug
       env:
         CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
