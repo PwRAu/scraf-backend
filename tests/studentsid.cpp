@@ -24,11 +24,7 @@ TEST(StudentsId, GetStudentsId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/students/{studentId}",
-		"Content-Type: application/json",
-		json{
-			{"studentid", "107"}
-		}.dump()
+		"localhost:" + std::to_string(port) + "/students/{studentId}?id=107"
 	);
 
 	EXPECT_EQ(
@@ -99,3 +95,89 @@ TEST(StudentsId, DelteStudentsId){
 
 
 //TEST STUDENTSID RICHIESTA ERRATA
+
+
+
+
+//GET no id
+TEST(StudentsId, GetStudentsIdNoId){
+	const std::uint16_t port {getPort()};
+	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
+	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
+	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
+
+	std::jthread servingThread {[&]() {
+		scraf.serve();
+	}};
+
+	ScrafCurl curl;
+
+	curl.get(
+		"localhost:" + std::to_string(port) + "/students/{studentId}"
+	);
+
+	EXPECT_EQ(
+		curl.getResponseCode(), 
+		static_cast<long>(Http::Code::Bad_Request)
+	);
+
+	scraf.shutdown();
+}
+
+//PATCH NO ID
+TEST(StudentsId, PatchStudentsIdNoId){
+	const std::uint16_t port {getPort()};
+	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
+	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
+	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
+
+	std::jthread servingThread {[&]() {
+		scraf.serve();
+	}};
+
+	ScrafCurl curl;
+
+	curl.patch(
+		"localhost:" + std::to_string(port) + "/students/{studentId}",
+		"Content-Type: application/json",
+		json{
+			//{"studentid", "107"}
+		}.dump()
+	);
+
+	EXPECT_EQ(
+		curl.getResponseCode(), 
+		static_cast<long>(Http::Code::Bad_Request)
+	);
+
+	scraf.shutdown();
+}
+
+//DELETE NO ID
+TEST(StudentsId, DelteStudentsIdNoId){
+	const std::uint16_t port {getPort()};
+	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
+	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
+	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
+
+	std::jthread servingThread {[&]() {
+		scraf.serve();
+	}};
+
+	ScrafCurl curl;
+
+	curl.delete(
+		"localhost:" + std::to_string(port) + "/students/{studentId}",
+		"Content-Type: application/json",
+		json{
+			//{"studentid", "107"}
+		}.dump()
+	);
+
+	EXPECT_EQ(
+		curl.getResponseCode(), 
+		static_cast<long>(Http::Code::Bad_Request)
+	);
+
+	scraf.shutdown();
+}
