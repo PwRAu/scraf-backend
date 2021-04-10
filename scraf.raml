@@ -41,6 +41,10 @@ version: v1
 
 /schools:
   type: collection
+  post:
+    responses:
+      201:
+
   /{schoolId}:
     type: collection-item
     /subjects:
@@ -101,7 +105,7 @@ resourceTypes:
       description: Register a <<resourcePathName|!singularize>> and get its id
       body:
         application/json:
-          type: <<resourcePathName|!singularize>>
+          type: <<resourcePathName|!singularize>>-post
       responses:
         201:
           body:
@@ -117,7 +121,7 @@ resourceTypes:
               type: message
               example: |
                 {
-                  "message": "The parameter "paolo" does not exist"
+                  "message": "The parameter \"paolo\" does not exist"
                 }
   collection-item:
     get:
