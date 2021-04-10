@@ -78,11 +78,7 @@ TEST(StudentsId, DelteStudentsId){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/students/{studentId}",
-		"Content-Type: application/json",
-		json{
-			{"studentid", "107"}
-		}.dump()
+		"localhost:" + std::to_string(port) + "/students/{studentId}/107"
 	);
 
 	EXPECT_EQ(
@@ -167,11 +163,7 @@ TEST(StudentsId, DelteStudentsIdNoId){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/students/{studentId}",
-		"Content-Type: application/json",
-		json{
-			//{"studentid", "107"}
-		}.dump()
+		"localhost:" + std::to_string(port) + "/students/{studentId}"
 	);
 
 	EXPECT_EQ(
