@@ -8,10 +8,10 @@ using namespace Pistache;
 using namespace std::literals;
 using namespace nlohmann;
 
-//TEST STUDENTSID RICHIESTA CORRETTA
+//TEST TEACHERID RICHIESTA CORRETTA
 
 //GET
-TEST(studentsid, GetStudentsId){
+TEST(teacherid, GetTeachersId){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -24,7 +24,7 @@ TEST(studentsid, GetStudentsId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/students/{studentId}?id=107"
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}?id=107"
 	);
 
 	EXPECT_EQ(
@@ -36,7 +36,7 @@ TEST(studentsid, GetStudentsId){
 }
 
 //PATCH
-TEST(studentsid, PatchStudentsId){
+TEST(teacherid, PatchTeachersId){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -49,10 +49,10 @@ TEST(studentsid, PatchStudentsId){
 	ScrafCurl curl;
 
 	curl.patch(
-		"localhost:" + std::to_string(port) + "/students/{studentId}",
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}",
 		"Content-Type: application/json",
 		json{
-			{"studentid", "107"}
+			{"teacherid", "107"}
 		}.dump()
 	);
 
@@ -65,7 +65,7 @@ TEST(studentsid, PatchStudentsId){
 }
 
 //DELETE
-TEST(studentsid, DeleteStudentsId){
+TEST(teacherid, DeleteTeachersId){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -78,7 +78,7 @@ TEST(studentsid, DeleteStudentsId){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/students/{studentId}/107"
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/107"
 	);
 
 	EXPECT_EQ(
@@ -90,13 +90,13 @@ TEST(studentsid, DeleteStudentsId){
 }
 
 
-//TEST STUDENTSID RICHIESTA ERRATA
+//TEST TEACHERID RICHIESTA ERRATA
 
 
 
 
 //GET no id
-TEST(studentsid, GetStudentsIdNoId){
+TEST(teacherid, GetTeachersIdNoId){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -109,7 +109,7 @@ TEST(studentsid, GetStudentsIdNoId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/students/{studentId}"
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}"
 	);
 
 	EXPECT_EQ(
@@ -121,7 +121,7 @@ TEST(studentsid, GetStudentsIdNoId){
 }
 
 //PATCH NO ID
-TEST(studentsid, PatchStudentsIdNoId){
+TEST(teacherid, PatchTeachersIdNoId){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -134,10 +134,9 @@ TEST(studentsid, PatchStudentsIdNoId){
 	ScrafCurl curl;
 
 	curl.patch(
-		"localhost:" + std::to_string(port) + "/students/{studentId}",
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}",
 		"Content-Type: application/json",
 		json{
-			//{"studentid", "107"}
 		}.dump()
 	);
 
@@ -150,7 +149,7 @@ TEST(studentsid, PatchStudentsIdNoId){
 }
 
 //DELETE NO ID
-TEST(studentsid, DeleteStudentsIdNoId){
+TEST(teacherid, DelteTeachersIdNoId){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -163,7 +162,7 @@ TEST(studentsid, DeleteStudentsIdNoId){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/students/{studentId}"
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}"
 	);
 
 	EXPECT_EQ(
