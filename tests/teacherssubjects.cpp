@@ -35,6 +35,35 @@ TEST(teacherssubjects, GetTeachersSubjects){
 	scraf.shutdown();
 }
 
+//POST
+TEST(teacherssubjects, PostTeachersSubjects){
+	const std::uint16_t port {getPort()};
+	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
+	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
+	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
+
+	std::jthread servingThread {[&]() {
+		scraf.serve();
+	}};
+
+	ScrafCurl curl;
+
+	curl.post(
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects",
+		"Content-Type: application/json",
+		json{
+			{"teacherid", "100"}
+		}.dump()
+	);
+
+	EXPECT_EQ(
+		curl.getResponseCode(), 
+		static_cast<long>(Http::Code::Created)
+	);
+
+	scraf.shutdown();
+}
+
 
 //TEST TEACHERSSUBJECTS RICHIESTA ERRATA
 
@@ -62,3 +91,33 @@ TEST(teacherssubjects, GetTeachersSubjectsNoId){
 
 	scraf.shutdown();
 }
+
+//POST NO ID
+
+TEST(teacherssubjects, PostTeachersSubjectsNoId){
+	const std::uint16_t port {getPort()};
+	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
+	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
+	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
+
+	std::jthread servingThread {[&]() {
+		scraf.serve();
+	}};
+
+	ScrafCurl curl;
+
+	curl.post(
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects",
+		"Content-Type: application/json",
+		json{
+		}.dump()
+	);
+
+	EXPECT_EQ(
+		curl.getResponseCode(), 
+		static_cast<long>(Http::Code::Created)
+	);
+
+	scraf.shutdown();
+}
+
