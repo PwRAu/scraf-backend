@@ -24,7 +24,7 @@ TEST(teacherssubjects, GetTeachersSubjects){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects?id=107"
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects?teacherid=107"
 	);
 
 	EXPECT_EQ(

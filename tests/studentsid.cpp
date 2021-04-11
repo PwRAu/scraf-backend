@@ -24,7 +24,7 @@ TEST(studentsid, GetStudentsId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/students/{studentId}?id=107"
+		"localhost:" + std::to_string(port) + "/students/{studentId}?studentid=107"
 	);
 
 	EXPECT_EQ(
@@ -78,7 +78,7 @@ TEST(studentsid, DeleteStudentsId){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/students/{studentId}/107"
+		"localhost:" + std::to_string(port) + "/students/{studentId}?studentid=107"
 	);
 
 	EXPECT_EQ(
