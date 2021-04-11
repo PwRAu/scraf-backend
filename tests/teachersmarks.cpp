@@ -8,10 +8,10 @@ using namespace Pistache;
 using namespace std::literals;
 using namespace nlohmann;
 
-//TEST STUDENTSMARKS RICHIESTA CORRETTA
+//TEST TEACHERSMARKS RICHIESTA CORRETTA
 
 //GET
-TEST(studentsmarks, GetStudentsMarks){
+TEST(teachersmarks, GetTeachersMarks){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -24,7 +24,7 @@ TEST(studentsmarks, GetStudentsMarks){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/students/{studentId}/subjects/{subjectId}/marks?studentid=107&subjectid=1"
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects/{subjectId}/marks?teacherid=107&subjectid=1"
 	);
 
 	EXPECT_EQ(
@@ -36,10 +36,10 @@ TEST(studentsmarks, GetStudentsMarks){
 }
 
 
-//TEST STUDENTSMARKS RICHIESTA ERRATA
+//TEST TEACHERSMARKS RICHIESTA ERRATA
 
 //GET NO ID
-TEST(studentsmarks, GetStudentsMarksNoId){
+TEST(teachersmarks, GetTeachersMarksNoId){
 	const std::uint16_t port {getPort()};
 	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
 	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
@@ -52,7 +52,7 @@ TEST(studentsmarks, GetStudentsMarksNoId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/students/{studentId}/subjects/{subjectId}/marks"
+		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects/{subjectId}/marks"
 	);
 
 	EXPECT_EQ(
