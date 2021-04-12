@@ -8,18 +8,16 @@ version: v1
   type: 
     collection:
       example-get-collection: |
-        {
-          "students": [
-            {
-              "id": 107,
-              "name": "Andrea Pappacoda"
-            },
-            {
-              "id": 238,
-              "name": "Paolo Andreoli"
-            }
-          ]
-        }
+        [
+          {
+            "id": 107,
+            "name": "Andrea Pappacoda"
+          },
+          {
+            "id": 238,
+            "name": "Paolo Andreoli"
+          }
+        ]
   /{studentId}:
     type: collection-item
     /subjects:
@@ -44,6 +42,8 @@ version: v1
   post:
     responses:
       201:
+        body:
+          text/plain: !!null
 
   /{schoolId}:
     type: collection-item
@@ -186,7 +186,7 @@ types:
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "array",
       "items": {
-        "type": object,
+        "type": "object",
         "properties": {
           "id": {
             "type": "integer"
@@ -199,7 +199,7 @@ types:
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "array",
       "items": {
-        "type": object,
+        "type": "object",
         "properties": {
           "id": {
             "type": "integer"
