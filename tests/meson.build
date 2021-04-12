@@ -9,8 +9,15 @@ scraf_curl_dep = declare_dependency(
 )
 
 test_names = [
-	'create_student',
-	'search_student'
+	'students',
+	'studentsid',
+	'studentsmarks',
+	'studentssubjects',
+	'teacherid',
+	'teachers',
+	'teachersmarks',
+	'teacherssubjectid',
+	'teacherssubjects'
 ]
 
 foreach test_name : test_names
