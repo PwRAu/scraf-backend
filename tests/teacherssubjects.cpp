@@ -24,7 +24,7 @@ TEST(teacherssubjects, GetTeachersSubjects){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects?teacherid=107"
+		"localhost:" + std::to_string(port) + "/teachers/107/subjects"
 	);
 
 	EXPECT_EQ(
@@ -49,10 +49,11 @@ TEST(teacherssubjects, PostTeachersSubjects){
 	ScrafCurl curl;
 
 	curl.post(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects",
+		"localhost:" + std::to_string(port) + "/teachers/107/subjects",
 		"Content-Type: application/json",
 		json{
-			{"teacherid", "100"}
+			{"teacherid", "107"},
+			{"subjectid", "1"}
 		}.dump()
 	);
 
@@ -81,7 +82,7 @@ TEST(teacherssubjects, GetTeachersSubjectsNoId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects"
+		"localhost:" + std::to_string(port) + "/teachers/subjects"
 	);
 
 	EXPECT_EQ(
@@ -107,7 +108,7 @@ TEST(teacherssubjects, PostTeachersSubjectsNoId){
 	ScrafCurl curl;
 
 	curl.post(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects",
+		"localhost:" + std::to_string(port) + "/teachers/subjects",
 		"Content-Type: application/json",
 		json{
 		}.dump()

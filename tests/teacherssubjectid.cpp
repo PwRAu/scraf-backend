@@ -24,7 +24,7 @@ TEST(teacherssubjectid, DeleteTeachersSubject){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects/{subjectId}?teacherid=107&subjectid=1"
+		"localhost:" + std::to_string(port) + "/teachers/107/subjects/1"
 	);
 
 	EXPECT_EQ(
@@ -51,8 +51,8 @@ TEST(teacherssubjectid, DeleteTeachersSubjectNoId){
 
 	ScrafCurl curl;
 
-	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects/{subjectId}"
+	curl.delete(
+		"localhost:" + std::to_string(port) + "/teachers/subjects"
 	);
 
 	EXPECT_EQ(

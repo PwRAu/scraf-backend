@@ -24,7 +24,7 @@ TEST(teachersmarks, GetTeachersMarks){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects/{subjectId}/marks?teacherid=107&subjectid=1"
+		"localhost:" + std::to_string(port) + "/teachers/107/subjects/1/marks"
 	);
 
 	EXPECT_EQ(
@@ -52,7 +52,7 @@ TEST(teachersmarks, GetTeachersMarksNoId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}/subjects/{subjectId}/marks"
+		"localhost:" + std::to_string(port) + "/teachers/subjects/marks"
 	);
 
 	EXPECT_EQ(

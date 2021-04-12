@@ -24,7 +24,7 @@ TEST(teacherid, GetTeachersId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}?teacherid=107"
+		"localhost:" + std::to_string(port) + "/teachers/107"
 	);
 
 	EXPECT_EQ(
@@ -49,7 +49,7 @@ TEST(teacherid, PatchTeachersId){
 	ScrafCurl curl;
 
 	curl.patch(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}",
+		"localhost:" + std::to_string(port) + "/teachers/107",
 		"Content-Type: application/json",
 		json{
 			{"teacherid", "107"}
@@ -78,7 +78,7 @@ TEST(teacherid, DeleteTeachersId){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}?teacherid=107"
+		"localhost:" + std::to_string(port) + "/teachers/107"
 	);
 
 	EXPECT_EQ(
@@ -109,7 +109,7 @@ TEST(teacherid, GetTeachersIdNoId){
 	ScrafCurl curl;
 
 	curl.get(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}"
+		"localhost:" + std::to_string(port) + "/teachers"
 	);
 
 	EXPECT_EQ(
@@ -134,7 +134,7 @@ TEST(teacherid, PatchTeachersIdNoId){
 	ScrafCurl curl;
 
 	curl.patch(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}",
+		"localhost:" + std::to_string(port) + "/teachers",
 		"Content-Type: application/json",
 		json{
 		}.dump()
@@ -162,7 +162,7 @@ TEST(teacherid, DelteTeachersIdNoId){
 	ScrafCurl curl;
 
 	curl.delete(
-		"localhost:" + std::to_string(port) + "/teachers/{teacherId}"
+		"localhost:" + std::to_string(port) + "/teachers"
 	);
 
 	EXPECT_EQ(
