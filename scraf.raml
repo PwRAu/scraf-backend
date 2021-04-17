@@ -5,7 +5,7 @@ baseUri: https://scraf.pwrau.ml/api/{version}
 version: v1
 
 /students:
-  type: 
+  type:
     collection:
       example-get-collection: |
         [
@@ -133,6 +133,9 @@ resourceTypes:
               type: <<resourcePathName|!singularize>>
     patch:
       description: Change details about a <<resourcePathName|!singularize>>
+      body:
+        application/json:
+          type: <<resourcePathName|!singularize>>
       responses:
         200:
         400:
