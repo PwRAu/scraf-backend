@@ -13,13 +13,7 @@ using namespace nlohmann;
 //GET
 TEST(teacherssubjects, GetTeachersSubjects){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -31,20 +25,11 @@ TEST(teacherssubjects, GetTeachersSubjects){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Ok)
 	);
-
-	scraf.shutdown();
 }
 
 //POST
 TEST(teacherssubjects, PostTeachersSubjects){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
 
 	ScrafCurl curl;
 
@@ -61,8 +46,6 @@ TEST(teacherssubjects, PostTeachersSubjects){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Created)
 	);
-
-	scraf.shutdown();
 }
 
 
@@ -71,13 +54,7 @@ TEST(teacherssubjects, PostTeachersSubjects){
 //GET NO ID
 TEST(teacherssubjects, GetTeachersSubjectsNoId){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -97,13 +74,7 @@ TEST(teacherssubjects, GetTeachersSubjectsNoId){
 
 TEST(teacherssubjects, PostTeachersSubjectsNoId){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -118,7 +89,4 @@ TEST(teacherssubjects, PostTeachersSubjectsNoId){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Created)
 	);
-
-	scraf.shutdown();
 }
-

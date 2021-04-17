@@ -39,7 +39,13 @@ void ScrafCurl::patch(const std::string_view url, const std::string_view header,
 	ScrafCurl::patch(url, std::array{header}, request);
 }
 
-[[nodiscard]] long ScrafCurl::getResponseCode() noexcept {
+void ScrafCurl::deletee(const std::string_view url) noexcept {
+	curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELETE");
+	curl_easy_setopt(curl, CURLOPT_URL, url.data());
+	curl_easy_perform(curl);
+}
+
+[[nodiscard]] long ScrafCurl::getResponseCode() const noexcept {
 	curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &_responseCode);
 	return _responseCode;
 }

@@ -19,7 +19,15 @@ public:
 	void commit() {}
 };
 
-std::uint16_t getPort() {
+inline std::uint16_t getPort() {
 	static std::atomic<std::uint16_t> port {10780};
 	return ++port;
 }
+
+#define SCRAF_TEST_SERVER(port)\
+	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};\
+	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};\
+	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};\
+	std::jthread servingThread {[&]() {\
+		scraf.serve();\
+	}}

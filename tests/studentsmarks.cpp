@@ -13,13 +13,7 @@ using namespace nlohmann;
 //GET
 TEST(studentsmarks, GetStudentsMarks){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -31,8 +25,6 @@ TEST(studentsmarks, GetStudentsMarks){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Ok)
 	);
-
-	scraf.shutdown();
 }
 
 
@@ -41,13 +33,7 @@ TEST(studentsmarks, GetStudentsMarks){
 //GET NO ID
 TEST(studentsmarks, GetStudentsMarksNoId){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -59,6 +45,4 @@ TEST(studentsmarks, GetStudentsMarksNoId){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Bad_Request)
 	);
-
-	scraf.shutdown();
 }

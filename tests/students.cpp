@@ -13,13 +13,7 @@ using namespace nlohmann;
 //GET
 TEST(students, GetStudents){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -31,21 +25,13 @@ TEST(students, GetStudents){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Ok)
 	);
-
-	scraf.shutdown();
 }
 
 //POST
 TEST(students, PostStudents){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
-
+	SCRAF_TEST_SERVER(port);
+	
 	ScrafCurl curl;
 
 	curl.post(
@@ -63,21 +49,13 @@ TEST(students, PostStudents){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Created)
 	);
-
-	scraf.shutdown();
 }
 
 //POST WITHOUT SURNAME
 
 TEST(students,PostStudentsNoSUrname) {
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -95,8 +73,6 @@ TEST(students,PostStudentsNoSUrname) {
 		curl.getResponseCode(),
 		static_cast<long>(Http::Code::Created)
 	); //la richiesta effettuata senza il cognome dovrebbe riuscire perchè il cognome è opzionale
-
-	scraf.shutdown();
 }
 
 
@@ -106,13 +82,7 @@ TEST(students,PostStudentsNoSUrname) {
 
 TEST(students, GetStudentsLenghtLess3){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -124,21 +94,13 @@ TEST(students, GetStudentsLenghtLess3){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Bad_Request)
 	);
-
-	scraf.shutdown();
 }
 
 //GET NO NAME
 
 TEST(students, GetStudentsNoName){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -150,8 +112,6 @@ TEST(students, GetStudentsNoName){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Bad_Request)
 	);
-
-	scraf.shutdown();
 }
 
 
@@ -159,13 +119,7 @@ TEST(students, GetStudentsNoName){
 //NO EMAIL
 TEST(students, PostStudentsNoEmail) {
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -192,13 +146,7 @@ TEST(students, PostStudentsNoEmail) {
 
 TEST(students, PostStudentsNoPassword) {
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -217,8 +165,6 @@ TEST(students, PostStudentsNoPassword) {
 		curl.getResponseCode(),
 		static_cast<long>(Http::Code::Bad_Request)
 	);
-
-	scraf.shutdown();
 }
 
 
@@ -226,13 +172,7 @@ TEST(students, PostStudentsNoPassword) {
 
 TEST(students, PostStudentsNoName) {
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
@@ -251,6 +191,4 @@ TEST(students, PostStudentsNoName) {
 		curl.getResponseCode(),
 		static_cast<std::int32_t>(Http::Code::Bad_Request)
 	);
-
-	scraf.shutdown();
 }

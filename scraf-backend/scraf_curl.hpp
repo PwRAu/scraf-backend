@@ -52,7 +52,9 @@ public:
 	}
 	void patch(std::string_view url, std::string_view header, std::string_view request) noexcept;
 
-	[[nodiscard]] long getResponseCode() noexcept;
+	void deletee(std::string_view url) noexcept;
+
+	[[nodiscard]] long getResponseCode() const noexcept;
 
 private:
 	CURL* curl;

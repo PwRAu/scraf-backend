@@ -13,17 +13,11 @@ using namespace nlohmann;
 //DELETE
 TEST(teacherssubjectid, DeleteTeachersSubject){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
-	curl.delete(
+	curl.deletee(
 		"localhost:" + std::to_string(port) + "/teachers/107/subjects/1"
 	);
 
@@ -31,8 +25,6 @@ TEST(teacherssubjectid, DeleteTeachersSubject){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Ok)
 	);
-
-	scraf.shutdown();
 }
 
 
@@ -41,17 +33,11 @@ TEST(teacherssubjectid, DeleteTeachersSubject){
 //DELETE NO ID
 TEST(teacherssubjectid, DeleteTeachersSubjectNoId){
 	const std::uint16_t port {getPort()};
-	std::unique_ptr<FakeDatabase> database {std::make_unique<FakeDatabase>()};
-	Http::Endpoint endpoint{{Ipv4::loopback(), Port(port)}};
-	Scraf<std::unique_ptr<FakeDatabase>, FakeDbTransaction> scraf {database, endpoint, 1};
-
-	std::jthread servingThread {[&]() {
-		scraf.serve();
-	}};
+	SCRAF_TEST_SERVER(port);
 
 	ScrafCurl curl;
 
-	curl.delete(
+	curl.deletee(
 		"localhost:" + std::to_string(port) + "/teachers/subjects"
 	);
 
@@ -59,6 +45,4 @@ TEST(teacherssubjectid, DeleteTeachersSubjectNoId){
 		curl.getResponseCode(), 
 		static_cast<long>(Http::Code::Bad_Request)
 	);
-
-	scraf.shutdown();
 }
