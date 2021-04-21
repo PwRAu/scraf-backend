@@ -35,7 +35,11 @@ TEST(studentsid, PatchStudentsId){
 	ScrafCurl curl;
 
 	curl.patch(
-		"localhost:" + std::to_string(port) + "/students/107"
+		"localhost:" + std::to_string(port) + "/students/107",
+		"Content-Type: application/json",
+		json{
+			{"studentid", "107"}
+		}.dump()
 	);
 
 	EXPECT_EQ(
@@ -92,7 +96,10 @@ TEST(studentsid, PatchStudentsIdNoId){
 	ScrafCurl curl;
 
 	curl.patch(
-		"localhost:" + std::to_string(port) + "/students"
+		"localhost:" + std::to_string(port) + "/students",
+		"Content-Type: application/json",
+		json{
+		}.dump()
 	);
 
 	EXPECT_EQ(
