@@ -82,3 +82,9 @@ La registrazione di uno studente segue questo flusso:
 - Lo studente seleziona la sua classe, e se non esiste la crea (in formato simil-5AITI, no "quinta a informatica", controllo sulla lunghezza e magari che il primo carattere sia un numero. Sarebbe comodo fare un controllo con una regex che controlla che vengano inseriti soltanto numeri e lettere maiuscole)
 - Viene effettuata una POST con il nome della classe su /schools/{schoolId}/classes, e viene restituito l'id, che sarà qualcosa del tipo nomeclasse-anno, ad esempio 5AITI-2020 (questo passaggio solo se la classe non esiste già)
 - Viene aggiunto lo studente alla classe con una POST con il suo id sulla classe in questione
+
+## Implementazione
+
+### Richieste HTTP
+
+Dato che Scraf è multithreaded posso creare una pool di `ScrafCurl` condivisa tra i thread, in modo da riciclare il curl handle, così da migliorare notevolmente la velocità delle richieste, dato che libcurl si occuperà di mantenere aperta la connessione ai server Spaggiari
