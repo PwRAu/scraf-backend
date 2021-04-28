@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "mail": {
+      "type": "string",
+      "format": "email"
+    },
+    "name": {
+      "type": "string"
+    },
+    "surname": {
+      "type": "string"
+    },
+    "is_class_president": {
+      "type": "boolean",
+      "required": false
+    },
+    "is_school_president": {
+      "type": "boolean",
+      "required": false
+    }
+  }
+}

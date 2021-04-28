@@ -7,7 +7,8 @@ version: v1
 /students:
   type:
     collection:
-      example-get-collection: |
+      example-get-collection-name: "Andrea Pa"
+      example-get-collection-response: |
         [
           {
             "id": 107,
@@ -27,7 +28,20 @@ version: v1
           type: sub-collection-read
 
 /teachers:
-  type: collection
+  type:
+    collection:
+      example-get-collection-name: "Andrea Pa"
+      example-get-collection-response: |
+        [
+          {
+            "id": 107,
+            "name": "Andrea Pappacoda"
+          },
+          {
+            "id": 238,
+            "name": "Paolo Andreoli"
+          }
+        ]
   /{teacherId}:
     type: collection-item
     /subjects:
@@ -38,17 +52,33 @@ version: v1
           type: sub-collection-read
 
 /schools:
-  type: collection
-  post:
-    responses:
-      201:
-        body:
-          text/plain: !!null
-
+  type:
+    collection:
+      example-get-collection-name: "Cobi"
+      example-get-collection-response: |
+        [
+          {
+            "code": "VBIS00700V",
+            "name": "IS \"L. COBIANCHI\""
+          },
+          {
+            "code": "FEIC823006",
+            "name": "I.C. Obiante Blu"
+          }
+        ]
   /{schoolId}:
     type: collection-item
     /subjects:
-      type: collection
+      type:
+        collection:
+          example-get-collection-name: "Italiano"
+          example-get-collection-response: |
+            [
+              {
+                "code": "lingua-e-letteratura-italiana",
+                "name": "Lingua e letteratura italiana"
+              }
+            ]
       /{subjectId}:
         type: collection-item
         /marks:
@@ -87,12 +117,13 @@ resourceTypes:
           type: string
           minLength: 3
           required: true
+          example: <<example-get-collection-name>>
       responses:
         200:
           body:
             application/json:
-              type: search-result
-              example: <<example-get-collection>>
+              type: <<resourcePathName>>-get-response
+              example: <<example-get-collection-response>>
         400:
           body:
             application/json:
@@ -105,12 +136,12 @@ resourceTypes:
       description: Register a <<resourcePathName|!singularize>> and get its id
       body:
         application/json:
-          type: <<resourcePathName|!singularize>>-post
+          type: <<resourcePathName>>-post-request
       responses:
         201:
           body:
             application/json:
-              type: id
+              type: <<resourcePathName>>-post-response
               example: |
                 {
                   "id": 107
@@ -130,12 +161,12 @@ resourceTypes:
         200:
           body:
             application/json:
-              type: <<resourcePathName|!singularize>>
+              type: <<resourcePathName|!singularize>>-get-response
     patch:
       description: Change details about a <<resourcePathName|!singularize>>
       body:
         application/json:
-          type: <<resourcePathName|!singularize>>
+          type: <<resourcePathName|!singularize>>-patch-request
       responses:
         200:
         400:
@@ -144,7 +175,7 @@ resourceTypes:
               type: message
               example: |
                 {
-                  "message": "The parameter "paolo" does not exist"
+                  "message": "The parameter \"paolo\" does not exist"
                 }
     delete:
       description: Delete a <<resourcePathName|!singularize>>
@@ -174,6 +205,30 @@ resourceTypes:
     get:
 
 types:
+  students-get-response:  !include raml/student/collection-get-response.json
+  students-post-request:  !include raml/student/collection-post-request.json
+  students-post-response: !include raml/student/collection-post-response.json
+  student-get-response:  !include raml/student/item-get-response.json
+  student-patch-request: !include raml/student/item-patch-request.json
+
+  teachers-get-response:  !include raml/teacher/collection-get-response.json
+  teachers-post-request:  !include raml/teacher/collection-post-request.json
+  teachers-post-response: !include raml/teacher/collection-post-response.json
+  teacher-get-response:  !include raml/teacher/item-get-response.json
+  teacher-patch-request: !include raml/teacher/item-patch-request.json
+
+  schools-get-response:  !include raml/school/collection-get-response.json
+  schools-post-request:  !include raml/school/collection-post-request.json
+  schools-post-response: !include raml/school/collection-post-response.json
+  school-get-response:  !include raml/school/item-get-response.json
+  school-patch-request: !include raml/school/item-patch-request.json
+
+  subjects-get-response:  !include raml/subject/collection-get-response.json
+  subjects-post-request:  !include raml/subject/collection-post-request.json
+  subjects-post-response: !include raml/subject/collection-post-response.json
+  subject-get-response:  !include raml/subject/item-get-response.json
+  subject-patch-request: !include raml/subject/item-patch-request.json
+
   id: |
     {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
@@ -220,24 +275,6 @@ types:
       "properties": {
         "message": {
           "type": "string"
-        }
-      }
-    }
-  student-post: |
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "type": "object",
-      "properties": {
-        "mail": {
-          "type": "string",
-          "format": "email"
-        },
-        "name": {
-          "type": "string"
-        },
-        "surname": {
-          "type": "string",
-          "required": false
         }
       }
     }
@@ -291,77 +328,7 @@ types:
         }
       }
     }
-  student: |
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "type": "object",
-      "properties": {
-        "mail": {
-          "type": "string",
-          "format": "email"
-        },
-        "name": {
-          "type": "string"
-        },
-        "surname": {
-          "type": "string"
-        },
-        "is_class_president": {
-          "type": "boolean",
-          "required": false
-        },
-        "is_school_president": {
-          "type": "boolean",
-          "required": false
-        }
-      }
-    }
-  teacher: |
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "type": "object",
-      "properties": {
-        "mail": {
-          "type": "string",
-          "format": "email"
-        },
-        "name": {
-          "type": "string"
-        },
-        "surname": {
-          "type": "string"
-        },
-        "is_class_coordinator": {
-          "type": "boolean",
-          "required": false
-        },
-        "is_school_president": {
-          "type": "boolean",
-          "required": false
-        }
-      }
-    }
-  school: |
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    }
   class: |
-    {
-      "$schema": "https://json-schema.org/draft/2020-12/schema",
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        }
-      }
-    }
-  subject: |
     {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "type": "object",

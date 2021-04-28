@@ -2,7 +2,7 @@
 build*/
 
 # Clangd cache
-.cache/
+.cache/clangd
 
 # File a caso
 -.s
