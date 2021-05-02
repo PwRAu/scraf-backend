@@ -155,7 +155,7 @@ private:
 							throw std::logic_error("Spaggiari login failed");
 						}
 						currentStudent->spaggiari_username = std::string{text};
-						currentStudent->spaggiari_password = std::string{text};
+						currentStudent->spaggiari_password = std::string{text2};
 						needsUpdate = true;
 					}
 					else {
