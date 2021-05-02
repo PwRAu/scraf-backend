@@ -22,6 +22,14 @@
     "is_school_president": {
       "type": "boolean",
       "required": false
+    },
+    "spaggiari_username": {
+      "type": "string",
+      "required": false
+    },
+    "spaggiari_password": {
+      "type": "string",
+      "required": false
     }
   }
 }

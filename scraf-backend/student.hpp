@@ -15,22 +15,23 @@ public:
 	std::string name;
 	// Per esprimere che un oggetto può essere NULL nel database, lo dichiaro odb::nullable (o forse in futuro std::optional)
 	odb::nullable<std::string> surname;
+	odb::nullable<bool> is_class_president;
+	odb::nullable<bool> is_school_president;
+	odb::nullable<std::string> spaggiari_username;
+	odb::nullable<std::string> spaggiari_password;
 
-	template<Text type>
-	student(type mail)
-		: mail(std::forward<type>(mail)) {}
+	student(std::string_view mail)
+		: mail(mail) {}
 	
-	template<Text type1, Text type2>
-	student(type1 mail, type2 password_hash)
-		: mail(std::forward<type1>(mail)), password_hash(std::forward<type2>(password_hash)) {}
+	student(std::string_view mail, std::string_view password_hash)
+		: mail(mail), password_hash(password_hash) {}
 	
-	template<Text type1, Text type2, Text type3>
-	student(type1 mail, type2 password_hash, type3 name)
-		: mail(std::forward<type1>(mail)), password_hash(std::forward<type2>(password_hash)), name(std::forward<type3>(name)) {}
-	
-	template<Text type1, Text type2, Text type3, Text type4>
-	student(type1 mail, type2 password_hash, type3 name, type4 surname)
-		: mail(std::forward<type1>(mail)), password_hash(std::forward<type2>(password_hash)), name(std::forward<type3>(name)), surname(std::forward<type4>(surname)) {}
+	student(std::string_view mail, std::string_view password_hash, std::string_view name)
+		: mail(mail), password_hash(password_hash), name(name) {}
+
+	template<Text text>
+	student(std::string_view mail, std::string_view password_hash, std::string_view name, text surname)
+		: mail(mail), password_hash(password_hash), name(name), surname(std::forward<text>(surname)) {}
 
 	//template<Text... type>
 	//student(type... arguments)

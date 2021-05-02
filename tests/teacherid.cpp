@@ -1,7 +1,7 @@
 #include <tests/common.hpp>
 #include <gtest/gtest.h>
 #include <scraf-backend/scraf.hpp>
-#include <scraf-backend/scraf_curl.hpp>
+#include <libscrafurl/scrafurl.hpp>
 #include <thread>
 
 using namespace Pistache;
@@ -15,7 +15,7 @@ TEST(teacherid, GetTeachersId){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/teachers/107"
@@ -32,7 +32,7 @@ TEST(teacherid, PatchTeachersId){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.patch(
 		"localhost:" + std::to_string(port) + "/teachers/107",
@@ -53,7 +53,7 @@ TEST(teacherid, DeleteTeachersId){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.deletee(
 		"localhost:" + std::to_string(port) + "/teachers/107"
@@ -76,7 +76,7 @@ TEST(teacherid, GetTeachersIdNoId){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/teachers"
@@ -93,7 +93,7 @@ TEST(teacherid, PatchTeachersIdNoId){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.patch(
 		"localhost:" + std::to_string(port) + "/teachers",
@@ -113,7 +113,7 @@ TEST(teacherid, DelteTeachersIdNoId){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.deletee(
 		"localhost:" + std::to_string(port) + "/teachers"

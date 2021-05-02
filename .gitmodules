@@ -4,3 +4,6 @@
 [submodule "subprojects/pistache"]
 	path = subprojects/pistache
 	url = https://github.com/pistacheio/pistache.git
+[submodule "subprojects/libscrafurl"]
+	path = subprojects/libscrafurl
+	url = https://github.com/PwRAu/libscrafurl.git

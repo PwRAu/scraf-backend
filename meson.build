@@ -19,8 +19,8 @@ if compiler.get_id() == 'clang'
 	add_global_arguments(['-fuse-ld=lld', '-Wno-unused-command-line-argument'], language: ['c', 'cpp'])
 	add_global_link_arguments('-fuse-ld=lld', language: ['c', 'cpp'])
 	if get_option('debug')
-		add_global_arguments(['-Og', '-gdwarf-4', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fdebug-default-version=4', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls'], language: ['c', 'cpp'])
-		clang_warnings = ['-Weverything', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-documentation', '-Wno-documentation-unknown-command']
+		add_global_arguments(['-Og', '-gdwarf-5', '-glldb', '-fstandalone-debug', '-fdebug-info-for-profiling', '-fdebug-macro', '-fno-omit-frame-pointer', '-fno-optimize-sibling-calls'], language: ['c', 'cpp'])
+		clang_warnings = ['-Weverything', '-Wno-c++98-compat', '-Wno-c++98-compat-pedantic', '-Wno-missing-prototypes', '-Wno-global-constructors', '-Wno-exit-time-destructors', '-Wno-documentation', '-Wno-documentation-unknown-command', '-Wno-sign-conversion', '-Wno-shadow-field-in-constructor', '-Wshadow-field-in-constructor-modified', '-Wno-ctad-maybe-unsupported']
 	endif
 	if get_option('b_sanitize') == 'memory'
 		add_global_arguments('-fsanitize-memory-track-origins', language: ['c', 'cpp'])
@@ -68,12 +68,13 @@ odb_src = odb_generator.process(
 )
 
 scraf_dependencies = [
-	dependency('libpistache', fallback: ['pistache', 'pistache_dep'], default_options: ['default_library=static', 'warning_level=0']),
+	dependency('libpistache', fallback: 'pistache', default_options: ['default_library=static', 'warning_level=0']),
 	dependency('libodb', version: '>=2.5.0'),
 	dependency('libodb-pgsql', version: '>=2.5.0'),
 	simdjson_dep,
 	dependency('nlohmann_json'),
-	dependency('libsodium')
+	dependency('libsodium'),
+	dependency('libscrafurl')
 ]
 
 executable(

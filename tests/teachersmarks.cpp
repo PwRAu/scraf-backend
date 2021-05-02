@@ -1,7 +1,7 @@
 #include <tests/common.hpp>
 #include <gtest/gtest.h>
 #include <scraf-backend/scraf.hpp>
-#include <scraf-backend/scraf_curl.hpp>
+#include <libscrafurl/scrafurl.hpp>
 #include <thread>
 
 using namespace Pistache;
@@ -15,7 +15,7 @@ TEST(teachersmarks, GetTeachersMarks){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/teachers/107/subjects/1/marks"
@@ -35,7 +35,7 @@ TEST(teachersmarks, GetTeachersMarksNoId){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/teachers/subjects/marks"

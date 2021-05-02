@@ -37,7 +37,7 @@ void handleSignals() {
 }
 
 int main() {
-	std::unique_ptr<odb::database> database {new odb::pgsql::database{"scraf", "ollareollare", "scraf_prova", "postgres.barto.paoloap.ml", 5432}};
+	std::unique_ptr<odb::database> database {std::make_unique<odb::pgsql::database>("scraf", "ollareollare", "scraf_prova", "postgres.barto.paoloap.ml", 5432)};
 	Http::Endpoint endpoint{{Ipv4::any(), Port(10780)}};
 	handleSignals();
 	Scraf scraf {database, endpoint, 1};

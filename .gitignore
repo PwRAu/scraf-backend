@@ -4,11 +4,9 @@ build*/
 # Clangd cache
 .cache/clangd
 
-# File a caso
--.s
-
 # Meson Wrap DB cache
 /subprojects/*
 !/subprojects/*.wrap
 !/subprojects/pistache
 !/subprojects/simdjson
+!/subprojects/libscrafurl

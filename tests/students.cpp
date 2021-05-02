@@ -1,7 +1,7 @@
 #include <tests/common.hpp>
 #include <gtest/gtest.h>
 #include <scraf-backend/scraf.hpp>
-#include <scraf-backend/scraf_curl.hpp>
+#include <libscrafurl/scrafurl.hpp>
 #include <thread>
 
 using namespace Pistache;
@@ -15,7 +15,7 @@ TEST(students, GetStudents){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/students?name=Andrea"
@@ -32,7 +32,7 @@ TEST(students, PostStudents){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 	
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
@@ -57,7 +57,7 @@ TEST(students,PostStudentsNoSUrname) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
@@ -84,7 +84,7 @@ TEST(students, GetStudentsLenghtLess3){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/students?name=Lu"
@@ -102,7 +102,7 @@ TEST(students, GetStudentsNoName){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/students"
@@ -121,7 +121,7 @@ TEST(students, PostStudentsNoEmail) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
@@ -148,7 +148,7 @@ TEST(students, PostStudentsNoPassword) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
@@ -174,7 +174,7 @@ TEST(students, PostStudentsNoName) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",

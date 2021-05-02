@@ -9,6 +9,11 @@ public:
 		return true;
 	}
 
+	void update(auto /**/) {}
+
+	template<typename type>
+	type* load(auto /*id*/) { return nullptr; }
+
 	template<typename type>
 	void persist(type object) {}
 };

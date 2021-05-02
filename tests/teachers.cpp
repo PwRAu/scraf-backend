@@ -1,7 +1,7 @@
 #include <tests/common.hpp>
 #include <gtest/gtest.h>
 #include <scraf-backend/scraf.hpp>
-#include <scraf-backend/scraf_curl.hpp>
+#include <libscrafurl/scrafurl.hpp>
 #include <thread>
 
 using namespace Pistache;
@@ -15,7 +15,7 @@ TEST(teachers, GetTeachers) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/teachers?name=Mirella"
@@ -32,7 +32,7 @@ TEST(teachers, PostTeachers){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
@@ -60,7 +60,7 @@ TEST(teachers, GetTeachersLenghtLess3){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/teachers?name=Fa"
@@ -78,7 +78,7 @@ TEST(teachers, GetTeachersNoName){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.get(
 		"localhost:" + std::to_string(port) + "/teachers"
@@ -98,7 +98,7 @@ TEST(teachers, PostTeachersNoSurname){
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
@@ -121,7 +121,7 @@ TEST(teachers, PostTeachersNoEmail) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
@@ -146,7 +146,7 @@ TEST(teachers, PostTeachersNoPassword) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
@@ -172,7 +172,7 @@ TEST(teachers, PostTeachersNoName) {
 	const std::uint16_t port {getPort()};
 	SCRAF_TEST_SERVER(port);
 
-	ScrafCurl curl;
+	Scrafurl curl;
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",

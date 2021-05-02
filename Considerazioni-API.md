@@ -87,4 +87,4 @@ La registrazione di uno studente segue questo flusso:
 
 ### Richieste HTTP
 
-Dato che Scraf è multithreaded posso creare una pool di `ScrafCurl` condivisa tra i thread, in modo da riciclare il curl handle, così da migliorare notevolmente la velocità delle richieste, dato che libcurl si occuperà di mantenere aperta la connessione ai server Spaggiari
+Dato che Scraf è multithreaded posso creare una pool di `Scrafurl` condivisa tra i thread, in modo da riciclare il curl handle, così da migliorare notevolmente la velocità delle richieste, dato che libcurl si occuperà di mantenere aperta la connessione ai server Spaggiari
