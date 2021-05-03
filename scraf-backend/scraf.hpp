@@ -35,6 +35,7 @@ public:
 		endpoint.init(Http::Endpoint::options().threads(threads));
 		while (threads --> 0) {
 			parserPool.push(std::make_unique<simdjson::dom::parser>());
+			curlPool.push(std::make_unique<Scrafurl>());
 		}
 
 		Rest::Routes::Post(router, "/students", Rest::Routes::bind(&Scraf::createStudent, this));
@@ -105,6 +106,10 @@ private:
 		if (!parserPool.waitPop(&parser)) {
 			throw std::runtime_error("Error getting the JSON parser. Try again later");
 		}
+		std::unique_ptr<Scrafurl> curl;
+		if (!curlPool.waitPop(&curl)) {
+			throw std::runtime_error("Error getting the curl handle. Try again later");
+		}
 		try {
 			const simdjson::dom::element parsed {parser->parse(request.body())};
 			std::int64_t id {request.param(":id").as<std::int64_t>()};
@@ -145,13 +150,12 @@ private:
 				}
 				if (parsed["spaggiari_username"].get(text) == simdjson::SUCCESS) {
 					if (parsed["spaggiari_password"].get(text2) == simdjson::SUCCESS) {
-						Scrafurl curl;
-						curl.post(
+						curl->post(
 							"https://web.spaggiari.eu/rest/v1/auth/login",
-							std::array{"Content-Type: application/json"sv, "User-Agent: zorro/1.0"sv, "Z-Dev-ApiKey: +zorro+"sv},
-							nlohmann::json{{"uid", text}, {"pass", text2}}.dump()
+							nlohmann::json{{"uid", text}, {"pass", text2}}.dump(),
+							"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+"
 						);
-						if (curl.getResponseCode() != static_cast<long>(Http::Code::Ok)) {
+						if (curl->getResponseCode() != static_cast<long>(Http::Code::Ok)) {
 							throw std::logic_error("Spaggiari login failed");
 						}
 						currentStudent->spaggiari_username = std::string{text};
@@ -184,6 +188,7 @@ private:
 			response.send(Http::Code::Bad_Gateway, nlohmann::json{{"message", "An error occured"}}.dump());
 		}
 		parserPool.push(std::move(parser));
+		curlPool.push(std::move(curl));
 	}
 
 private:
@@ -192,5 +197,6 @@ private:
 	Rest::Router router;
 	// Pool thread-safe di parser
 	ObjectPool<std::unique_ptr<simdjson::dom::parser>> parserPool;
+	ObjectPool<std::unique_ptr<Scrafurl>> curlPool;
 	bool off {true};
 };

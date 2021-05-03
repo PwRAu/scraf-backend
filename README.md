@@ -74,7 +74,7 @@ After you installed all the dependencies, you can build Scraf with Meson.
 First, clone the repository
 
 ```sh
-git clone https://github.com/PwRAu/scraf-backend.git --recurse-submodules
+git clone https://github.com/PwRAu/scraf-backend.git
 ```
 
 Then configure the build directory
