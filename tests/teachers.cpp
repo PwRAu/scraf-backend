@@ -36,13 +36,13 @@ TEST(teachers, PostTeachers){
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
-		"Content-Type: application/json",
 		json{
 			{"mail", "fausto.bartolucci@edu.cobianchi.it"},
 			{"password", "CBC349aa"},
 			{"name", "Fausto"},
 			{"surname", "Bartolucci"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
@@ -102,12 +102,12 @@ TEST(teachers, PostTeachersNoSurname){
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
-		"Content-Type: application/json",
 		json{
 			{"mail", "fausto.bartolucci@edu.cobianchi.it"},
 			{"password", "CBC349aa"},
 			{"name", "Fausto"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
@@ -125,12 +125,12 @@ TEST(teachers, PostTeachersNoEmail) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
-		"Content-Type: application/json",
 		json{
 			{"password", "CBC349aa"},
 			{"name", "Fausto"},
 			{"surname", "Bartolucci"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	// La richiesta effettuata senza l'email dovrebbe dare uno status code che indica che la richiesta è incompleta
@@ -150,12 +150,12 @@ TEST(teachers, PostTeachersNoPassword) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
-		"Content-Type: application/json",
 		json{
 			{"mail", "fausto.bartolucci@edu.cobianchi.it"},
 			{"name", "Fausto"},
 			{"surname", "Bartolucci"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	// La richiesta effettuata senza la password dovrebbe dare uno status code che indica che la richiesta è incompleta
@@ -176,12 +176,12 @@ TEST(teachers, PostTeachersNoName) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers",
-		"Content-Type: application/json",
 		json{
 			{"mail", "fausto.bartolucci@edu.cobianchi.it"},
 			{"password", "CBC349aa"},
 			{"surname", "Bartolucci"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	// La richiesta effettuata senza il nome dovrebbe dare uno status code che indica che la richiesta è incompleta

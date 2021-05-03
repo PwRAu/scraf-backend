@@ -36,10 +36,10 @@ TEST(studentsid, PatchStudentsId){
 
 	curl.patch(
 		"localhost:" + std::to_string(port) + "/students/107",
-		"Content-Type: application/json",
 		json{
 			{"studentid", "107"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
@@ -97,9 +97,9 @@ TEST(studentsid, PatchStudentsIdNoId){
 
 	curl.patch(
 		"localhost:" + std::to_string(port) + "/students",
-		"Content-Type: application/json",
 		json{
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(

@@ -24,8 +24,6 @@
 #include <libscrafurl/scrafurl.hpp>
 
 using namespace Pistache;
-using namespace std::chrono_literals;
-using namespace std::string_view_literals;
 
 template<typename Database = std::unique_ptr<odb::database>, typename DbTransaction = odb::transaction>
 class Scraf {

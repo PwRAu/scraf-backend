@@ -36,13 +36,13 @@ TEST(students, PostStudents){
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		"Content-Type: application/json",
 		json{
 			{"mail", "andrea@pappacoda.it"},
 			{"password", "coconutnut1968"},
 			{"name", "Andrea"},
 			{"surname", "Pappacoda"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
@@ -61,12 +61,12 @@ TEST(students,PostStudentsNoSUrname) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		"Content-Type: application/json",
 		json{
 			{"mail", "luca.lettini@libero.it"},
 			{"password", "tuamammma68"},
 			{"name", "Luca"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
@@ -125,12 +125,12 @@ TEST(students, PostStudentsNoEmail) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		"Content-Type: application/json",
 		json{
 			{"password", "ciaociao22"},
 			{"name", "Luca"},
 			{"surname", "Lettini"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	// La richiesta effettuata senza l'email dovrebbe dare uno status code che indica che la richiesta è incompleta
@@ -152,12 +152,12 @@ TEST(students, PostStudentsNoPassword) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		"Content-Type: application/json",
 		json{
 			{"mail", "lettilu22@gmail.com"},
 			{"name", "Marco"},
 			{"surname", "IlSupremo"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	// La richiesta effettuata senza la password dovrebbe dare uno status code che indica che la richiesta è incompleta
@@ -178,12 +178,12 @@ TEST(students, PostStudentsNoName) {
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/students",
-		"Content-Type: application/json",
 		json{
 			{"mail", "lucalettini54@gmail.com"},
 			{"password", "marcopolo22"},
 			{"surname", "IlSupremo"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	// La richiesta effettuata senza il nome dovrebbe dare uno status code che indica che la richiesta è incompleta

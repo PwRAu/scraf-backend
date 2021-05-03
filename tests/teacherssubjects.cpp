@@ -35,11 +35,11 @@ TEST(teacherssubjects, PostTeachersSubjects){
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers/107/subjects",
-		"Content-Type: application/json",
 		json{
 			{"teacherid", "107"},
 			{"subjectid", "1"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
@@ -80,9 +80,9 @@ TEST(teacherssubjects, PostTeachersSubjectsNoId){
 
 	curl.post(
 		"localhost:" + std::to_string(port) + "/teachers/subjects",
-		"Content-Type: application/json",
 		json{
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(

@@ -36,10 +36,10 @@ TEST(teacherid, PatchTeachersId){
 
 	curl.patch(
 		"localhost:" + std::to_string(port) + "/teachers/107",
-		"Content-Type: application/json",
 		json{
 			{"teacherid", "107"}
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
@@ -97,9 +97,9 @@ TEST(teacherid, PatchTeachersIdNoId){
 
 	curl.patch(
 		"localhost:" + std::to_string(port) + "/teachers",
-		"Content-Type: application/json",
 		json{
-		}.dump()
+		}.dump(),
+		"Content-Type: application/json"
 	);
 
 	EXPECT_EQ(
