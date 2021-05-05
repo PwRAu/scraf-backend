@@ -13,11 +13,12 @@ class school_class;
 // Dico che la classe school è un oggetto del database
 #pragma db object
 class school {
-public:
+private:
 	// Dico che code è l'id (PRIMARY KEY) della school;
 	// potrei dire db id auto per dire che l'id è AUTOINCREMENT
 	#pragma db id
 	std::string code;
+public:
 	std::string name;
 
 	//#pragma db inverse(primaryKey.school_fk)
@@ -59,9 +60,16 @@ public:
 	// e senza copie aggiuntive.
 	// Onestamente std::forward non l'ho ben capito neanch'io, cioè probabilmente l'ho capito ieri ma me ne sono
 	// già dimenticato perché è bello storto.
-	template<Text type1, Text type2>
-	school(type1 code, type2 name)
-		: code(std::forward<type1>(code)), name(std::forward<type2>(name)) {}
+	// template<Text type1, Text type2>
+	// school(type1 code, type2 name)
+	// 	: code(std::forward<type1>(code)), name(std::forward<type2>(name)) {}
+
+	school(const std::string_view code, const std::string_view name)
+		: code(code), name(name) {}
+
+	[[nodiscard]] const std::string& getCode() const noexcept {
+		return code;
+	}
 
 private:
 	// Creo il costruttore di default, di cui ODB ha bisogno;
