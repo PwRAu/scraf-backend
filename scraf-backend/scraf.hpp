@@ -110,7 +110,7 @@ private:
 			json responseBody {json::array()};
 			{
 				DbTransaction transaction(database->begin());
-				odb::result<student> result(database->template query<student>("levenshtein_less_equal('" + request.query().get("name").value() + "', concat(name, surname), 7) < 7")); 
+				auto result(database->template query<student>("levenshtein_less_equal('" + request.query().get("name").value() + "', concat(name, surname), 7) < 7")); 
 				for (const auto& student : result) {
 					responseBody.push_back({{"id", student.getId()}, {"name", student.name + (student.surname.null() ? "" : student.surname.get())}});
 				}
