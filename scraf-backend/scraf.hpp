@@ -4,6 +4,7 @@
 #include <memory>
 #include <utility>
 #include <scraf-backend/object_pool.hpp>
+#include <regex>
 
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
@@ -24,7 +25,7 @@
 #include <libscrafurl/scrafurl.hpp>
 
 using namespace Pistache;
-namespace nl = nlohmann;
+using json = nlohmann::json;
 
 template<typename Database = std::unique_ptr<odb::database>, typename DbTransaction = odb::transaction>
 class Scraf {
@@ -37,11 +38,13 @@ public:
 			curlPool.push(std::make_unique<Scrafurl>());
 		}
 
-		Rest::Routes::Get(router, "/students", Rest::Routes::bind(&Scraf::searchStudent, this));
-		Rest::Routes::Post(router, "/students", Rest::Routes::bind(&Scraf::createStudent, this));
+		Rest::Routes::Get  (router, "/students", Rest::Routes::bind(&Scraf::searchStudent, this));
+		Rest::Routes::Post (router, "/students", Rest::Routes::bind(&Scraf::createStudent, this));
+		Rest::Routes::Get  (router, "/students/:id", Rest::Routes::bind(&Scraf::getStudentDetails, this));
 		Rest::Routes::Patch(router, "/students/:id", Rest::Routes::bind(&Scraf::updateStudent, this));
+		Rest::Routes::Get  (router, "/students/:id/subjects", Rest::Routes::bind(&Scraf::getStudentSubjects, this));
 
-		Rest::Routes::Post(router, "/schools", Rest::Routes::bind(&Scraf::createSchool, this));
+		Rest::Routes::Post (router, "/schools", Rest::Routes::bind(&Scraf::createSchool, this));
 
 		endpoint.setHandler(router.handler());
 	}
@@ -88,49 +91,77 @@ private:
 				database->persist(student);
 				transaction.commit();
 			}
-			response.send(Http::Code::Created, nl::json{{"id", student.getId()}}.dump());
+			response.send(Http::Code::Created, json{{"id", student.getId()}}.dump());
 		}
 		catch (const simdjson::simdjson_error& exception) {
-			response.send(Http::Code::Bad_Request, nl::json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
+			response.send(Http::Code::Bad_Request, json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
 		}
 		catch (const std::exception& exception) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", exception.what()}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
 		}
 		catch (...) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", "An error occured"}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", "An error occured"}}.dump());
 		}
 		parserPool.push(std::move(parser));
 	}
 
 	void searchStudent(const Rest::Request& request, Http::ResponseWriter response) {
-		std::unique_ptr<simdjson::dom::parser> parser;
-		if (!parserPool.waitPop(&parser)) {
-			throw std::runtime_error("Error getting the JSON parser. Try again later");
-		}
 		try {
-			const simdjson::dom::element parsed {parser->parse(request.body())};
-			const std::string searched {parsed["name"].get_string().value()};
-			nl::json responseBody {};
+			json responseBody {json::array()};
 			{
 				DbTransaction transaction(database->begin());
-				odb::result<student> result(database->query<student>("levenshtein_less_equal('" + searched + "', name || surname, 5) < 5"));
+				odb::result<student> result(database->template query<student>("levenshtein_less_equal('" + request.query().get("name").value() + "', concat(name, surname), 7) < 7")); 
 				for (const auto& student : result) {
-					responseBody
+					responseBody.push_back({{"id", student.getId()}, {"name", student.name + (student.surname.null() ? "" : student.surname.get())}});
 				}
 				transaction.commit();
 			}
-			response.send(Http::Code::Ok, nl::json{{"id"}}.dump());
-		}
-		catch (const simdjson::simdjson_error& exception) {
-			response.send(Http::Code::Bad_Request, nl::json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
+			response.send(Http::Code::Ok, responseBody.dump());
 		}
 		catch (const std::exception& exception) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", exception.what()}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
 		}
 		catch (...) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", "An error occured"}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", "An error occured"}}.dump());
 		}
-		parserPool.push(std::move(parser));
+	}
+
+	/*
+	 * Devo restituire nome cognome ecc e una lista di id voti e 
+	 */
+	void getStudentDetails(const Rest::Request& request, Http::ResponseWriter response) {
+		try {
+			DbTransaction transaction(database->begin());
+			std::unique_ptr<student> student_ {database->template load<student>(request.param(":id").as<std::int64_t>())};
+			transaction.commit();
+			if (student_->surname.null()) {
+				response.send(Http::Code::Ok,
+					json{
+						{"mail", student_->mail},
+						{"name", student_->name},
+						{"is_class_president", student_->is_class_president},
+						{"is_school_president", student_->is_school_president}
+					}
+				);
+			}
+			else {
+				response.send(Http::Code::Ok,
+					json{
+						{"mail", student_->mail},
+						{"name", student_->name},
+						{"surname", student_->surname.get()},
+						{"is_class_president", student_->is_class_president},
+						{"is_school_president", student_->is_school_president}
+					}
+				);
+			}
+		}
+		catch (const std::exception& exception) {
+			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
+		}
+		catch (...) {
+			response.send(Http::Code::Bad_Gateway, json{{"message", "An error occured"}}.dump());
+		}
 	}
 
 	void updateStudent(const Rest::Request& request, Http::ResponseWriter response) {
@@ -144,10 +175,9 @@ private:
 		}
 		try {
 			const simdjson::dom::element parsed {parser->parse(request.body())};
-			std::int64_t id {request.param(":id").as<std::int64_t>()};
 			{
 				DbTransaction transaction(database->begin());
-				std::unique_ptr<student> currentStudent {database->template load<student>(id)};
+				std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":id").as<std::int64_t>())};
 				std::string_view text;
 				bool boolean;
 				bool needsUpdate {false};
@@ -171,34 +201,34 @@ private:
 					currentStudent->password_hash = hashedPassword.data();
 					needsUpdate = true;
 				}
-				if (parsed["is_class_president"].get(boolean) == simdjson::SUCCESS && currentStudent->is_class_president.get() != boolean) {
+				if (parsed["is_class_president"].get(boolean) == simdjson::SUCCESS && currentStudent->is_class_president != boolean) {
 					currentStudent->is_class_president = boolean;
 					needsUpdate = true;
 				}
-				if (parsed["is_school_president"].get(boolean) == simdjson::SUCCESS && currentStudent->is_school_president.get() != boolean) {
+				if (parsed["is_school_president"].get(boolean) == simdjson::SUCCESS && currentStudent->is_school_president != boolean) {
 					currentStudent->is_school_president = boolean;
 					needsUpdate = true;
 				}
-				if (parsed["spaggiari_username"].get(text) == simdjson::SUCCESS) {
-					if (std::string_view text2; parsed["spaggiari_password"].get(text2) == simdjson::SUCCESS) {
+				if (parsed["cvv_username"].get(text) == simdjson::SUCCESS) {
+					if (std::string_view text2; parsed["cvv_password"].get(text2) == simdjson::SUCCESS) {
 						curl->post(
 							"https://web.spaggiari.eu/rest/v1/auth/login",
-							nl::json{{"uid", text}, {"pass", text2}}.dump(),
+							json{{"uid", text}, {"pass", text2}}.dump(),
 							"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+"
 						);
 						if (curl->getResponseCode() != static_cast<long>(Http::Code::Ok)) {
-							throw std::logic_error("Spaggiari login failed");
+							throw std::logic_error("ClasseViva login failed");
 						}
-						currentStudent->spaggiari_username = std::string{text};
-						currentStudent->spaggiari_password = std::string{text2};
+						const simdjson::dom::element parsedCvv {parser->parse(curl->getResponseBody())};
+						currentStudent->cvv_username = std::string{text};
+						currentStudent->cvv_password = std::string{text2};
+						currentStudent->cvv_ident = std::regex_replace(parsedCvv["ident"].get_c_str().value(), std::regex("[^0-9]*([0-9]+).*"), std::string("$1"));
+						currentStudent->cvv_token = std::string{parsedCvv["token"].get_string().value()};
 						needsUpdate = true;
 					}
 					else {
-						throw std::logic_error("When changing one Spaggiari credential you must provide both of them");
+						throw std::logic_error("When changing one ClasseViva credential you must provide both of them");
 					}
-				}
-				else if (parsed["spaggiari_password"].get(text) == simdjson::SUCCESS && parsed["spaggiari_username"].get(text) != simdjson::SUCCESS) {
-					throw std::logic_error("When changing one Spaggiari credential you must provide both of them");
 				}
 				if (needsUpdate) {
 					database->update(*currentStudent);
@@ -207,13 +237,63 @@ private:
 			}
 		}
 		catch (const simdjson::simdjson_error& exception) {
-			response.send(Http::Code::Bad_Request, nl::json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
+			response.send(Http::Code::Bad_Request, json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
 		}
 		catch (const std::exception& exception) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", exception.what()}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
 		}
 		catch (...) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", "An error occured"}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", "An error occured"}}.dump());
+		}
+		parserPool.push(std::move(parser));
+		curlPool.push(std::move(curl));
+	}
+
+	/*
+	 * Per gestire l'autenticazione posso fare una richiesta col token memorizzato,
+	 * e se ottengo 401 (unauthorized) ne richiedo uno nuovo
+	 */
+	void getStudentSubjects(const Rest::Request& request, Http::ResponseWriter response) {
+		std::unique_ptr<simdjson::dom::parser> parser;
+		if (!parserPool.waitPop(&parser)) {
+			throw std::runtime_error("Error getting the JSON parser. Try again later");
+		}
+		std::unique_ptr<Scrafurl> curl;
+		if (!curlPool.waitPop(&curl)) {
+			throw std::runtime_error("Error getting the curl handle. Try again later");
+		}
+		try {
+			DbTransaction transaction(database->begin());
+			std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":id").as<std::int64_t>())};
+			curl->get(
+				"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/subjects?ffilter=subjects(id,description)",
+				"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+", std::string{"Z-Auth-Token: " + currentStudent->cvv_token.get()}.c_str()
+			);
+			// Token expired, I get a new one
+			if (curl->getResponseCode() == static_cast<long>(Http::Code::Unauthorized)) {
+				curl->post(
+					"https://web.spaggiari.eu/rest/v1/auth/login",
+					json{{"uid", currentStudent->cvv_username.get()}, {"pass", currentStudent->cvv_password.get()}}.dump(),
+					"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+"
+				);
+				if (curl->getResponseCode() != static_cast<long>(Http::Code::Ok)) {
+					throw std::logic_error("ClasseViva login failed");
+				}
+				const simdjson::dom::element parsed {parser->parse(curl->getResponseBody())};
+				currentStudent->cvv_token = std::string{parsed["token"].get_string().value()};
+				curl->get(
+					"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/subjects?ffilter=subjects(id,description)",
+					"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+", std::string{"Z-Auth-Token: " + std::string{parsed["token"].get_string().value()}}.c_str()
+				);
+				transaction.commit();
+			}
+			response.send(Http::Code::Ok, curl->getResponseBody());
+		}
+		catch (const std::exception& exception) {
+			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
+		}
+		catch (...) {
+			response.send(Http::Code::Bad_Gateway, json{{"message", "An error occured"}}.dump());
 		}
 		parserPool.push(std::move(parser));
 		curlPool.push(std::move(curl));
@@ -232,22 +312,22 @@ private:
 				database->persist(school);
 				transaction.commit();
 			}
-			response.send(Http::Code::Created, nl::json{{"id", school.getCode()}}.dump());
+			response.send(Http::Code::Created, json{{"id", school.getCode()}}.dump());
 		}
 		catch (const simdjson::simdjson_error& exception) {
-			response.send(Http::Code::Bad_Request, nl::json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
+			response.send(Http::Code::Bad_Request, json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
 		}
 		catch (const std::exception& exception) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", exception.what()}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
 		}
 		catch (...) {
-			response.send(Http::Code::Bad_Gateway, nl::json{{"message", "An error occured"}}.dump());
+			response.send(Http::Code::Bad_Gateway, json{{"message", "An error occured"}}.dump());
 		}
 		parserPool.push(std::move(parser));
 	}
 
 private:
-	odb::database*& database;
+	Database& database;
 	Http::Endpoint& endpoint;
 	Rest::Router router;
 	// Pool thread-safe di parser

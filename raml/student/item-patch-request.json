@@ -23,11 +23,11 @@
       "type": "boolean",
       "required": false
     },
-    "spaggiari_username": {
+    "cvv_username": {
       "type": "string",
       "required": false
     },
-    "spaggiari_password": {
+    "cvv_password": {
       "type": "string",
       "required": false
     }

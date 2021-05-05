@@ -2,9 +2,12 @@
 
 #include <odb/core.hxx>
 #include <odb/nullable.hxx>
+#include <odb/vector.hxx>
 #include <utility>
 
 #include "concepts.hpp"
+
+class mark;
 
 #pragma db object
 class student {
@@ -15,17 +18,15 @@ public:
 	std::string name;
 	// Per esprimere che un oggetto può essere NULL nel database, lo dichiaro odb::nullable (o forse in futuro std::optional)
 	odb::nullable<std::string> surname;
-	odb::nullable<bool> is_class_president;
-	odb::nullable<bool> is_school_president;
-	odb::nullable<std::string> spaggiari_username;
-	odb::nullable<std::string> spaggiari_password;
+	bool is_class_president {false};
+	bool is_school_president {false};
+	odb::nullable<std::string> cvv_username;
+	odb::nullable<std::string> cvv_password;
+	odb::nullable<std::string> cvv_ident;
+	odb::nullable<std::string> cvv_token;
+//	#pragma db inverse(markedStudent)
+//	odb::vector<std::weak_ptr<mark>> marks;
 
-	student(std::string_view mail)
-		: mail(mail) {}
-	
-	student(std::string_view mail, std::string_view password_hash)
-		: mail(mail), password_hash(password_hash) {}
-	
 	student(std::string_view mail, std::string_view password_hash, std::string_view name)
 		: mail(mail), password_hash(password_hash), name(name) {}
 
@@ -48,3 +49,7 @@ private:
 	student() = default;
 	friend class odb::access;
 };
+
+#ifdef ODB_COMPILER
+	#include "mark.hpp"
+#endif

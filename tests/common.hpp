@@ -16,6 +16,9 @@ public:
 
 	template<typename type>
 	void persist(type object) {}
+
+	template<typename type>
+	auto query(type object) {}
 };
 
 class FakeDbTransaction {
