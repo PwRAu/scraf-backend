@@ -10,3 +10,4 @@ build*/
 !/subprojects/pistache
 !/subprojects/simdjson
 !/subprojects/libscrafurl
+/subprojects/rapidjson.wrap
