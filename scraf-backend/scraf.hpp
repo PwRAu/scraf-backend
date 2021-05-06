@@ -40,9 +40,10 @@ public:
 
 		Rest::Routes::Get  (router, "/students", Rest::Routes::bind(&Scraf::searchStudent, this));
 		Rest::Routes::Post (router, "/students", Rest::Routes::bind(&Scraf::createStudent, this));
-		Rest::Routes::Get  (router, "/students/:id", Rest::Routes::bind(&Scraf::getStudentDetails, this));
-		Rest::Routes::Patch(router, "/students/:id", Rest::Routes::bind(&Scraf::updateStudent, this));
-		Rest::Routes::Get  (router, "/students/:id/subjects", Rest::Routes::bind(&Scraf::getStudentSubjects, this));
+		Rest::Routes::Get  (router, "/students/:studentId", Rest::Routes::bind(&Scraf::getStudentDetails, this));
+		Rest::Routes::Patch(router, "/students/:studentId", Rest::Routes::bind(&Scraf::updateStudent, this));
+		Rest::Routes::Get  (router, "/students/:studentId/subjects", Rest::Routes::bind(&Scraf::getStudentSubjects, this));
+		Rest::Routes::Get  (router, "/students/:studentId/subjects/:subjectId/marks", Rest::Routes::bind(&Scraf::getSubjectMarks, this));
 
 		Rest::Routes::Post (router, "/schools", Rest::Routes::bind(&Scraf::createSchool, this));
 
@@ -126,13 +127,10 @@ private:
 		}
 	}
 
-	/*
-	 * Devo restituire nome cognome ecc e una lista di id voti e 
-	 */
 	void getStudentDetails(const Rest::Request& request, Http::ResponseWriter response) {
 		try {
 			DbTransaction transaction(database->begin());
-			std::unique_ptr<student> student_ {database->template load<student>(request.param(":id").as<std::int64_t>())};
+			std::unique_ptr<student> student_ {database->template load<student>(request.param(":studentId").as<std::int64_t>())};
 			transaction.commit();
 			if (student_->surname.null()) {
 				response.send(Http::Code::Ok,
@@ -177,7 +175,7 @@ private:
 			const simdjson::dom::element parsed {parser->parse(request.body())};
 			{
 				DbTransaction transaction(database->begin());
-				std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":id").as<std::int64_t>())};
+				std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":studentId").as<std::int64_t>())};
 				std::string_view text;
 				bool boolean;
 				bool needsUpdate {false};
@@ -264,9 +262,57 @@ private:
 		}
 		try {
 			DbTransaction transaction(database->begin());
-			std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":id").as<std::int64_t>())};
+			std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":studentId").as<std::int64_t>())};
 			curl->get(
 				"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/subjects?ffilter=subjects(id,description)",
+				"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+", std::string{"Z-Auth-Token: " + currentStudent->cvv_token.get()}.c_str()
+			);
+			// Token expired, I get a new one
+			if (curl->getResponseCode() == static_cast<long>(Http::Code::Unauthorized)) {
+				curl->post(
+					"https://web.spaggiari.eu/rest/v1/auth/login",
+					json{{"uid", currentStudent->cvv_username.get()}, {"pass", currentStudent->cvv_password.get()}}.dump(),
+					"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+"
+				);
+				if (curl->getResponseCode() != static_cast<long>(Http::Code::Ok)) {
+					throw std::logic_error("ClasseViva login failed");
+				}
+				std::cerr << curl->getResponseBody() << '\n';
+				const simdjson::dom::element parsed {parser->parse(curl->getResponseBody())};
+				currentStudent->cvv_token = std::string{parsed["token"].get_string().value()};
+				curl->get(
+					"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/subjects?ffilter=subjects(id,description)",
+					"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+", std::string{"Z-Auth-Token: " + std::string{parsed["token"].get_string().value()}}.c_str()
+				);
+				transaction.commit();
+			}
+			response.send(Http::Code::Ok, curl->getResponseBody());
+		}
+		catch (const std::exception& exception) {
+			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
+		}
+		catch (...) {
+			response.send(Http::Code::Bad_Gateway, json{{"message", "An error occured"}}.dump());
+		}
+		parserPool.push(std::move(parser));
+		curlPool.push(std::move(curl));
+	}
+
+	void getSubjectMarks(const Rest::Request& request, Http::ResponseWriter response) {
+		std::unique_ptr<simdjson::dom::parser> parser;
+		if (!parserPool.waitPop(&parser)) {
+			throw std::runtime_error("Error getting the JSON parser. Try again later");
+		}
+		std::unique_ptr<Scrafurl> curl;
+		if (!curlPool.waitPop(&curl)) {
+			throw std::runtime_error("Error getting the curl handle. Try again later");
+		}
+		try {
+			DbTransaction transaction(database->begin());
+			std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":studentId").as<std::int64_t>())};
+			const std::string cvvRequestUrl {"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/grades2/subjects/" + request.param(":subjectId").as<std::string>() + "?dfilter=grades(componentDesc=Misurazioni)&ffilter=grades(decimalValue,notesForFamily)"};
+			curl->get(
+				cvvRequestUrl,
 				"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+", std::string{"Z-Auth-Token: " + currentStudent->cvv_token.get()}.c_str()
 			);
 			// Token expired, I get a new one
@@ -282,7 +328,7 @@ private:
 				const simdjson::dom::element parsed {parser->parse(curl->getResponseBody())};
 				currentStudent->cvv_token = std::string{parsed["token"].get_string().value()};
 				curl->get(
-					"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/subjects?ffilter=subjects(id,description)",
+					cvvRequestUrl,
 					"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+", std::string{"Z-Auth-Token: " + std::string{parsed["token"].get_string().value()}}.c_str()
 				);
 				transaction.commit();
