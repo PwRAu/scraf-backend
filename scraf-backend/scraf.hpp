@@ -310,7 +310,7 @@ private:
 		try {
 			DbTransaction transaction(database->begin());
 			std::unique_ptr<student> currentStudent {database->template load<student>(request.param(":studentId").as<std::int64_t>())};
-			const std::string cvvRequestUrl {"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/grades2/subjects/" + request.param(":subjectId").as<std::string>() + "?dfilter=grades(componentDesc=Misurazioni)&ffilter=grades(decimalValue,notesForFamily)"};
+			const std::string cvvRequestUrl {"https://web.spaggiari.eu/rest/v1/students/" + currentStudent->cvv_ident.get() + "/grades2/subjects/" + request.param(":subjectId").as<std::string>() + "?dfilter=grades(componentDesc=Misurazioni)&ffilter=grades(decimalValue,notesForFamily,evtDate)"};
 			curl->get(
 				cvvRequestUrl,
 				"Content-Type: application/json", "User-Agent: zorro/1.0", "Z-Dev-ApiKey: +zorro+", std::string{"Z-Auth-Token: " + currentStudent->cvv_token.get()}.c_str()
