@@ -42,11 +42,11 @@ public:
 		return id;
 	}
 
+	student() = default;
 private:
 	#pragma db id auto
 	std::int64_t id;	// Intero a 64 bit, grande quando un bigint SQL
 
-	student() = default;
 	friend class odb::access;
 };
 

@@ -108,16 +108,20 @@ private:
 
 	void searchStudent(const Rest::Request& request, Http::ResponseWriter response) {
 		try {
-			json responseBody {json::array()};
-			{
-				DbTransaction transaction(database->begin());
+			DbTransaction transaction(database->begin());
+			if (request.query().has("name")) {
+				json responseBody {json::array()};
 				auto result(database->template query<student>("levenshtein_less_equal('" + request.query().get("name").value() + "', concat(name, surname), 7) < 7")); 
 				for (const auto& student : result) {
-					responseBody.push_back({{"id", student.getId()}, {"name", student.name + (student.surname.null() ? "" : student.surname.get())}});
+					responseBody.push_back({{"id", student.getId()}, {"name", student.name + (student.surname.null() ? "" : " " + student.surname.get())}});
 				}
-				transaction.commit();
+				response.send(Http::Code::Ok, responseBody.dump());
 			}
-			response.send(Http::Code::Ok, responseBody.dump());
+			else if (request.query().has("mail")) {
+				const auto result(database->template query_value<student>(odb::query<student>::mail == request.query().get("mail").value()));
+				response.send(Http::Code::Ok, json{{"id", result.getId()}, {"name", result.name + (result.surname.null() ? "" : " " + result.surname.get())}}.dump());
+			}
+			transaction.commit();
 		}
 		catch (const std::exception& exception) {
 			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
