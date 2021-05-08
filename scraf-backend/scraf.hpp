@@ -221,9 +221,10 @@ private:
 						if (curl->getResponseCode() != static_cast<long>(Http::Code::Ok)) {
 							throw std::logic_error("ClasseViva login failed");
 						}
-						const simdjson::dom::element parsedCvv {parser->parse(curl->getResponseBody())};
+						// After re-parsing, the content of parsed is lost, and so also text and text2
 						currentStudent->cvv_username = std::string{text};
 						currentStudent->cvv_password = std::string{text2};
+						const simdjson::dom::element parsedCvv {parser->parse(curl->getResponseBody())};
 						currentStudent->cvv_ident = std::regex_replace(parsedCvv["ident"].get_c_str().value(), std::regex("[^0-9]*([0-9]+).*"), std::string("$1"));
 						currentStudent->cvv_token = std::string{parsedCvv["token"].get_string().value()};
 						needsUpdate = true;
@@ -242,6 +243,7 @@ private:
 			response.send(Http::Code::Bad_Request, json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
 		}
 		catch (const std::exception& exception) {
+			std::cerr << "aaaaaaaa\n";
 			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
 		}
 		catch (...) {
@@ -281,7 +283,6 @@ private:
 				if (curl->getResponseCode() != static_cast<long>(Http::Code::Ok)) {
 					throw std::logic_error("ClasseViva login failed");
 				}
-				std::cerr << curl->getResponseBody() << '\n';
 				const simdjson::dom::element parsed {parser->parse(curl->getResponseBody())};
 				currentStudent->cvv_token = std::string{parsed["token"].get_string().value()};
 				curl->get(
