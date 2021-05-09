@@ -143,7 +143,7 @@ private:
 						{"name", student_->name},
 						{"is_class_president", student_->is_class_president},
 						{"is_school_president", student_->is_school_president}
-					}
+					}.dump()
 				);
 			}
 			else {
@@ -154,7 +154,7 @@ private:
 						{"surname", student_->surname.get()},
 						{"is_class_president", student_->is_class_president},
 						{"is_school_president", student_->is_school_president}
-					}
+					}.dump()
 				);
 			}
 		}
