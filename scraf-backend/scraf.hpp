@@ -243,7 +243,6 @@ private:
 			response.send(Http::Code::Bad_Request, json{{"message", std::string{"Error parsing the JSON: "} + exception.what()}}.dump());
 		}
 		catch (const std::exception& exception) {
-			std::cerr << "aaaaaaaa\n";
 			response.send(Http::Code::Bad_Gateway, json{{"message", exception.what()}}.dump());
 		}
 		catch (...) {
