@@ -129,11 +129,11 @@ jobs:
         meson test -C build_debug || (cat build_debug/meson-logs/testlog.txt && export SCRAF_TEST_DEBUG_FAILED='true')
         lcov --capture --output-file coverage.info --directory . --gcov-tool $HOME/.local/bin/cov.sh --exclude '/usr/*' --exclude "${HOME}"'/.cache/*' --exclude '*/tests/*' --exclude '*/subprojects/*'
         lcov --list coverage.info
-        bash <(curl --silent https://codecov.io/bash) -X coveragepy -X xcode -f coverage.info
+        curl --silent --remote-name --proto https --proto-default https --tlsv1.3 https://uploader.codecov.io/latest/codecov-linux
+        chmod +x ./codecov-linux
+        ./codecov-linux
         if [ "$SCRAF_TEST_DEBUG_FAILED" = 'true' ]; then false; fi
         rm -r build_debug
-      env:
-        CODECOV_TOKEN: 7fe99389-2dd9-40d0-a3e9-042f23a54307
 
     - name: Memory sanitizer
       if: matrix.compiler == 'clang'
