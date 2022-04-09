@@ -1,12 +1,15 @@
 {
-	// See https://go.microsoft.com/fwlink/?LinkId=733558
-	// for the documentation about the tasks.json format
 	"version": "2.0.0",
 	"tasks": [
 		{
 			"label": "compile",
-			"type": "shell",
-			"command": "meson compile -C build"
+			"type": "process",
+			"command": "meson",
+			"args": ["compile", "-C", "build"],
+			"presentation": {
+				"reveal": "silent",
+				"focus": false
+			}
 		}
 	]
 }
